@@ -99,7 +99,7 @@ public class Window {
         GL.createCapabilities();
 
         // Set the clear color
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
@@ -125,9 +125,11 @@ public class Window {
         int color_size = 3; // R, G, B,
 
         FloatBuffer vertex_data = BufferUtils.createFloatBuffer(vertices * vertex_size);
-        vertex_data.put(new float[] { -1f, -1f, 0f, });
-        vertex_data.put(new float[] { 1f, -1f, 0f, });
+        vertex_data.put(new float[] { 0f, 0f, 0f, });
+        vertex_data.put(new float[] { 0f, 1f, 0f, });
         vertex_data.put(new float[] { 1f, 1f, 0f, });
+        // ensures that we're reading from the start of the buffer
+        // docs: https://www.educative.io/edpresso/what-is-the-floatbuffer-flip-method-in-java
         vertex_data.flip();
 
         FloatBuffer color_data = BufferUtils.createFloatBuffer(vertices * color_size);
@@ -149,10 +151,10 @@ public class Window {
         // render the VBO
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo_vertex_handle);
-        glVertexPointer(vertex_size, GL_FLOAT, 0, 0l);
+        glVertexPointer(vertex_size, GL_FLOAT, 0, 0L);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo_color_handle);
-        glColorPointer(color_size, GL_FLOAT, 0, 0l);
+        glColorPointer(color_size, GL_FLOAT, 0, 0L);
 
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
