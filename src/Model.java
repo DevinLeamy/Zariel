@@ -36,4 +36,14 @@ abstract public class Model {
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_COLOR_ARRAY);
     }
+
+    public void update(float dt) {
+
+    }
+
+    public void cleanUp() {
+        // delete buffers
+        glDeleteBuffers(vboVertexHandle);
+        glDeleteBuffers(vboColorHandle);
+    }
 }

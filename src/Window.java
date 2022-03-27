@@ -16,18 +16,16 @@ public class Window {
     // The window handle
     private long window;
 
-    private final int WW = 600;
-    private final int WH = 600;
+    private final int WIDTH = 600;
+    private final int HEIGHT = 600;
 
-    public void Window() {
-    }
-
-    public void run() {
+    public Window() {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
         init();
-        loop();
+    }
 
+    public void cleanUp() {
         // Free the window callbacks and destroy the window
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
@@ -52,7 +50,7 @@ public class Window {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
         // Create the window
-        window = glfwCreateWindow(WW, WH, "Hello LWJGL!", NULL, NULL);
+        window = glfwCreateWindow(WIDTH, HEIGHT, "Hello LWJGL!", NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
@@ -88,9 +86,7 @@ public class Window {
 
         // Make the window visible
         glfwShowWindow(window);
-    }
 
-    private void loop() {
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
         // LWJGL detects the context that is current in the current thread,
@@ -98,77 +94,21 @@ public class Window {
         // bindings available for use.
         GL.createCapabilities();
 
-        // Set the clear color
+        // Set the clear color (WHITE)
         glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-
-        // Run the rendering loop until the user has attempted to close
-        // the window or has pressed the ESCAPE key.
-        while ( !glfwWindowShouldClose(window) ) {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
-            update();
-
-            glfwSwapBuffers(window); // swap the color buffers
-
-            // Poll for window events. The key callback above will only be
-            // invoked during this call.
-            glfwPollEvents();
-        }
     }
 
-    // main update loop
-    private void update() {
-        int vertices = 3;
+    public void prepareWindow() {
+        // clear the framebuffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
 
-        // create the VBO
-        int vertex_size = 3; // X, Y, Z,
-        int color_size = 3; // R, G, B,
+    public void render() {
+        // swap the color buffers
+        glfwSwapBuffers(window);
 
-        FloatBuffer vertex_data = BufferUtils.createFloatBuffer(vertices * vertex_size);
-        vertex_data.put(new float[] { 0f, 0f, 0f, });
-        vertex_data.put(new float[] { 0f, 1f, 0f, });
-        vertex_data.put(new float[] { 1f, 1f, 0f, });
-        // ensures that we're reading from the start of the buffer
-        // docs: https://www.educative.io/edpresso/what-is-the-floatbuffer-flip-method-in-java
-        vertex_data.flip();
-
-        FloatBuffer color_data = BufferUtils.createFloatBuffer(vertices * color_size);
-        color_data.put(new float[] { 1f, 0f, 0f, });
-        color_data.put(new float[] { 0f, 1f, 0f, });
-        color_data.put(new float[] { 0f, 0f, 1f, });
-        color_data.flip();
-
-        int vbo_vertex_handle = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_vertex_handle);
-        glBufferData(GL_ARRAY_BUFFER, vertex_data, GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        int vbo_color_handle = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_color_handle);
-        glBufferData(GL_ARRAY_BUFFER, color_data, GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        // render the VBO
-
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_vertex_handle);
-        glVertexPointer(vertex_size, GL_FLOAT, 0, 0L);
-
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_color_handle);
-        glColorPointer(color_size, GL_FLOAT, 0, 0L);
-
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
-
-        glDrawArrays(GL_TRIANGLES, 0, vertices);
-
-        glDisableClientState(GL_COLOR_ARRAY);
-        glDisableClientState(GL_VERTEX_ARRAY);
-
-
-        // delete the VBO
-
-        glDeleteBuffers(vbo_vertex_handle);
-        glDeleteBuffers(vbo_color_handle);
-
+        // Poll for window events. The key callback above will only be
+        // invoked during this call.
+        glfwPollEvents();
     }
 }
