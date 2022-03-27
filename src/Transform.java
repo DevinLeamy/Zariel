@@ -5,7 +5,7 @@ public class Transform {
     private float scaleX;
     private float scaleY;
 
-    public void Transform(float x, float y) {
+    public Transform(float x, float y) {
         this.x = x;
         this.y = y;
         this.rotation = 0;

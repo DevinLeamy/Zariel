@@ -2,12 +2,12 @@ import org.lwjgl.BufferUtils;
 
 import java.nio.*;
 
-import static org.lwjgl.opengl.GL46.*;
+import static org.lwjgl.opengl.GL41.*;
 
 public class Triangle extends Model {
 
-    public Triangle() {
-        super();
+    public Triangle(VertexShader vs, FragmentShader fs, Transform transform) {
+        super(vs, fs, transform);
 
         this.vertexCount = 3;
         this.coordinatesPerVertex = 3;
