@@ -43,4 +43,16 @@ public class Triangle extends Model {
         // cleanup
         glBindVertexArray(0);
     }
+
+    @Override
+    public void update(float dt) {
+        // rotate the triangle around its center
+        transform.rotate(0.0f, 0, 0.01f);
+    }
+
+    @Override
+    protected void setUniforms() {
+        int rotationMHandler = glGetUniformLocation(shaderProgram.getProgramHandle(),  "rotationM");
+        glUniformMatrix3fv(rotationMHandler, false, transform.rotationMatrix().toFloatBuffer());
+    }
 }

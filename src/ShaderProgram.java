@@ -25,6 +25,10 @@ public class ShaderProgram {
         }
     }
 
+    public int getProgramHandle() {
+        return programHandle;
+    }
+
     // when the program is no longer going to be used
     public void cleanUp() {
         glDeleteProgram(programHandle);

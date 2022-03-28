@@ -3,10 +3,13 @@
 layout (location = 0) in vec3 vPosition;
 layout (location = 1) in vec3 aColor;
 
+uniform mat3 rotationM;
+
 out vec3 color;
 
 void main()
 {
   color = aColor;
-  gl_Position = vec4(vPosition, 1.0);
+  vec3 finalPosition = rotationM * vPosition;
+  gl_Position = vec4(finalPosition, 1.0);
 }

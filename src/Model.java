@@ -14,24 +14,27 @@ abstract public class Model {
         this.shaderProgram = new ShaderProgram(vs, fs);
     }
 
-    public void render() {
+    final public void render() {
         // bind shader program
         shaderProgram.link();
+
+        setUniforms();
+
         // bind buffer array
         glBindVertexArray(this.vao);
         // draw 'vertices' many vertices
         glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 
+        // unbind
         glBindVertexArray(0);
     }
 
-    public void update(float dt) {
+    protected void setUniforms() {}
 
-    }
+    public void update(float dt) {}
 
     public void cleanUp() {
         // delete buffers
         glDeleteBuffers(vao);
-//        glDeleteBuffers(vboColorHandle);
     }
 }
