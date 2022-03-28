@@ -16,3 +16,13 @@ OpenGL Version: 4.1
 - Created a number of boilerplate files.
 - Got a triangle rendering to the screen.
 - Created a Trello board for the project.
+
+### Day 2
+- Reading from shaders
+- Added some classes
+- Moved to `OpenGL 4.10` and `GLSL 4.1`
+
+### Lessons
+- Core OpenGL __requires__ that you use VAOs
+- `GL_FLOAT` is not the size of a float!
+- VAOs store the "configuration" of VBOs - nothing else

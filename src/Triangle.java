@@ -5,7 +5,6 @@ import java.nio.*;
 import static org.lwjgl.opengl.GL41.*;
 
 public class Triangle extends Model {
-
     public Triangle(VertexShader vs, FragmentShader fs, Transform transform) {
         super(vs, fs, transform);
 
@@ -15,32 +14,33 @@ public class Triangle extends Model {
 
         // initialize vertex buffer
         FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(
-                this.vertexCount * this.coordinatesPerVertex
+                this.vertexCount * this.coordinatesPerVertex * 2
         );
-        vertexBuffer.put(new float[] { 0f, 0f, 0f, });
-        vertexBuffer.put(new float[] { 0f, 1f, 0f, });
-        vertexBuffer.put(new float[] { 1f, 1f, 0f, });
+        // (x,y,z,R,G,B)
+        vertexBuffer.put(new float[] { 0f, 0.5f, 0f, 0f, 1.0f, 0f });
+        vertexBuffer.put(new float[] { 0.5f, 0f, 0f, 1.0f, 0f, 0f });
+        vertexBuffer.put(new float[] { -0.5f, 0f, 0f, 0f, 0f, 1.0f });
         vertexBuffer.flip();
 
-        // initialize color buffer
-        FloatBuffer colorBuffer = BufferUtils.createFloatBuffer(
-                this.vertexCount * this.channelsPerColor
-        );
-        colorBuffer.put(new float[] { 1f, 0f, 0f, });
-        colorBuffer.put(new float[] { 0f, 1f, 0f, });
-        colorBuffer.put(new float[] { 0f, 0f, 1f, });
-        colorBuffer.flip();
+        this.vao = glGenVertexArrays();
+        this.vbo = glGenBuffers();
 
+        glBindVertexArray(this.vao);
         // load vertex buffer data
-        this.vboVertexHandle = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, this.vboVertexHandle);
+        glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
         // GL_STATIC_DRAW => Data is modified once and used many times
         glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
+        // tell OpenGL how to read the buffer
 
+        int stride = 6 * 4;
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0);
+        glVertexAttribPointer(1, 3, GL_FLOAT, false, stride, 3*4);
 
-        // load color buffer data
-        this.vboColorHandle = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, this.vboColorHandle);
-        glBufferData(GL_ARRAY_BUFFER, colorBuffer, GL_STATIC_DRAW);
+        // "yes, we want to use attribute 0"
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+
+        // cleanup
+        glBindVertexArray(0);
     }
 }
