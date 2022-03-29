@@ -26,6 +26,10 @@ OpenGL Version: 4.1
 - Rendering color and position
 - Creating a rainbow rotating triangle
 
+### Day 3
+- Created a `Square`
+- Started a `math` package 
+- Created a loader for Wavefront `.obj` files
 
 
 # OpenGL
@@ -33,7 +37,8 @@ OpenGL Version: 4.1
 ### Lessons
 - Core OpenGL __requires__ that you use VAOs
 - `GL_FLOAT` is not the size of a float!
-- VAOs store the "configuration" of VBOs - nothing else
+- VAOs store the "configuration" of VBOs and EBOs - nothing else
+- EBO (Element Buffer Objects) are just lists of indices for vertices
 
 ### GLSL Basics
 
@@ -59,5 +64,5 @@ void main()
 ### Resources
 - https://learnopengl.com/
 - https://docs.gl
-
+- https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/shading-normals
 

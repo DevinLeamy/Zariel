@@ -4,26 +4,32 @@ import java.nio.*;
 
 import static org.lwjgl.opengl.GL41.*;
 
-public class Triangle extends Model {
-    public Triangle(VertexShader vs, FragmentShader fs, Transform transform) {
+public class Square extends Model {
+    public Square(VertexShader vs, FragmentShader fs, Transform transform) {
         super(vs, fs, transform);
 
-        this.vertexCount = 3;
+        this.vertexCount = 6;
         this.coordinatesPerVertex = 3;
         this.channelsPerColor = 3;
 
         // initialize vertex buffer
         FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(
-                this.vertexCount * this.coordinatesPerVertex * 2
+                this.vertexCount * (this.coordinatesPerVertex + this.channelsPerColor)
         );
         // (x,y,z,R,G,B)
+        // Triangle 1
         vertexBuffer.put(new float[] { 0f, 0.5f, 0f, 0f, 1.0f, 0f });
+        vertexBuffer.put(new float[] { 0.5f, 0f, 0f, 1.0f, 0f, 0f });
+        vertexBuffer.put(new float[] { -0.5f, 0f, 0f, 0f, 0f, 1.0f });
+        // Triangle 2
+        vertexBuffer.put(new float[] { 0f, -0.5f, 0f, 0f, 1.0f, 0f });
         vertexBuffer.put(new float[] { 0.5f, 0f, 0f, 1.0f, 0f, 0f });
         vertexBuffer.put(new float[] { -0.5f, 0f, 0f, 0f, 0f, 1.0f });
         vertexBuffer.flip();
 
         this.vao = glGenVertexArrays();
         this.vbo = glGenBuffers();
+
 
         glBindVertexArray(this.vao);
         // load vertex buffer data
@@ -32,9 +38,9 @@ public class Triangle extends Model {
         glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
         // tell OpenGL how to read the buffer
 
-        int stride = 6 * 4;
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0);
-        glVertexAttribPointer(1, 3, GL_FLOAT, false, stride, 3*4);
+        int stride = (this.coordinatesPerVertex + this.channelsPerColor) * 4;
+        glVertexAttribPointer(0, this.coordinatesPerVertex, GL_FLOAT, false, stride, 0);
+        glVertexAttribPointer(1, this.channelsPerColor, GL_FLOAT, false, stride, this.coordinatesPerVertex * 4L);
 
         // "yes, we want to use attribute 0"
         glEnableVertexAttribArray(0);
@@ -46,8 +52,7 @@ public class Triangle extends Model {
 
     @Override
     public void update(float dt) {
-        // rotate the triangle around its center
-        transform.rotate(0.00f, 0.01f, 0.01f);
+        transform.rotate(0.00f, 0.00f, 0.01f);
     }
 
     @Override

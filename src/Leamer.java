@@ -27,7 +27,7 @@ final public class Leamer {
         VertexShader vs = new VertexShader("src/vertex_shader.vert");
         FragmentShader fs = new FragmentShader("src/fragment_shader.frag");
 
-        gameObjects.add(new Triangle(vs, fs, new Transform(0, 0)));
+        gameObjects.add(new Square(vs, fs, new Transform(0, 0)));
         shaders.add(vs);
         shaders.add(fs);
 

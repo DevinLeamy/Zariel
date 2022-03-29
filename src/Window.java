@@ -54,7 +54,7 @@ public class Window {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
         // Create the window
-        window = glfwCreateWindow(WIDTH, HEIGHT, "Hello LWJGL!", NULL, NULL);
+        window = glfwCreateWindow(WIDTH, HEIGHT, "Zariel", NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 

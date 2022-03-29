@@ -1,3 +1,5 @@
+import math.Matrix3;
+
 public class Transform {
     private float x;
     private float y;
@@ -20,7 +22,7 @@ public class Transform {
     }
 
     public Matrix3 rotationMatrix() {
-        return Matrix3.rotate(Matrix3.zero(), rotationX, rotationY, rotationZ);
+        return Matrix3.genRotationMatrix(rotationX, rotationY, rotationZ);
     }
 
     public void rotate(float x, float y, float z) {

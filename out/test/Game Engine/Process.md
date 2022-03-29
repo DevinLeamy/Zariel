@@ -21,6 +21,10 @@ OpenGL Version: 4.1
 - Reading from shaders
 - Added some classes
 - Moved to `OpenGL 4.10` and `GLSL 4.1`
+- Rendering using shaders
+- Rendering using VAO
+- Rendering color and position
+- Creating a rainbow rotating triangle
 
 
 
