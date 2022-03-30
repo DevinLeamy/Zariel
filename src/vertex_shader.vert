@@ -1,15 +1,13 @@
 #version 410 core
 
-layout (location = 0) in vec3 vPosition;
-layout (location = 1) in vec3 aColor;
+layout (location = 0) in vec3 pos;
+layout (location = 1) in vec2 uv;
+layout (location = 2) in vec3 normal;
 
 uniform mat3 rotationM;
 
-out vec3 color;
-
 void main()
 {
-  color = aColor;
-  vec3 finalPosition = rotationM * vPosition;
+  vec3 finalPosition = rotationM * pos;
   gl_Position = vec4(finalPosition, 1.0);
 }

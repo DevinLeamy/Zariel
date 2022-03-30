@@ -88,6 +88,7 @@ public class Matrix3 {
         });
     }
 
+
     public FloatBuffer toFloatBuffer() {
         FloatBuffer fb = BufferUtils.createFloatBuffer(3 * 3);
         for (int i = 0; i < 3; ++i) {

@@ -1,6 +1,7 @@
 import org.lwjgl.Version;
 
 import java.util.ArrayList;
+import rendering.*;
 
 import static org.lwjgl.opengl.GL41.*;
 
@@ -26,15 +27,15 @@ final public class Leamer {
 
         VertexShader vs = new VertexShader("src/vertex_shader.vert");
         FragmentShader fs = new FragmentShader("src/fragment_shader.frag");
+        Mesh cube = MeshLoader.loadMesh("res/square.obj");
 
-        gameObjects.add(new Square(vs, fs, new Transform(0, 0)));
+        gameObjects.add(new Cube(vs, fs, new Transform(0, 0), cube));
         shaders.add(vs);
         shaders.add(fs);
 
         while (running) {
             runGameLoop(SECONDS_PER_FRAME);
         }
-
 
         for (Model gameObject : gameObjects) {
             gameObject.cleanUp();

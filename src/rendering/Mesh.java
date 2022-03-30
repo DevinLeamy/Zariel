@@ -1,82 +1,80 @@
 package rendering;
-import math.Vector2;
-import math.Vector3;
 import org.lwjgl.BufferUtils;
 
-import java.nio.FloatBuffer;
+import java.nio.*;
 import java.util.*;
-import java.io.*;
 
+import static org.lwjgl.opengl.GL41.*;
 /**
  * A mesh is the 3D geometry
  */
 public class Mesh {
-    ArrayList<Vector3> vertices;
-    ArrayList<Vector2> textureCords;
-    ArrayList<Vector3> vertexNormals;
-    ArrayList<ArrayList<int[]>> faces;
+    public ArrayList<Vertex> vertices;
+    public ArrayList<Integer> indices;
+    public int vao, vbo, ebo;
 
-    public Mesh(String meshSource) {
-        loadMesh(meshSource);
+    public Mesh(ArrayList<Vertex> vertices, ArrayList<Integer> indices) {
+        this.vertices = vertices;
+        this.indices = indices;
+        prepareMesh();
     }
 
-    public void loadMesh(String meshSource) {
-        vertices = new ArrayList<>();
-        textureCords = new ArrayList<>();
-        vertexNormals = new ArrayList<>();
-        faces = new ArrayList<>();
+    private void prepareMesh() {
+        // create buffers
+        vao = glGenVertexArrays();
+        vbo = glGenBuffers();
+        ebo = glGenBuffers();
 
-        try {
-            FileInputStream fstream = new FileInputStream(meshSource);
-            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] tokens = line.split("\\s+");
-                String type = tokens[0];
+        // bind VAO and array buffer (order matters!)
+        glBindVertexArray(vao);
 
-                switch (type) {
-                    case "v" -> vertices.add(new Vector3(
-                            Float.parseFloat(tokens[1]),
-                            Float.parseFloat(tokens[2]),
-                            Float.parseFloat(tokens[3])
-                    ));
-                    case "vt" -> textureCords.add(new Vector2(
-                            Float.parseFloat(tokens[1]),
-                            Float.parseFloat(tokens[2])
-                    ));
-                    case "vn" -> vertexNormals.add(new Vector3(
-                            Float.parseFloat(tokens[1]),
-                            Float.parseFloat(tokens[2]),
-                            Float.parseFloat(tokens[3])
-                    ));
-                    case "f" -> {
-                        ArrayList<int[]> face = new ArrayList<>();
-                        face.add(parseFaceVertexIndices(tokens[1]));
-                        face.add(parseFaceVertexIndices(tokens[2]));
-                        face.add(parseFaceVertexIndices(tokens[3]));
-                        this.faces.add(face);
-                    }
-                }
+        // fill buffers
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, getVertexBuffer(), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndexBuffer(), GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
+
+        int stride = 4 * 8; // 8 = 3 (coords) + 2 (uv) + 3 (normal)
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0L);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, stride,  3 * 4);
+        glVertexAttribPointer(2, 3, GL_FLOAT, false, stride,  5 * 4);
+
+        // unbind
+        glBindVertexArray(0);
+    }
+
+    public FloatBuffer getVertexBuffer() {
+        // 8 = 3 (coords) + 2 (uv) + 3 (normal)
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(vertices.size() * 8);
+        for (Vertex vertex : vertices) {
+            buffer.put(vertex.toArray());
+            for (float v : vertex.toArray()) {
+                System.out.print(v + " ");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("");
         }
-    }
-
-    private int[] parseFaceVertexIndices(String vertexAttribIndices) {
-        String[] indicesS = vertexAttribIndices.split("/");
-        int[] indices = new int[indicesS.length];
-
-        for (int i = 0; i < indicesS.length; ++i) {
-            indices[i] = Integer.parseInt(indicesS[i]);
-        }
-
-        return indices;
-    }
-
-    public FloatBuffer toFloatBuffer() {
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(0);
 
         return buffer;
+    }
+
+    public IntBuffer getIndexBuffer() {
+        IntBuffer buffer = BufferUtils.createIntBuffer(indices.size());
+
+        for (int index : indices) {
+            buffer.put(index);
+        }
+
+        return buffer;
+    }
+
+    public void dispose() {
+        glDeleteBuffers(vao);
+        glDeleteBuffers(vbo);
+        glDeleteBuffers(ebo);
     }
 }

@@ -1,15 +1,14 @@
 import static org.lwjgl.opengl.GL41.*;
+
 import rendering.Mesh;
 
 abstract public class Model {
     protected Transform transform;
     protected Mesh mesh;
-    protected int vbo, vao, ebo;
-    protected int vertexCount, coordinatesPerVertex, channelsPerColor;
     protected ShaderProgram shaderProgram;
 
-    public Model(VertexShader vs, FragmentShader fs, Transform transform) {
-//        this.mesh = new Mesh();
+    public Model(VertexShader vs, FragmentShader fs, Transform transform, Mesh mesh) {
+        this.mesh = mesh;
         this.transform = transform;
         this.shaderProgram = new ShaderProgram(vs, fs);
     }
@@ -21,9 +20,11 @@ abstract public class Model {
         setUniforms();
 
         // bind buffer array
-        glBindVertexArray(this.vao);
+        glBindVertexArray(mesh.vao);
+
         // draw 'vertices' many vertices
-        glDrawArrays(GL_TRIANGLES, 0, this.vertexCount);
+//        glDrawElements(GL_TRIANGLES, mesh.vertices.size(), GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.size());
 
         // unbind
         glBindVertexArray(0);
@@ -34,9 +35,6 @@ abstract public class Model {
     public void update(float dt) {}
 
     public void cleanUp() {
-        // delete buffers
-        glDeleteBuffers(vao);
-        glDeleteBuffers(vbo);
-        glDeleteBuffers(ebo);
+        mesh.dispose();
     }
 }

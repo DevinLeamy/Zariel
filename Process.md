@@ -65,4 +65,5 @@ void main()
 - https://learnopengl.com/
 - https://docs.gl
 - https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/shading-normals
+- https://docs.unity3d.com/Packages/com.unity.probuilder@4.0/manual/workflow-texture-mapping.html#:~:text=The%20Mesh%20stores%20the%20texture,specific%20locations%20on%20the%20image.
 

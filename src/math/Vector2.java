@@ -8,4 +8,8 @@ public class Vector2 {
         this.v0 = v0;
         this.v1 = v1;
     }
+
+    public float[] toArray() {
+        return new float[] { v0, v1 };
+    }
 }
