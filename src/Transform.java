@@ -1,38 +1,33 @@
 import math.Matrix3;
+import math.Vector3;
 
 public class Transform {
-    private float x;
-    private float y;
-    private float z;
-    private float rotationX;
-    private float rotationY;
-    private float rotationZ;
-    private float scaleX;
-    private float scaleY;
+    private Vector3 position;
+    private Vector3 rotation;
+    private Vector3 scale;
 
-    public Transform(float x, float y) {
-        this.x = x;
-        this.y = y;
-        this.z = 0;
-        this.rotationX = 0;
-        this.rotationY = 0;
-        this.rotationZ = 0;
-        this.scaleX = 1;
-        this.scaleY = 1;
+    public Transform(Vector3 position, Vector3 rotation, Vector3 scale) {
+        this.position = position;
+        this.rotation = rotation;
+        this.scale    = scale;
     }
 
-    public Matrix3 rotationMatrix() {
-        return Matrix3.genRotationMatrix(rotationX, rotationY, rotationZ);
+    public Matrix3 toMatrix() {
+        Matrix3 rotationM = Matrix3.genRotationMatrix(rotation.v0, rotation.v1, rotation.v2);
+        Matrix3 scalingM  = Matrix3.genScalingMatrix(scale.v0, scale.v1, scale.v2);
+
+        // rotate by rotationM and then scale by scaleM
+        return Matrix3.mult(scalingM, rotationM);
     }
 
     public void rotate(float x, float y, float z) {
-        this.rotationX += x;
-        this.rotationX %= 2 * Math.PI;
+        rotation.v0 += x;
+        rotation.v0 %= 2 * Math.PI;
 
-        this.rotationY += y;
-        this.rotationY %= 2 * Math.PI;
+        rotation.v1 += y;
+        rotation.v1 %= 2 * Math.PI;
 
-        this.rotationZ += z;
-        this.rotationZ %= 2 * Math.PI;
+        rotation.v2 += z;
+        rotation.v2 %= 2 * Math.PI;
     }
 }

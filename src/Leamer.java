@@ -1,3 +1,4 @@
+import math.Vector3;
 import org.lwjgl.Version;
 
 import java.util.ArrayList;
@@ -27,9 +28,14 @@ final public class Leamer {
 
         VertexShader vs = new VertexShader("src/vertex_shader.vert");
         FragmentShader fs = new FragmentShader("src/fragment_shader.frag");
-        Mesh cube = MeshLoader.loadMesh("res/square.obj");
+        Mesh cube = MeshLoader.loadMesh("res/b.obj");
 
-        gameObjects.add(new Cube(vs, fs, new Transform(0, 0), cube));
+        Transform cubeTransform = new Transform(
+                new Vector3(0, 0, 0),
+                new Vector3(0, 0, 0),
+                new Vector3(0.5f, 0.5f, 0.5f)
+        );
+        gameObjects.add(new Cube(vs, fs, cubeTransform, cube));
         shaders.add(vs);
         shaders.add(fs);
 

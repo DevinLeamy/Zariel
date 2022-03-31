@@ -14,6 +14,11 @@ public class Vertex {
     }
 
     public float[] toArray() {
+        System.out.println(
+            position.v0 + " " + position.v1 + " " + position.v2 + " " +
+            uv.v0 + " " + uv.v1 + " " +
+            normal.v0 + " " + normal.v1 + " " + normal.v2
+        );
         return new float[] {
             position.v0, position.v1, position.v2,
             uv.v0, uv.v1,

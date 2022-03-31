@@ -35,21 +35,25 @@ public class Matrix3 {
         });
     }
 
-    public Matrix3 mult(Matrix3 other) {
-        float[][] m = new float[3][3];
+    public static Matrix3 mult(Matrix3 m1, Matrix3 m2) {
+        float[][] res = new float[3][3];
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
                 float dot = 0;
                 for (int k = 0; k < 3; ++k) {
-                    dot += this.m[i][k] * other.m[k][j];
+                    dot += m1.m[i][k] * m2.m[k][j];
                 }
 
-                m[i][j] = dot;
+                res[i][j] = dot;
             }
         }
 
-        set(m);
+        return new Matrix3(res);
+    }
+
+    public Matrix3 mult(Matrix3 other) {
+        set(Matrix3.mult(this, other).m);
         return this;
     }
 
@@ -73,6 +77,14 @@ public class Matrix3 {
         });
 
         return rotationZ.mult(rotationY).mult(rotationX);
+    }
+
+    public static Matrix3 genScalingMatrix(float x, float y, float z) {
+        return new Matrix3(new float[][]{
+                {x,    0.0f, 0.0f},
+                {0.0f, y,    0.0f},
+                {0.0f, 0.0f, z   }
+        });
     }
 
     // rotate an existing matrix

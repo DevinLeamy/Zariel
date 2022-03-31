@@ -53,11 +53,8 @@ public class Mesh {
         FloatBuffer buffer = BufferUtils.createFloatBuffer(vertices.size() * 8);
         for (Vertex vertex : vertices) {
             buffer.put(vertex.toArray());
-            for (float v : vertex.toArray()) {
-                System.out.print(v + " ");
-            }
-            System.out.println("");
         }
+        buffer.flip();
 
         return buffer;
     }
@@ -68,6 +65,7 @@ public class Mesh {
         for (int index : indices) {
             buffer.put(index);
         }
+        buffer.flip();
 
         return buffer;
     }

@@ -4,10 +4,10 @@ layout (location = 0) in vec3 pos;
 layout (location = 1) in vec2 uv;
 layout (location = 2) in vec3 normal;
 
-uniform mat3 rotationM;
+uniform mat3 transformM;
 
 void main()
 {
-  vec3 finalPosition = rotationM * pos;
+  vec3 finalPosition = transformM * pos;
   gl_Position = vec4(finalPosition, 1.0);
 }

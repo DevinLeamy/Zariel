@@ -9,12 +9,12 @@ public class Cube extends Model {
 
     @Override
     public void update(float dt) {
-        transform.rotate(0.00f, 0.00f, 0.01f);
+        transform.rotate(0.01f, 0.01f, 0.01f);
     }
 
     @Override
     protected void setUniforms() {
-        int rotationMHandler = glGetUniformLocation(shaderProgram.getProgramHandle(),  "rotationM");
-        glUniformMatrix3fv(rotationMHandler, false, transform.rotationMatrix().toFloatBuffer());
+        int transformMHandler = glGetUniformLocation(shaderProgram.getProgramHandle(),  "transformM");
+        glUniformMatrix3fv(transformMHandler, false, transform.toMatrix().toFloatBuffer());
     }
 }

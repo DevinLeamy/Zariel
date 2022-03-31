@@ -23,8 +23,7 @@ abstract public class Model {
         glBindVertexArray(mesh.vao);
 
         // draw 'vertices' many vertices
-//        glDrawElements(GL_TRIANGLES, mesh.vertices.size(), GL_UNSIGNED_INT, 0);
-        glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.size());
+        glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, 0);
 
         // unbind
         glBindVertexArray(0);
