@@ -38,11 +38,13 @@ public class Mesh {
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
+        glEnableVertexAttribArray(3);
 
-        int stride = 4 * 8; // 8 = 3 (coords) + 2 (uv) + 3 (normal)
+        int stride = 4 * 11; // 11 = 3 (coords) + 2 (uv) + 3 (normal) + 3 (colors)
         glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0L);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, stride,  3 * 4);
         glVertexAttribPointer(2, 3, GL_FLOAT, false, stride,  5 * 4);
+        glVertexAttribPointer(3, 3, GL_FLOAT, false, stride,  8 * 4);
 
         // unbind
         glBindVertexArray(0);
@@ -50,7 +52,7 @@ public class Mesh {
 
     public FloatBuffer getVertexBuffer() {
         // 8 = 3 (coords) + 2 (uv) + 3 (normal)
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(vertices.size() * 8);
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(vertices.size() * Vertex.size);
         for (Vertex vertex : vertices) {
             buffer.put(vertex.toArray());
         }

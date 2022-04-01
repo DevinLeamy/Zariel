@@ -39,6 +39,8 @@ OpenGL Version: 4.1
 - `GL_FLOAT` is not the size of a float!
 - VAOs store the "configuration" of VBOs and EBOs - nothing else
 - EBO (Element Buffer Objects) are just lists of indices for vertices
+- OpenGl makes you copy normals and texture coords! You can only specify "vertex" indices
+  but the different vertices many use the same texture coords or vertex normals -> repeated data!
 
 ### GLSL Basics
 
@@ -66,4 +68,5 @@ void main()
 - https://docs.gl
 - https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/shading-normals
 - https://docs.unity3d.com/Packages/com.unity.probuilder@4.0/manual/workflow-texture-mapping.html#:~:text=The%20Mesh%20stores%20the%20texture,specific%20locations%20on%20the%20image.
-
+- https://ogldev.org/www/tutorial13/tutorial13.html 
+- http://www.songho.ca/opengl/gl_transform.html#modelview 

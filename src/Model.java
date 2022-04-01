@@ -22,6 +22,10 @@ abstract public class Model {
         // bind buffer array
         glBindVertexArray(mesh.vao);
 
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CW);
+
         // draw 'vertices' many vertices
         glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, 0);
 

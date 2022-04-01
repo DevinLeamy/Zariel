@@ -3,11 +3,16 @@
 layout (location = 0) in vec3 pos;
 layout (location = 1) in vec2 uv;
 layout (location = 2) in vec3 normal;
+layout (location = 3) in vec3 aColor;
 
-uniform mat3 transformM;
+uniform mat4 transformM;
+uniform mat4 viewM;
+uniform mat4 projectionM;
+
+out vec3 color;
 
 void main()
 {
-  vec3 finalPosition = transformM * pos;
-  gl_Position = vec4(finalPosition, 1.0);
+  gl_Position = projectionM * viewM * transformM * vec4(pos, 1.0f);
+  color = aColor;
 }

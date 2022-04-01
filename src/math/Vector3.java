@@ -14,4 +14,23 @@ public class Vector3 {
     public float[] toArray() {
         return new float[] { v0, v1, v2 };
     }
+
+    public void normalize() {
+        float len = len();
+        v0 /= len;
+        v1 /= len;
+        v2 /= len;
+    }
+
+    public float len() {
+        return (float) Math.sqrt(v0 * v0 + v1 * v1 + v2 * v2);
+    }
+
+    public static Vector3 cross(Vector3 v1, Vector3 v2) {
+        return new Vector3(
+            v1.v1 * v2.v2 - v1.v2 * v2.v1,
+            v1.v2 * v2.v0 - v1.v0 * v2.v2,
+            v1.v0 * v1.v1 - v1.v1 * v2.v0
+        );
+    }
 }

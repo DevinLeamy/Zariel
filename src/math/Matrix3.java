@@ -52,6 +52,20 @@ public class Matrix3 {
         return new Matrix3(res);
     }
 
+    public static Vector3 mult(Matrix3 m, Vector3 v) {
+        float[] res = new float[3];
+
+        for (int i = 0; i < 3; ++i) {
+            float sum = 0;
+            for (int j = 0; j < 3; ++j) {
+                sum += m.m[i][j] + v.toArray()[j];
+            }
+            res[i] = sum;
+        }
+
+        return new Vector3(res[0], res[1], res[2]);
+    }
+
     public Matrix3 mult(Matrix3 other) {
         set(Matrix3.mult(this, other).m);
         return this;

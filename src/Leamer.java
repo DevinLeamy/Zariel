@@ -21,6 +21,7 @@ final public class Leamer {
         gameObjects = new ArrayList<>();
         shaders = new ArrayList<>();
 
+
         // versions
         System.out.println("LWJGL_VERSION: " + Version.getVersion());
         System.out.println("GL_SHADING_LANGUAGE_VERSION: " + glGetString (GL_SHADING_LANGUAGE_VERSION));
@@ -28,14 +29,16 @@ final public class Leamer {
 
         VertexShader vs = new VertexShader("src/vertex_shader.vert");
         FragmentShader fs = new FragmentShader("src/fragment_shader.frag");
-        Mesh cube = MeshLoader.loadMesh("res/b.obj");
+        Mesh cube = MeshLoader.loadMesh("res/B.obj");
+
 
         Transform cubeTransform = new Transform(
                 new Vector3(0, 0, 0),
                 new Vector3(0, 0, 0),
-                new Vector3(0.5f, 0.5f, 0.5f)
+//                new Vector3(0.25f, 0.25f, 0.25f)
+                new Vector3(1, 1, 1)
         );
-        gameObjects.add(new Cube(vs, fs, cubeTransform, cube));
+        gameObjects.add(new Player(vs, fs, cubeTransform, cube));
         shaders.add(vs);
         shaders.add(fs);
 
