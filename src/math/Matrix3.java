@@ -58,7 +58,7 @@ public class Matrix3 {
         for (int i = 0; i < 3; ++i) {
             float sum = 0;
             for (int j = 0; j < 3; ++j) {
-                sum += m.m[i][j] + v.toArray()[j];
+                sum += m.m[i][j] * v.toArray()[j];
             }
             res[i] = sum;
         }
@@ -79,9 +79,9 @@ public class Matrix3 {
         });
 
         Matrix3 rotationY = new Matrix3(new float[][]{
-                {(float) Math.cos(y),  0.0f, (float) Math.sin(y)},
-                {0.0f,                 1.0f, 0.0f               },
-                {(float) -Math.sin(y), 0.0f, (float) Math.cos(y)}
+                {(float) Math.cos(y), 0.0f, (float) -Math.sin(y)},
+                {0.0f,                1.0f, 0.0f               },
+                {(float) Math.sin(y), 0.0f, (float) Math.cos(y)}
         });
 
         Matrix3 rotationZ = new Matrix3(new float[][]{
@@ -91,6 +91,32 @@ public class Matrix3 {
         });
 
         return rotationZ.mult(rotationY).mult(rotationX);
+    }
+
+    /**
+     * Rotation about an arbitrary axis of rotation
+     * Learn more: https://repository.lboro.ac.uk/articles/thesis/Modelling_CPV/9523520 (section 9.2.4.)
+     * @param axis:  Axis of rotation
+     * @param theta: Magnitude of rotation about the axis in radians
+     * @return Affine rotation matrix
+     */
+    public static Matrix3 genRotationMatrix(Vector3 axis, float theta) {
+        // axis must be a normalized vector
+//        assert(axis.len() == 1);
+
+        float x = axis.x, xx = x * x;
+        float y = axis.y, yy = y * y;
+        float z = axis.z, zz = z * z;
+
+        float cos = (float) Math.cos(theta);
+        float mcos = (1 - cos);
+        float sin = (float) Math.sin(theta);
+
+        return new Matrix3(new float[][]{
+                {cos + xx * mcos,        x * y * mcos - z * sin, x * z * mcos + y * sin},
+                {y * x * mcos + z * sin, cos + yy * mcos,        y * z * mcos - x * sin},
+                {z * x * mcos - y * sin, z * y * mcos + x * sin, cos + zz * mcos       }
+        });
     }
 
     public static Matrix3 genScalingMatrix(float x, float y, float z) {

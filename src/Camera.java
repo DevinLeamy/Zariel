@@ -4,18 +4,22 @@ import math.Vector3;
 
 public class Camera {
     Vector3 position;
-    Vector3 rotation;
+    Vector3 forward;
+    Vector3 up;
+    Vector3 right;
     float fov;
 
     /**
-     *
-     * @param fov: Field of view in radians (0, PI)
-     * @param position: position of the camera in world space
-     * @param rotation: rotation of the camera in world space
+     * @param fov:      Field of view in radians (0, PI)
+     * @param position: Position of the camera in world space
+     * @param forward:  The vector going straight through the "eye" of the camera
+     * @param up:       The vector going up through the top of the camera
      */
-    public Camera(float fov, Vector3 position, Vector3 rotation) {
+    public Camera(float fov, Vector3 position, Vector3 forward, Vector3 up) {
         this.position = position;
-        this.rotation = rotation;
+        this.forward  = forward.normalize();
+        this.up       = up.normalize();
+        this.right    = Vector3.cross(up, forward).normalize();
         this.fov      = fov;
     }
 
@@ -29,63 +33,62 @@ public class Camera {
         });
     }
 
-    // inputs coordinates are in world space
-    public Vector3 getForward(float x, float y, float z) {
-        Vector3 forward = new Vector3(x, y, z);
-        forward.normalize();
+    /**
+     * Think "nodding your head"
+     * Rotate about right-axis
+     * @param theta: Change in pitch in radians
+     */
+    public void pitch(float theta) {
+        Matrix3 pitchM = Matrix3.genRotationMatrix(right, -theta);
 
-        return forward;
+        forward = Matrix3.mult(pitchM, forward).normalize();
+        up      = Vector3.cross(forward, right).normalize();
     }
 
-    public Vector3 getUp() {
-        Vector3 defaultYAxis = new Vector3(0, 1, 0);
+    /**
+     * Think "rolling a log"
+     * Rotate around forward-axis
+     * @param theta: Change in roll in radians
+     */
+    public void roll(float theta) {
+        Matrix3 rollM = Matrix3.genRotationMatrix(forward, theta);
 
-        // move the point based on the cameras x and z rotations
-        float rotationX   = rotation.v0;
-        float rotationZ   = rotation.v2;
-        Matrix3 rotationM = Matrix3.genRotationMatrix(rotationX, 0, rotationZ);
-
-        Vector3 up = Matrix3.mult(rotationM, defaultYAxis);
-        up.normalize();
-
-        return up;
+        right = Matrix3.mult(rollM, right).normalize();
+        up      = Vector3.cross(forward, right).normalize();
     }
 
-    public Vector3 getRight(Vector3 forwardAxis, Vector3 upAxis) {
-       Vector3 right = Vector3.cross(forwardAxis, upAxis);
-       right.normalize();
+    /**
+     * Think "automatic watering"
+     * Rotate around up-axis
+     * @param theta: Change in yaw in radians
+     */
+    public void yaw(float theta) {
+        Matrix3 yawM = Matrix3.genRotationMatrix(up, theta);
 
-       return right;
+        forward = Matrix3.mult(yawM, forward).normalize();
+        right   = Vector3.cross(up, forward).normalize();
     }
 
-    public Matrix4 cameraTranslationMatrix() {
-        return Matrix4.genTranslationMatrix(-position.v0, -position.v1, -position.v2);
+    public void moveRight(float mag) {
+        position.add(Vector3.scale(right, mag));
+    }
+
+    public void moveForward(float mag) {
+        position.add(Vector3.scale(forward, mag));
+    }
+
+    public void moveUp(float mag) {
+        position.add(Vector3.scale(up, mag));
     }
 
     public Matrix4 viewMatrix() {
-        // axis
-        Vector3 forwardAxis = new Vector3(0, 0, 1);
-        Vector3 upAxis = new Vector3(0, 1, 0);
-        Vector3 rightAxis = new Vector3(1, 0, 0);
-//        Vector3 forwardAxis = getForward(0, 0, 1);  // Z
-//        Vector3 upAxis      = getUp();                       // Y
-//        Vector3 rightAxis   = getRight(upAxis, forwardAxis); // X
-
         // (word -> camera) matrix
         // Note: transpose of the (camera -> world) matrix
-        Matrix4 viewMatrix = new Matrix4(new float[][] {
-            {rightAxis.v0, rightAxis.v1, rightAxis.v2, -position.v0},
-            {upAxis.v0, upAxis.v1, upAxis.v2,          -position.v1},
-            {forwardAxis.v0, forwardAxis.v1, forwardAxis.v2, -position.v2},
-            {0, 0, 0, 1}
+        return new Matrix4(new float[][] {
+            {right.x,   right.y,   right.z,   -position.x},
+            {up.x,      up.y,      up.z,      -position.y},
+            {forward.x, forward.y, forward.z, -position.z},
+            {0.0f,      0.0f,      0.0f,      1.0f        }
         });
-
-        return viewMatrix;
-    }
-
-    public void update() {}
-
-    public void handleInput() {
-
     }
 }

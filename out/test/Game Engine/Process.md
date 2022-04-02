@@ -31,6 +31,13 @@ OpenGL Version: 4.1
 - Started a `math` package 
 - Created a loader for Wavefront `.obj` files
 
+### March 31st 
+- View matrix
+- Perspective projection
+- 4D matrices for 3D affine transformations
+
+
+
 
 # OpenGL
 
@@ -41,6 +48,7 @@ OpenGL Version: 4.1
 - EBO (Element Buffer Objects) are just lists of indices for vertices
 - OpenGl makes you copy normals and texture coords! You can only specify "vertex" indices
   but the different vertices many use the same texture coords or vertex normals -> repeated data!
+- OpenGL reads matrix uniforms in `column-major` format my default! Sigh... Remember to transpose your matrices folks.
 
 ### GLSL Basics
 

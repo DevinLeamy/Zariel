@@ -1,3 +1,4 @@
+import controller.Controller;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -47,7 +48,6 @@ public class Window {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
-        // OpenGL 3.2 support
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -59,10 +59,11 @@ public class Window {
             throw new RuntimeException("Failed to create the GLFW window");
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-        });
+//        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+//            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
+//                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+//        });
+        glfwSetKeyCallback(window, Controller::onKeyPressedCallback);
 
         // Get the thread stack and push a new frame
         try ( MemoryStack stack = stackPush() ) {
@@ -97,6 +98,10 @@ public class Window {
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
         GL.createCapabilities();
+//        glEnable(GL_DEPTH_TEST);
+//        glClearDepthf(10000);
+//        glDepthMask(true);
+//        glDepthFunc(GL_LESS);
 
         // Set the clear color (WHITE)
         glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
@@ -105,6 +110,10 @@ public class Window {
     public void prepareWindow() {
         // clear the framebuffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    public void setTitle(String windowTitle) {
+        glfwSetWindowTitle(window, windowTitle);
     }
 
     public void render() {

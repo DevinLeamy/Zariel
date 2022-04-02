@@ -1,35 +1,33 @@
 import math.Vector3;
-import rendering.Mesh;
+import controller.Controller;
 
-import static org.lwjgl.opengl.GL41.*;
+import static org.lwjgl.glfw.GLFW.*;
 
-public class Player extends Model {
+/**
+ * TODO: Make this an abstract class??
+ * Then we could abstract away the camera and controller initialization
+ * and the controller reading for subclasses, perhaps
+ * TODO: Separate camera from Model?? Make a _Renderable_??
+ */
+public class Player {
+    private Controller controller;
     private Camera camera;
-    public Player(VertexShader vs, FragmentShader fs, Transform transform, Mesh mesh) {
-        super(vs, fs, transform, mesh);
-        camera = new Camera(
-        (float) Math.PI / 2,
-            new Vector3(0, 0.5f, -1.5f),
-            new Vector3(0, 0, 0)
-        );
+    final private float cameraMovementSpeed = 1; // 1u / second
+    final private float cameraRotationSpeed = (float) Math.PI / 4; // 1u / second
+
+    public Player(Camera camera) {
+        controller = Controller.getInstance();
+        this.camera = camera;
     }
 
-    @Override
     public void update(float dt) {
-        transform.rotate(0.00f, 0.01f, 0.00f);
-    }
+        if (controller.keyPressed(GLFW_KEY_W)) { camera.moveForward(dt * cameraMovementSpeed); }
+        if (controller.keyPressed(GLFW_KEY_S)) { camera.moveForward(dt * -cameraMovementSpeed); }
 
-    @Override
-    protected void setUniforms() {
-        int shaderHandle = shaderProgram.getProgramHandle();
+        if (controller.keyPressed(GLFW_KEY_A)) { camera.moveRight(dt * -cameraMovementSpeed); }
+        if (controller.keyPressed(GLFW_KEY_D)) { camera.moveRight(dt * cameraMovementSpeed); }
 
-        int transformMHandler   = glGetUniformLocation(shaderHandle,  "transformM");
-        int viewMHander         = glGetUniformLocation(shaderHandle, "viewM");
-        int projectionMHandler  = glGetUniformLocation(shaderHandle, "projectionM");
-
-        // transpose: true! This implies that the matrix will be read row by row (not column by column!)
-        glUniformMatrix4fv(transformMHandler, true, transform.toMatrix().toFloatBuffer());
-        glUniformMatrix4fv(viewMHander, true, camera.viewMatrix().toFloatBuffer());
-        glUniformMatrix4fv(projectionMHandler, true, camera.projectionMatrix().toFloatBuffer());
+        if (controller.keyPressed(GLFW_KEY_LEFT_SHIFT)) { camera.moveUp(dt * -cameraMovementSpeed); }
+        if (controller.keyPressed(GLFW_KEY_SPACE)) { camera.moveUp(dt * cameraMovementSpeed); }
     }
 }

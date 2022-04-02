@@ -13,11 +13,11 @@ abstract public class Model {
         this.shaderProgram = new ShaderProgram(vs, fs);
     }
 
-    final public void render() {
+    final public void render(Camera camera) {
         // bind shader program
         shaderProgram.link();
 
-        setUniforms();
+        _setUniforms(camera);
 
         // bind buffer array
         glBindVertexArray(mesh.vao);
@@ -31,6 +31,20 @@ abstract public class Model {
 
         // unbind
         glBindVertexArray(0);
+    }
+
+    private void _setUniforms(Camera camera) {
+        int shaderHandle = shaderProgram.getProgramHandle();
+
+        int transformMHandler   = glGetUniformLocation(shaderHandle,  "transformM");
+        int viewMHander         = glGetUniformLocation(shaderHandle, "viewM");
+        int projectionMHandler  = glGetUniformLocation(shaderHandle, "projectionM");
+
+        // transpose: true! This implies that the matrix will be read row by row (not column by column!)
+        glUniformMatrix4fv(transformMHandler, true, transform.toMatrix().toFloatBuffer());
+        glUniformMatrix4fv(viewMHander, true, camera.viewMatrix().toFloatBuffer());
+        glUniformMatrix4fv(projectionMHandler, true, camera.projectionMatrix().toFloatBuffer());
+        setUniforms();
     }
 
     protected void setUniforms() {}

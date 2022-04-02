@@ -15,12 +15,13 @@ final public class Leamer {
     static private Window window;
     static private ArrayList<Model> gameObjects;
     static private ArrayList<Shader> shaders;
+    static private Player player;
+    static private Camera camera;
 
     public static void main(String[] args) {
         window = new Window();
         gameObjects = new ArrayList<>();
         shaders = new ArrayList<>();
-
 
         // versions
         System.out.println("LWJGL_VERSION: " + Version.getVersion());
@@ -29,21 +30,35 @@ final public class Leamer {
 
         VertexShader vs = new VertexShader("src/vertex_shader.vert");
         FragmentShader fs = new FragmentShader("src/fragment_shader.frag");
-        Mesh cube = MeshLoader.loadMesh("res/B.obj");
-
-
-        Transform cubeTransform = new Transform(
-                new Vector3(0, 0, 0),
-                new Vector3(0, 0, 0),
-//                new Vector3(0.25f, 0.25f, 0.25f)
-                new Vector3(1, 1, 1)
-        );
-        gameObjects.add(new Player(vs, fs, cubeTransform, cube));
         shaders.add(vs);
         shaders.add(fs);
 
+        Mesh cube = MeshLoader.loadMesh("res/cube.obj");
+        for (int i = 0; i < 10; ++i) {
+            Transform cubeTransform = new Transform(
+                    Utils.randVector3().scale(3),
+                    Utils.randVector3().scale((float) Math.PI),
+                    new Vector3(0.25f, 0.25f, 0.25f)
+            );
+            gameObjects.add(new Cube(vs, fs, cubeTransform, cube));
+        }
+
+        camera = new Camera(
+                (float) Math.PI / 2,
+                new Vector3(0, 0, -1.5f),
+                new Vector3(0, 0, 1),
+                new Vector3(0, 1, 0)
+        );
+        player = new Player(camera);
+
+
         while (running) {
-            runGameLoop(SECONDS_PER_FRAME);
+            float dt = SECONDS_PER_FRAME;
+            handleInput();
+            update(dt);
+
+            prepareRender();
+            render();
         }
 
         for (Model gameObject : gameObjects) {
@@ -58,19 +73,13 @@ final public class Leamer {
         window.cleanUp();
     }
 
-    // delta time in seconds
-    private static void runGameLoop(float dt) {
-        handleInput();
-        update(dt);
-
-        prepareRender();
-        render();
-    }
-
     private static void update(float dt) {
+        player.update(dt);
         for (Model gameObject : gameObjects) {
             gameObject.update(dt);
         }
+
+        window.setTitle(camera.position.toString());
     }
 
     private static void prepareRender() {
@@ -80,7 +89,7 @@ final public class Leamer {
 
     private static void render() {
         for (Model gameObject : gameObjects) {
-            gameObject.render();
+            gameObject.render(camera);
         }
         window.render();
     }

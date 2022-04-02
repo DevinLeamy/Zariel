@@ -13,9 +13,9 @@ public class Transform {
     }
 
     public Matrix4 toMatrix() {
-        Matrix4 rotationM    = Matrix4.genRotationMatrix(rotation.v0, rotation.v1, rotation.v2);
-        Matrix4 scalingM     = Matrix4.genScalingMatrix(scale.v0, scale.v1, scale.v2);
-        Matrix4 translationM = Matrix4.genTranslationMatrix(position.v0, position.v1, position.v2);
+        Matrix4 rotationM    = Matrix4.genRotationMatrix(rotation.x, rotation.y, rotation.z);
+        Matrix4 scalingM     = Matrix4.genScalingMatrix(scale.x, scale.y, scale.z);
+        Matrix4 translationM = Matrix4.genTranslationMatrix(position.x, position.y, position.z);
 
         Matrix4 transform = Matrix4.identity();
         transform.mult(translationM);
@@ -26,13 +26,13 @@ public class Transform {
     }
 
     public void rotate(float x, float y, float z) {
-        rotation.v0 += x;
-        rotation.v0 %= 2 * Math.PI;
+        rotation.x += x;
+        rotation.x %= 2 * Math.PI;
 
-        rotation.v1 += y;
-        rotation.v1 %= 2 * Math.PI;
+        rotation.y += y;
+        rotation.y %= 2 * Math.PI;
 
-        rotation.v2 += z;
-        rotation.v2 %= 2 * Math.PI;
+        rotation.z += z;
+        rotation.z %= 2 * Math.PI;
     }
 }
