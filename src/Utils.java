@@ -9,9 +9,9 @@ public class Utils {
 
     public static Vector3 randVector3() {
         return new Vector3(
-                (float) Math.random(),
-                (float) Math.random(),
-                (float) Math.random()
+                (float) (Math.random() - 0.5f) * 2,
+                (float) (Math.random() - 0.5f) * 2,
+                (float) (Math.random() - 0.5f) * 2
         );
     }
 }

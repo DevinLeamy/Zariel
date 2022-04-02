@@ -17,7 +17,7 @@ public class Window {
     // The window handle
     private long window;
 
-    private final int WIDTH = 600;
+    private final int WIDTH = 1000;
     private final int HEIGHT = 600;
 
     public Window() {
@@ -32,6 +32,10 @@ public class Window {
         // Terminate GLFW and free the error callback
         glfwTerminate();
         glfwSetErrorCallback(null).free();
+    }
+
+    public float getAspectRatio() {
+        return (float) WIDTH / (float) HEIGHT;
     }
 
     private void init() {
@@ -98,10 +102,9 @@ public class Window {
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
         GL.createCapabilities();
-//        glEnable(GL_DEPTH_TEST);
-//        glClearDepthf(10000);
-//        glDepthMask(true);
-//        glDepthFunc(GL_LESS);
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(true);
+        glDepthFunc(GL_LESS);
 
         // Set the clear color (WHITE)
         glClearColor(1.0f, 1.0f, 1.0f, 0.0f);

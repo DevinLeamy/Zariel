@@ -8,28 +8,37 @@ public class Camera {
     Vector3 up;
     Vector3 right;
     float fov;
+    float aspect;
+    float ncp;
+    float fcp;
 
     /**
      * @param fov:      Field of view in radians (0, PI)
+     * @param aspect:   Aspect ratio of our window
      * @param position: Position of the camera in world space
      * @param forward:  The vector going straight through the "eye" of the camera
      * @param up:       The vector going up through the top of the camera
      */
-    public Camera(float fov, Vector3 position, Vector3 forward, Vector3 up) {
+    public Camera(float fov, float aspect, Vector3 position, Vector3 forward, Vector3 up) {
         this.position = position;
         this.forward  = forward.normalize();
         this.up       = up.normalize();
         this.right    = Vector3.cross(up, forward).normalize();
         this.fov      = fov;
+        this.aspect   = aspect;
+        this.ncp      = 1.0f;  // near clip plane (NCP)
+        this.fcp      = 10.0f; // far clip plane (FCP)
     }
 
     public Matrix4 projectionMatrix() {
+        // Note: z is copied into w for perspective division
+        // res: https://ogldev.org/www/tutorial12/tutorial12.html
         float inverseTanHalfFov = (float) (1 / Math.tan(fov / 2));
         return new Matrix4(new float[][] {
-            {inverseTanHalfFov, 0,                 0, 0},
-            {0,                 inverseTanHalfFov, 0, 0},
-            {0,                 0,                 1, 0},
-            {0,                 0,                 1, 0} // z is copied into w for perspective division
+            {inverseTanHalfFov / aspect, 0,                 0,                          0                            },
+            {0,                          inverseTanHalfFov, 0,                          0                            },
+            {0,                          0,                 (-fcp - ncp) / (ncp - fcp), (2 * fcp * ncp) / (ncp - fcp)},
+            {0,                          0,                 1,                          0                            }
         });
     }
 

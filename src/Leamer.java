@@ -45,7 +45,8 @@ final public class Leamer {
 
         camera = new Camera(
                 (float) Math.PI / 2,
-                new Vector3(0, 0, -1.5f),
+                window.getAspectRatio(),
+                new Vector3(0, 0, -6.0f),
                 new Vector3(0, 0, 1),
                 new Vector3(0, 1, 0)
         );
