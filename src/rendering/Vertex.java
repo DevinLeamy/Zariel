@@ -22,11 +22,6 @@ public class Vertex {
     }
 
     public float[] toArray() {
-//        System.out.println(
-//            position.x + " " + position.y + " " + position.z + " " +
-//            uv.x + " " + uv.y + " " +
-//            normal.x + " " + normal.y + " " + normal.z
-//        );
         return new float[] {
             position.x, position.y, position.z,
             uv.x, uv.y,

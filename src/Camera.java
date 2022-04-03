@@ -23,7 +23,7 @@ public class Camera {
         this.aspect = aspect;
         this.pitch  = 0.0f; // centered
         this.yaw    = (float) -Math.PI / 2 + 0.01f; // centered
-        this.ncp    = 1.0f;  // near clip plane (NCP)
+        this.ncp    = 0.01f;  // near clip plane (NCP)
         this.fcp    = 20.0f; // far clip plane (FCP)
     }
 

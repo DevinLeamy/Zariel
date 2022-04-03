@@ -2,3 +2,4 @@ libs
 out
 *.log
 .DS_Store
+*.obj

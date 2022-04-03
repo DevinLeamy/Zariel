@@ -15,55 +15,70 @@ final public class Leamer {
 
     static private Window window;
     static private ArrayList<Model> gameObjects;
+    static private Scene world;
     static private ArrayList<Shader> shaders;
     static private Player player;
     static private Camera camera;
 
     public static void main(String[] args) {
         window = new Window();
-        gameObjects = new ArrayList<>();
         shaders = new ArrayList<>();
+        gameObjects = new ArrayList<>();
 
         // versions
         System.out.println("LWJGL_VERSION: " + Version.getVersion());
         System.out.println("GL_SHADING_LANGUAGE_VERSION: " + glGetString (GL_SHADING_LANGUAGE_VERSION));
         System.out.println("OPEN_GL_VERSION: " + glGetString (GL_VERSION));
 
-        VertexShader vs = new VertexShader("src/vertex_shader.vert");
-        FragmentShader fs = new FragmentShader("src/fragment_shader.frag");
-        shaders.add(vs);
-        shaders.add(fs);
-
-        Mesh cube = MeshLoader.loadMesh("res/cube.obj");
-        for (int i = 0; i < 10; ++i) {
-            Transform cubeTransform = new Transform(
-                    Utils.randVector3().scale(-3),
-                    Utils.randVector3().scale((float) Math.PI),
-                    new Vector3(0.5f, 0.5f, 0.5f)
-            );
-            gameObjects.add(new Cube(vs, fs, cubeTransform, cube));
-        }
-//        Transform cubeTransform = new Transform(
-//                new Vector3(4, 0, -2),
-//                Utils.randVector3().scale((float) Math.PI),
-//                new Vector3(0.5f, 0.5f, 0.5f)
-//        );
-//        gameObjects.add(new Cube(vs, fs, cubeTransform, cube));
-
-        Transform terrainTransform = new Transform(
-                new Vector3(0, -5, 0),
-                Vector3.zeros(),
-                new Vector3(100, 0.1f, 100)
-        );
-        gameObjects.add(new Cube(vs, fs, terrainTransform, cube));
+        float groundLevel = 0;
 
         camera = new Camera(
                 (float) Math.PI - (float) Math.PI / 4,
                 window.getAspectRatio(),
-                new Vector3(0, 0, 6.0f)
+                new Vector3(0, groundLevel + 6.0f, 0)
         );
         player = new Player(camera);
+        world = new Scene(camera);
 
+        VertexShader vs = new VertexShader("src/vertex_shader.vert");
+        FragmentShader fs = new FragmentShader("src/fragment_shader.frag");
+        shaders.add(vs);
+        shaders.add(fs);
+        ShaderProgram cubeShader = new ShaderProgram(vs, fs);
+        Mesh cube = MeshLoader.loadMesh("res/cube.obj");
+
+
+        for (int i = 0; i < 10; ++i) {
+            for (int j = 0; j < 10; ++j) {
+                Transform modelTrans = new Transform(
+                        new Vector3(i * 1.1f, groundLevel, j * 1.1f),
+                        Vector3.zeros(),
+                        new Vector3(0.5f, 0.5f, 0.5f)
+                );
+                Cube cubeModel = new Cube(cubeShader, modelTrans, cube);
+                world.addModel(cubeModel);
+                gameObjects.add(cubeModel);
+            }
+        }
+
+        Transform carTrans = new Transform(
+                new Vector3(-3, groundLevel + 5, 0),
+                Vector3.zeros(),
+                new Vector3(1, 1, 1)
+        );
+        CarModel carModel = new CarModel(carTrans);
+        world.addModel(carModel);
+        gameObjects.add(carModel);
+
+        Transform terrainTransform = new Transform(
+                new Vector3(0, groundLevel, 0),
+                Vector3.zeros(),
+                new Vector3(100, 0.1f, 100)
+        );
+
+
+
+        world.addModel(new Cube(cubeShader, terrainTransform, cube));
 
         while (running) {
             float dt = SECONDS_PER_FRAME;
@@ -101,9 +116,7 @@ final public class Leamer {
 
 
     private static void render() {
-        for (Model gameObject : gameObjects) {
-            gameObject.render(camera);
-        }
+        Renderer.renderScene(world);
         window.render();
     }
 

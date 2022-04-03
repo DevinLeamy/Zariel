@@ -50,17 +50,21 @@ public class MeshLoader {
                     ));
                     case "f" -> {
                         for (int i = 0; i < 3; ++i) {
-                            String token = tokens[i + 1];
-                            int[] v = parseFaceVertexIndices(token);
-                            if (!vertexMap.containsKey(token)) {
-                                vertexMap.put(token, vertexMap.size());
-                                vertices.add(new Vertex(
-                                        rawVertices.get(v[0]),
-                                        rawUvs     .get(v[1]),
-                                        rawNormals .get(v[2])
-                                ));
-                            }
-                            indices.add(vertexMap.get(token));
+                            try {
+                                String token = tokens[i + 1];
+                                int[] v = parseFaceVertexIndices(token);
+                                if (!vertexMap.containsKey(token)) {
+                                    vertexMap.put(token, vertexMap.size());
+                                    vertices.add(new Vertex(
+                                            rawVertices.get(v[0]),
+                                            rawUvs     .get(v[1]),
+//                                            rawVertices.get(v[0])
+                                            rawNormals .get(v[2])
+                                    ));
+                                }
+                                indices.add(vertexMap.get(token));
+                            } catch (Exception e) {}
+
                         }
                     }
                 }
@@ -69,9 +73,8 @@ public class MeshLoader {
             e.printStackTrace();
         }
 
-        System.out.println(rawNormals.size() + " " + rawUvs.size() + " " + rawVertices.size());
-        System.out.println(indices.toString());
-        System.out.println(vertices.size() + " " + indices.size());
+        System.out.println("Normals: " + rawNormals.size() + " UVs: " + rawUvs.size() + " Vertices: " + rawVertices.size());
+        System.out.println("Indices: " + indices.size());
 
         return new Mesh(vertices, indices);
     }
