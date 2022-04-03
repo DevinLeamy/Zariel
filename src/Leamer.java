@@ -37,12 +37,18 @@ final public class Leamer {
         Mesh cube = MeshLoader.loadMesh("res/cube.obj");
         for (int i = 0; i < 10; ++i) {
             Transform cubeTransform = new Transform(
-                    Utils.randVector3().scale(2),
+                    Utils.randVector3().scale(-3),
                     Utils.randVector3().scale((float) Math.PI),
                     new Vector3(0.5f, 0.5f, 0.5f)
             );
             gameObjects.add(new Cube(vs, fs, cubeTransform, cube));
         }
+//        Transform cubeTransform = new Transform(
+//                new Vector3(4, 0, -2),
+//                Utils.randVector3().scale((float) Math.PI),
+//                new Vector3(0.5f, 0.5f, 0.5f)
+//        );
+//        gameObjects.add(new Cube(vs, fs, cubeTransform, cube));
 
         Transform terrainTransform = new Transform(
                 new Vector3(0, -5, 0),
@@ -54,7 +60,7 @@ final public class Leamer {
         camera = new Camera(
                 (float) Math.PI - (float) Math.PI / 4,
                 window.getAspectRatio(),
-                new Vector3(0, 0, -6.0f)
+                new Vector3(0, 0, 6.0f)
         );
         player = new Player(camera);
 

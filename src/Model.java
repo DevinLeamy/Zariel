@@ -43,28 +43,6 @@ abstract public class Model {
         int viewMHander         = glGetUniformLocation(shaderHandle, "viewM");
         int projectionMHandler  = glGetUniformLocation(shaderHandle, "projectionM");
 
-        // debugging
-//        int cameraTransMHandler = glGetUniformLocation(shaderHandle, "cameraTransM");
-
-
-//        float radius = 5.0f;
-//        float camX = (float) Math.sin(glfwGetTime()) * radius;
-//        float camZ = (float) Math.cos(glfwGetTime()) * radius;
-//
-//        camera.position = new Vector3(camX, 0, camZ);
-////        glUniformMatrix4fv(
-////                cameraTransMHandler, true,
-////                Matrix4.genTranslationMatrix(-camX, 0, -camZ).toFloatBuffer()
-////        );
-//        glUniformMatrix4fv(viewMHander, true,
-//                camera.lookAt(
-//                        new Vector3(camX, 0, camZ),
-//                        new Vector3(0, 0, 0),
-//                        new Vector3(0, 1, 0)
-//                ).toFloatBuffer());
-
-        // -----
-
         // transpose: true! This implies that the matrix will be read row by row (not column by column!)
         glUniformMatrix4fv(transformMHandler, true, transform.toMatrix().toFloatBuffer());
         glUniformMatrix4fv(viewMHander, true, camera.viewMatrix().toFloatBuffer());

@@ -17,8 +17,8 @@ public class Window {
     // The window handle
     private long window;
 
-    private final int WIDTH = 1000;
-    private final int HEIGHT = 600;
+    private final int WIDTH = 800;
+    private final int HEIGHT = 800;
 
     public Window() {
         init();
@@ -67,7 +67,8 @@ public class Window {
         glfwSetKeyCallback(window, Controller::onKeyPressedCallback);
 
         // mouse input initialization
-//        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+//        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         glfwSetCursorPosCallback(window, Controller::onMousePositionCallback);
 
         // Get the thread stack and push a new frame
