@@ -1,5 +1,7 @@
 package controller;
 
+import math.Vector2;
+
 import static org.lwjgl.glfw.GLFW.*;
 
 import java.util.*;
@@ -11,6 +13,8 @@ import java.util.*;
 
 public class Controller {
     private Map<Integer, Boolean> keyPressed;
+    private int mouseX;
+    private int mouseY;
     private static Controller instance;
 
     private Controller() {
@@ -20,6 +24,10 @@ public class Controller {
 
     public boolean keyPressed(int key) {
         return keyPressed.getOrDefault(key, false);
+    }
+
+    public int[] mousePosition() {
+        return new int[] { mouseX, mouseY };
     }
 
     private void setKeyPressed(int key, boolean pressed) {
@@ -35,16 +43,20 @@ public class Controller {
     }
 
     public static void onKeyPressedCallback(long window, int key, int scancode, int action, int mods) {
-        Controller controller = Controller.instance;
-
-        if (controller == null) {
-            System.err.println("Error: Controller has not been initialized");
-            return;
-        }
+        Controller controller = Controller.getInstance();
 
         switch (action) {
             case GLFW_PRESS   -> controller.setKeyPressed(key, true);
             case GLFW_RELEASE -> controller.setKeyPressed(key, false);
         }
+    }
+
+    public static void onMousePositionCallback(long window, double mouseX, double mouseY) {
+        Controller controller = Controller.getInstance();
+
+//        System.out.println("MouseX: " + mouseX + " MouseY: " + mouseY);
+
+        controller.mouseX = (int) mouseX;
+        controller.mouseY = (int) mouseY;
     }
 }

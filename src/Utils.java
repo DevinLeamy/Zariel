@@ -14,4 +14,8 @@ public class Utils {
                 (float) (Math.random() - 0.5f) * 2
         );
     }
+
+    public static float clamp(float low, float high, float v) {
+        return Math.max(Math.min(high, v), low);
+    }
 }

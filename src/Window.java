@@ -57,17 +57,18 @@ public class Window {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
+
         // Create the window
         window = glfwCreateWindow(WIDTH, HEIGHT, "Zariel", NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-//        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-//            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-//                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-//        });
+        // keyboard input initialization
         glfwSetKeyCallback(window, Controller::onKeyPressedCallback);
+
+        // mouse input initialization
+//        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetCursorPosCallback(window, Controller::onMousePositionCallback);
 
         // Get the thread stack and push a new frame
         try ( MemoryStack stack = stackPush() ) {
@@ -102,12 +103,16 @@ public class Window {
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
         GL.createCapabilities();
+
+        // enable depth testing
         glEnable(GL_DEPTH_TEST);
+        // update the depth buffer
         glDepthMask(true);
+        // replace the existing value in the buffer is the new value is less than the old value
         glDepthFunc(GL_LESS);
 
         // Set the clear color (WHITE)
-        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+//        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
     }
 
     public void prepareWindow() {
@@ -126,5 +131,8 @@ public class Window {
         // Poll for window events. The key callback above will only be
         // invoked during this call.
         glfwPollEvents();
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+            glfwDestroyWindow(window);
+        }
     }
 }

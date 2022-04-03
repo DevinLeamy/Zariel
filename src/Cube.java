@@ -8,11 +8,8 @@ public class Cube extends Model {
     }
 
     @Override
-    public void update(float dt) {
-//        transform.rotate(0.01f, 0.01f, 0.01f);
-    }
+    public void update(float dt) {}
 
     @Override
-    protected void setUniforms() {
-    }
+    protected void setUniforms() {}
 }

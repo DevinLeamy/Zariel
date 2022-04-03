@@ -1,3 +1,4 @@
+import controller.Controller;
 import math.Vector3;
 import org.lwjgl.Version;
 
@@ -36,19 +37,24 @@ final public class Leamer {
         Mesh cube = MeshLoader.loadMesh("res/cube.obj");
         for (int i = 0; i < 10; ++i) {
             Transform cubeTransform = new Transform(
-                    Utils.randVector3().scale(3),
+                    Utils.randVector3().scale(2),
                     Utils.randVector3().scale((float) Math.PI),
-                    new Vector3(0.25f, 0.25f, 0.25f)
+                    new Vector3(0.5f, 0.5f, 0.5f)
             );
             gameObjects.add(new Cube(vs, fs, cubeTransform, cube));
         }
 
+        Transform terrainTransform = new Transform(
+                new Vector3(0, -5, 0),
+                Vector3.zeros(),
+                new Vector3(100, 0.1f, 100)
+        );
+        gameObjects.add(new Cube(vs, fs, terrainTransform, cube));
+
         camera = new Camera(
-                (float) Math.PI / 2,
+                (float) Math.PI - (float) Math.PI / 4,
                 window.getAspectRatio(),
-                new Vector3(0, 0, -6.0f),
-                new Vector3(0, 0, 1),
-                new Vector3(0, 1, 0)
+                new Vector3(0, 0, -6.0f)
         );
         player = new Player(camera);
 

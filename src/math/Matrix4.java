@@ -5,7 +5,7 @@ import org.lwjgl.BufferUtils;
 import java.nio.FloatBuffer;
 
 public class Matrix4 {
-    private float[][] m;
+    public float[][] m;
     public Matrix4(float[][] m) {
         this.m = new float[4][4];
         set(m);

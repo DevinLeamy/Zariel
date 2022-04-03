@@ -50,6 +50,22 @@ public class Vector3 {
         return x == other.x && y == other.y && z == other.z;
     }
 
+    public static Vector3 sub(Vector3 u, Vector3 v) {
+        return new Vector3(
+               u.x - v.x,
+               u.y - v.y,
+               u.z - v.z
+        );
+    }
+
+    public static Vector3 add(Vector3 u, Vector3 v) {
+        return new Vector3(
+                u.x + v.x,
+                u.y + v.y,
+                u.z + v.z
+        );
+    }
+
     public Vector3 add(Vector3 other) {
         x += other.x;
         y += other.y;
@@ -76,6 +92,10 @@ public class Vector3 {
                 v.y * mag,
                 v.z * mag
         );
+    }
+
+    public static Vector3 zeros() {
+        return new Vector3(0, 0, 0);
     }
 
     public String toString() {
