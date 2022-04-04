@@ -78,3 +78,5 @@ void main()
 - https://docs.unity3d.com/Packages/com.unity.probuilder@4.0/manual/workflow-texture-mapping.html#:~:text=The%20Mesh%20stores%20the%20texture,specific%20locations%20on%20the%20image.
 - https://ogldev.org/www/tutorial13/tutorial13.html 
 - http://www.songho.ca/opengl/gl_transform.html#modelview 
+- https://sites.google.com/site/letsmakeavoxelengine/#h.p_ID_98
+- https://en.wikibooks.org/wiki/OpenGL_Programming/Glescraft_1
