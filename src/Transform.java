@@ -12,6 +12,10 @@ public class Transform {
         this.scale    = scale;
     }
 
+    public Transform(Vector3 position) {
+        this(position, Vector3.zeros(), new Vector3(1, 1, 1));
+    }
+
     public Matrix4 toMatrix() {
         Matrix4 rotationM    = Matrix4.genRotationMatrix(rotation.x, rotation.y, rotation.z);
         Matrix4 scalingM     = Matrix4.genScalingMatrix(scale.x, scale.y, scale.z);

@@ -36,6 +36,11 @@ OpenGL Version: 4.1
 - Perspective projection
 - 4D matrices for 3D affine transformations
 
+### April 3rd
+- Got the camera flight controller working
+- Modified the UVN camera to be a lookAt camera
+- Started work on a voxel engine
+
 
 
 

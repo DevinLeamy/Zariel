@@ -83,6 +83,10 @@ public class Camera {
         position.add(Vector3.scale(forward, mag));
     }
 
+    public void moveUp(float mag) {
+        position.add(new Vector3(0, 1, 0).scale(mag));
+    }
+
      public Matrix4 lookAt(Vector3 from, Vector3 to, Vector3 tempUp) {
          Vector3 forward = Vector3.sub(from, to).normalize();
          Vector3 side = Vector3.cross(forward, tempUp).normalize();

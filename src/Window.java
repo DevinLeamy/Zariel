@@ -68,7 +68,6 @@ public class Window {
 
         // mouse input initialization
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-//        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         glfwSetCursorPosCallback(window, Controller::onMousePositionCallback);
 
         // Get the thread stack and push a new frame
