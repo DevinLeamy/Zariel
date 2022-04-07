@@ -14,17 +14,12 @@ final public class Leamer {
     private static boolean running = true;
 
     static private Window window;
-    static private ArrayList<Model> gameObjects;
-    static private Scene world;
-    static private ArrayList<Shader> shaders;
     static private Player player;
     static private Camera camera;
-    static private Chunk chunk;
+    static private ChunkManager chunkManager;
 
     public static void main(String[] args) {
         window = new Window();
-//        shaders = new ArrayList<>();
-//        gameObjects = new ArrayList<>();
 
         // versions
         System.out.println("LWJGL_VERSION: " + Version.getVersion());
@@ -36,49 +31,10 @@ final public class Leamer {
         camera = new Camera(
                 (float) Math.PI - (float) Math.PI / 4,
                 window.getAspectRatio(),
-                new Vector3(0, groundLevel + 6.0f, 18)
+                new Vector3(9, groundLevel + 20.0f, 22)
         );
         player = new Player(camera);
-        chunk = new Chunk();
-//        world = new Scene(camera);
-
-//        VertexShader vs = new VertexShader("src/vertex_shader.vert");
-//        FragmentShader fs = new FragmentShader("src/fragment_shader.frag");
-//        shaders.add(vs);
-//        shaders.add(fs);
-//        ShaderProgram cubeShader = new ShaderProgram(vs, fs);
-//        Mesh cube = MeshLoader.loadMesh("res/cube.obj");
-
-
-//        for (int i = 0; i < 10; ++i) {
-//            for (int j = 0; j < 10; ++j) {
-//                Transform modelTrans = new Transform(
-//                        new Vector3(i * 1.1f, groundLevel, j * 1.1f),
-//                        Vector3.zeros(),
-//                        new Vector3(0.5f, 0.5f, 0.5f)
-//                );
-//                Cube cubeModel = new Cube(cubeShader, modelTrans, cube);
-//                world.addModel(cubeModel);
-//                gameObjects.add(cubeModel);
-//            }
-//        }
-
-//        Transform carTrans = new Transform(
-//                new Vector3(-3, groundLevel + 5, 0),
-//                Vector3.zeros(),
-//                new Vector3(1, 1, 1)
-//        );
-//        CarModel carModel = new CarModel(carTrans);
-//        world.addModel(carModel);
-//        gameObjects.add(carModel);
-
-//        Transform terrainTransform = new Transform(
-//                new Vector3(0, groundLevel, 0),
-//                Vector3.zeros(),
-//                new Vector3(100, 0.1f, 100)
-//        );
-
-//        world.addModel(new Cube(cubeShader, terrainTransform, cube));
+        chunkManager = new ChunkManager();
 
         while (running) {
             float dt = SECONDS_PER_FRAME;
@@ -86,27 +42,15 @@ final public class Leamer {
             update(dt);
 
             prepareRender();
-            render();
+            render(camera);
         }
 
-//        for (Model gameObject : gameObjects) {
-//            gameObject.cleanUp();
-//        }
-
-//        for (Shader shader : shaders) {
-//            shader.cleanUp();
-//        }
-
-        // clean up
         window.cleanUp();
     }
 
     private static void update(float dt) {
         player.update(dt);
-//        for (Model gameObject : gameObjects) {
-//            gameObject.update(dt);
-//        }
-
+        chunkManager.update(camera);
         window.setTitle(camera.position.toString());
     }
 
@@ -115,9 +59,8 @@ final public class Leamer {
     }
 
 
-    private static void render() {
-//        Renderer.renderScene(world);
-        chunk.render(camera);
+    private static void render(Camera perspective) {
+        chunkManager.render(perspective);
         window.render();
     }
 

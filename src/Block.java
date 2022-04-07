@@ -18,5 +18,4 @@ public class Block {
     public BlockType getBlockType() {
         return blockType;
     }
-
 }

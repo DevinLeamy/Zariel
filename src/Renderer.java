@@ -37,7 +37,7 @@ public class Renderer {
 
         model.setUniforms();
 
-        // bind buffer array
+        // bind vertex array
         glBindVertexArray(mesh.vao);
 
         glEnable(GL_CULL_FACE);
