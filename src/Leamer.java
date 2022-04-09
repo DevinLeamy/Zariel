@@ -26,10 +26,12 @@ final public class Leamer {
         camera = new Camera(
                 (float) Math.PI - (float) Math.PI / 2,
                 window.getAspectRatio(),
-                new Vector3(9, Config.FLOOR_LEVEL + 6.0f, 22)
+//                new Vector3(9, Config.FLOOR_LEVEL + 6.0f, 22)
+                new Vector3(0, Config.FLOOR_LEVEL + 6.0f, 0)
         );
         player = new Player(camera);
         chunkManager = new ChunkManager();
+
 
         long prevTime = System.currentTimeMillis();
         int frameCount = 0;
@@ -41,7 +43,6 @@ final public class Leamer {
             prevTime += dtInMillis;
 
             // updates
-            handleInput();
             update(dt);
             // rendering
             prepareRender();
@@ -74,7 +75,6 @@ final public class Leamer {
     private static void update(float dt) {
         player.update(dt);
         chunkManager.update(camera);
-//        window.setTitle(camera.position.toString());
     }
 
     private static void prepareRender() {
@@ -85,9 +85,5 @@ final public class Leamer {
     private static void render(Camera perspective) {
         chunkManager.render(perspective);
         window.render();
-    }
-
-    private static void handleInput() {
-
     }
 }

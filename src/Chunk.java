@@ -81,7 +81,6 @@ public class Chunk {
                     }
 
                     ArrayList<Vertex> blockVertices = createBlockVertices(blocks[i][j][k].getBlockType(), i, j, k);
-                    // DEBUG: //ArrayList<Vertex> blockVertices = createBlockVertices(blocks[0][0][0].getBlockType(), i, j, k);
                     chunkVertices.addAll(blockVertices);
                 }
             }
@@ -173,6 +172,10 @@ public class Chunk {
                 z + location.z * CHUNK_SIZE
         );
         for (Vector3 vertex : vertices) {
+            // DEBUG
+            vertex.add(new Vector3(1.0f, 1.0f, 1.0f));
+            vertex.scale(0.5f);
+
             vertex.add(translation);
         }
 

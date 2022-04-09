@@ -20,7 +20,7 @@ public class Camera {
     public Camera(float fov, float aspect, Vector3 position) {
         this.position = position;
         this.fov    = fov;
-        this.aspect = aspect;
+        this.aspect = 1; // aspect;
         this.pitch  = 0.0f; // centered
         this.yaw    = (float) -Math.PI / 2 + 0.01f; // centered
         this.ncp    = 0.01f;  // near clip plane (NCP)

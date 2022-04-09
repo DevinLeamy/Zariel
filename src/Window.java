@@ -64,6 +64,7 @@ public class Window {
             throw new RuntimeException("Failed to create the GLFW window");
 
         // keyboard input initialization
+        glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
         glfwSetKeyCallback(window, Controller::onKeyPressedCallback);
 
         // mouse input initialization

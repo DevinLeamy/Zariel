@@ -49,6 +49,10 @@ public class Controller {
             case GLFW_PRESS   -> controller.setKeyPressed(key, true);
             case GLFW_RELEASE -> controller.setKeyPressed(key, false);
         }
+//        switch (action) {
+//            case GLFW_PRESS   -> System.out.println("DOWN");
+//            case GLFW_RELEASE -> System.out.println("UP");
+//        }
     }
 
     public static void onMousePositionCallback(long window, double mouseX, double mouseY) {
