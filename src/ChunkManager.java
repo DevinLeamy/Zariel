@@ -3,9 +3,10 @@ import math.Vector3;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class ChunkManager {
-    public static float CHUNK_LOAD_DISTANCE = 1.0f;
+    public static float CHUNK_LOAD_DISTANCE = 3.0f;
     /**
      * @field chunks: Chunks that may be visible
      * @field renderQueue: Queue of chunks we want to render
@@ -32,6 +33,7 @@ public class ChunkManager {
 
         // remove irrelevant chunk
         for (Vector3 chunkLocation : unload) {
+//            System.out.println("UNLOAD CHUNK " + chunkLocation);
             loadedChunks.get(chunkLocation).unload();
             loadedChunks.remove(chunkLocation);
         }
@@ -51,10 +53,6 @@ public class ChunkManager {
             for (int y = lowY; y <= lowY + lowHighSpread; ++y) {
                 for (int z = lowZ; z <= lowZ + lowHighSpread; ++z) {
                     Vector3 chunkLocation = new Vector3(x, y, z);
-                    if (loadedChunks.containsKey(chunkLocation)) {
-                        continue;
-                    }
-
                     if (chunkLocationInRange(origin, chunkLocation)) {
                         load.add(chunkLocation);
                     }
@@ -63,8 +61,13 @@ public class ChunkManager {
         }
 
         for (Vector3 chunkLocation : load) {
+            if (loadedChunks.containsKey(chunkLocation)) {
+                continue;
+            }
+
             loadedChunks.put(chunkLocation, new Chunk(chunkLocation));
             loadedChunks.get(chunkLocation).load();
+//            System.out.println("CHUNK LOADED " + chunkLocation);
         }
     }
 

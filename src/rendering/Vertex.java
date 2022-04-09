@@ -10,26 +10,27 @@ public class Vertex {
     public Vector3 normal;
     public Vector3 color;
 
-    public Vertex(Vector3 position, Vector2 uv, Vector3 normal) {
+    public Vertex(Vector3 position, Vector2 uv, Vector3 normal, Vector3 color) {
         this.position = position;
         this.uv = uv;
         this.normal = normal;
+        this.color = color;
+    }
 
-//        float color = (Math.abs(position.x)) / (Math.abs(position.x) + Math.abs(position.y) + Math.abs(position.z) + 0.01f);
-        float color = Double.toString(Math.PI).charAt(Math.abs(Math.round(position.x + position.y + position.z)) % 17) / 10.0f;
-        this.color = new Vector3(
-                color, color, color
-//        (Math.abs(position.x)) / (Math.abs(position.x) + Math.abs(position.y) + Math.abs(position.z) + 0.01f),
-//        (Math.abs(position.y)) / (Math.abs(position.x) + Math.abs(position.y) + Math.abs(position.z) + 0.01f),
-//        (Math.abs(position.z)) / (Math.abs(position.x) + Math.abs(position.y) + Math.abs(position.z) + 0.01f)
-//                (float) Math.random(),
-//                (float) Math.random(),
-//                (float) Math.random()
-        );
+    public Vertex(Vector3 position, Vector2 uv, Vector3 normal) {
+        this(position, uv, normal, new Vector3(
+                Double.toString(Math.PI).charAt(Math.abs(Math.round(position.x + position.y + position.z)) % 17) / 10.0f,
+                Double.toString(Math.PI).charAt(Math.abs(Math.round(position.x + position.y + position.z)) % 17) / 10.0f,
+                Double.toString(Math.PI).charAt(Math.abs(Math.round(position.x + position.y + position.z)) % 17) / 10.0f
+        ));
     }
 
     public Vertex(Vector3 position) {
         this(position, new Vector2(0, 0), new Vector3(0, 0, 0));
+    }
+
+    public Vertex(Vector3 position, Vector3 color) {
+        this(position, new Vector2(0, 0), new Vector3(0, 0, 0), color);
     }
 
     public float[] toArray() {

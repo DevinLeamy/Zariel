@@ -112,7 +112,7 @@ public class Window {
         glDepthFunc(GL_LESS);
 
         // Set the clear color (WHITE)
-//        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+        glClearColor(0 / 255f, 96 / 255f, 255 / 255f, 0.0f);
     }
 
     public void prepareWindow() {

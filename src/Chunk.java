@@ -37,7 +37,6 @@ public class Chunk {
         this.chunkVerticesCount = 0;
         this.location = location;
 
-
         /**
          * Initialize the blocks in the chunk
          */
@@ -45,7 +44,16 @@ public class Chunk {
         for (int i = 0; i < CHUNK_SIZE; ++i) {
             for (int j = 0; j < CHUNK_SIZE; ++j) {
                 for (int k = 0; k < CHUNK_SIZE; ++k) {
-                    blocks[i][j][k] = new Block(Math.random() < 0.2, BlockType.GENERAL);
+                    float y = j + this.location.y * CHUNK_SIZE;
+                    if (y < Config.GROUND_LEVEL || y >= Config.FLOOR_LEVEL) {
+                        blocks[i][j][k] = new Block(false, BlockType.EMPTY);
+                    } else {
+                        if (Math.random() < 0.2) {
+                            blocks[i][j][k] = new Block(true, BlockType.DIRT);
+                        } else {
+                            blocks[i][j][k] = new Block(true, BlockType.SAND);
+                        }
+                    }
                 }
             }
         }
@@ -73,12 +81,17 @@ public class Chunk {
                     }
 
                     ArrayList<Vertex> blockVertices = createBlockVertices(blocks[i][j][k].getBlockType(), i, j, k);
+                    // DEBUG: //ArrayList<Vertex> blockVertices = createBlockVertices(blocks[0][0][0].getBlockType(), i, j, k);
                     chunkVertices.addAll(blockVertices);
                 }
             }
         }
 
         chunkVerticesCount = chunkVertices.size();
+
+        if (chunkVerticesCount == 0) {
+            return;
+        }
 
         // buffer to hold vertex data
         FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(chunkVerticesCount * Vertex.size);
@@ -113,6 +126,9 @@ public class Chunk {
     }
 
     public void render(Camera perspective) {
+        if (chunkVerticesCount == 0) {
+            return;
+        }
 //        if (false) {
 //            TODO: Check if the chunk has updated for the perspective has changed.
 //            return;
@@ -153,7 +169,7 @@ public class Chunk {
         // translate vertices
         Vector3 translation = new Vector3(
                 x + location.x * CHUNK_SIZE,
-                y + location.y * CHUNK_SIZE - CHUNK_SIZE * 2,
+                y + location.y * CHUNK_SIZE,
                 z + location.z * CHUNK_SIZE
         );
         for (Vector3 vertex : vertices) {
@@ -179,9 +195,9 @@ public class Chunk {
         ArrayList<Vertex> blockVertices = new ArrayList<>();
 
         for (int[] triangle : triangles) {
-            blockVertices.add(new Vertex(vertices.get(triangle[0])));
-            blockVertices.add(new Vertex(vertices.get(triangle[1])));
-            blockVertices.add(new Vertex(vertices.get(triangle[2])));
+            blockVertices.add(new Vertex(vertices.get(triangle[0]), blockType.color));
+            blockVertices.add(new Vertex(vertices.get(triangle[1]), blockType.color));
+            blockVertices.add(new Vertex(vertices.get(triangle[2]), blockType.color));
         }
 
         return blockVertices;

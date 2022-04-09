@@ -1,5 +1,7 @@
 package math;
 
+import java.util.Arrays;
+
 public class Vector3 {
     public float x;
     public float y;
@@ -48,6 +50,11 @@ public class Vector3 {
         }
 
         return x == other.x && y == other.y && z == other.z;
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(toArray());
     }
 
     public static Vector3 sub(Vector3 u, Vector3 v) {

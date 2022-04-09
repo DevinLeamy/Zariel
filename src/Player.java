@@ -7,9 +7,9 @@ public class Player {
     private Controller controller;
     private Camera camera;
     private int[] mousePos;
-    final private float cameraMovementSpeed = 2; // 1u / second
+    final private float cameraMovementSpeed = 6; // 1u / second
     final private float cameraRotationSpeed = (float) Math.PI / 4; // 1u / second
-    final private float mouseSensitivity = 0.002f;
+    final private float mouseSensitivity = 0.2f;
 
     public Player(Camera camera) {
         controller = Controller.getInstance();
@@ -26,8 +26,8 @@ public class Player {
         int dx = newMousePos[0] - mousePos[0];
         int dy = newMousePos[1] - mousePos[1];
 
-        camera.updateYaw(dx * mouseSensitivity);
-        camera.updatePitch(-dy * mouseSensitivity);
+        camera.updateYaw(dx * mouseSensitivity * dt);
+        camera.updatePitch(-dy * mouseSensitivity * dt);
 
         mousePos = newMousePos;
     }
