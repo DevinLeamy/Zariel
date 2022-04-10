@@ -11,11 +11,10 @@ import java.util.List;
 import static org.lwjgl.opengl.GL41.*;
 
 public class Chunk {
-    final private static int CHUNK_SIZE = 16;
+    final private static int CHUNK_SIZE = 64;
     private static VertexShader vs = new VertexShader("res/shaders/chunk.vert");
     private static FragmentShader fs = new FragmentShader("res/shaders/chunk.frag");
     private static ShaderProgram shader = new ShaderProgram(vs, fs);
-    private static Mesh voxelMesh = MeshLoader.loadMesh("res/cube.obj");
 
     /**
      * @field blocks: Blocks in the chunk
@@ -29,6 +28,7 @@ public class Chunk {
     int vao, vbo;
     int chunkVerticesCount;
     Vector3 location;
+    NoiseMap noiseMap;
 
     public Chunk(Vector3 location) {
         this.updated = true;
@@ -36,24 +36,42 @@ public class Chunk {
         this.vbo = glGenBuffers();
         this.chunkVerticesCount = 0;
         this.location = location;
+        this.noiseMap = new NoiseMap(CHUNK_SIZE, CHUNK_SIZE);
 
         /**
          * Initialize the blocks in the chunk
          */
         blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
-        for (int i = 0; i < CHUNK_SIZE; ++i) {
-            for (int j = 0; j < CHUNK_SIZE; ++j) {
-                for (int k = 0; k < CHUNK_SIZE; ++k) {
-                    float y = j + this.location.y * CHUNK_SIZE;
-                    if (y < Config.GROUND_LEVEL || y >= Config.FLOOR_LEVEL) {
-                        blocks[i][j][k] = new Block(false, BlockType.EMPTY);
-                    } else {
-                        if (Math.random() < 0.2) {
-                            blocks[i][j][k] = new Block(true, BlockType.DIRT);
-                        } else {
-                            blocks[i][j][k] = new Block(true, BlockType.SAND);
-                        }
+        initialize();
+    }
+
+    public void initialize() {
+        for (int x = 0; x < CHUNK_SIZE; ++x) {
+            for (int z = 0; z < CHUNK_SIZE; ++z) {
+                float noise = noiseMap.noise(x, z);
+                noise = (noise + 1.0f) / 2.0f;
+
+                noise /= 3.0f; // dampen
+
+                int maxHeight = (int) (noise * CHUNK_SIZE);
+                for (int y = 0; y < maxHeight; ++y) {
+                    float worldY = y + this.location.y * CHUNK_SIZE;
+
+                    // check if the block is within spawning range
+                    if (worldY < Config.GROUND_LEVEL || worldY >= Config.FLOOR_LEVEL) {
+                        blocks[x][y][z] = new Block(false, BlockType.EMPTY);
+                        continue;
                     }
+
+                    if (Math.random() < 0.2) {
+                        blocks[x][y][z] = new Block(true, BlockType.DIRT);
+                    } else {
+                        blocks[x][y][z] = new Block(true, BlockType.SAND);
+                    }
+                }
+
+                for (int y = maxHeight; y < CHUNK_SIZE; ++y) {
+                    blocks[x][y][z] = new Block(false, BlockType.EMPTY);
                 }
             }
         }

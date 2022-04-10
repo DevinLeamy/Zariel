@@ -3,10 +3,9 @@ import math.Vector3;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class ChunkManager {
-    public static float CHUNK_LOAD_DISTANCE = 3.0f;
+    public static float CHUNK_LOAD_DISTANCE = 2.0f;
     /**
      * @field chunks: Chunks that may be visible
      * @field renderQueue: Queue of chunks we want to render

@@ -9,6 +9,54 @@ public class Vector2 {
         this.y = y;
     }
 
+    public Vector2 scale(float mag) {
+        x *= mag;
+        y *= mag;
+
+        return this;
+    }
+
+    public static Vector2 scale(Vector2 v, float mag) {
+        return new Vector2(
+                v.x * mag,
+                v.y * mag
+        );
+    }
+
+    public float len() {
+        return (float) Math.sqrt(x * x + y * y);
+    }
+
+    public Vector2 normalize() {
+        float mag = len();
+
+        if (mag == 0) {
+            System.err.println("Cannot normalize 0 vector");
+            return this;
+        }
+
+        x /= mag;
+        y /= mag;
+
+        return this;
+    }
+
+    public static Vector2 sub(Vector2 u, Vector2 v) {
+        return new Vector2(
+                u.x - v.x,
+                u.y - v.y
+        );
+    }
+
+    public static float dot(Vector2 u, Vector2 v) {
+        return u.x * v.x + u.y * v.y;
+    }
+
+    public String toString() {
+        return "x: " + x + " y: " + y;
+    }
+
+
     public float[] toArray() {
         return new float[] { x, y };
     }
