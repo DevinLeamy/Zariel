@@ -51,8 +51,6 @@ public class Chunk {
                 float noise = noiseMap.noise(x, z);
                 noise = (noise + 1.0f) / 2.0f;
 
-                noise /= 3.0f; // dampen
-
                 int maxHeight = (int) (noise * CHUNK_SIZE);
                 for (int y = 0; y < maxHeight; ++y) {
                     float worldY = y + this.location.y * CHUNK_SIZE;
@@ -146,10 +144,7 @@ public class Chunk {
         if (chunkVerticesCount == 0) {
             return;
         }
-//        if (false) {
-//            TODO: Check if the chunk has updated for the perspective has changed.
-//            return;
-//        }
+
         shader.link();
 
         // set shader uniforms
@@ -170,14 +165,14 @@ public class Chunk {
 
     private ArrayList<Vertex> createBlockVertices(BlockType blockType, int x, int y, int z) {
         // vertices
-        Vector3 v1 = new Vector3 (1.0f,  -1.0f, -1.0f);
-        Vector3 v2 = new Vector3 (1.0f,  -1.0f, 1.0f);
-        Vector3 v3 = new Vector3 (-1.0f, -1.0f, 1.0f);
-        Vector3 v4 = new Vector3 (-1.0f, -1.0f, -1.0f);
-        Vector3 v5 = new Vector3 (1.0f,  1.0f, -1.0f );
+        Vector3 v1 = new Vector3 (1.0f,  0.0f, 0.0f);
+        Vector3 v2 = new Vector3 (1.0f,  0.0f, 1.0f);
+        Vector3 v3 = new Vector3 (0.0f, 0.0f, 1.0f);
+        Vector3 v4 = new Vector3 (0.0f, 0.0f, 0.0f);
+        Vector3 v5 = new Vector3 (1.0f,  1.0f, 0.0f );
         Vector3 v6 = new Vector3 (1.0f,  1.0f, 1.0f);
-        Vector3 v7 = new Vector3 (-1.0f, 1.0f, 1.0f);
-        Vector3 v8 = new Vector3 (-1.0f, 1.0f, -1.0f);
+        Vector3 v7 = new Vector3 (0.0f, 1.0f, 1.0f);
+        Vector3 v8 = new Vector3 (0.0f, 1.0f, 0.0f);
 
         ArrayList<Vector3> vertices = new ArrayList<>(List.of(
             Vector3.zeros(), v1, v2, v3, v4, v5, v6, v7, v8
@@ -190,28 +185,47 @@ public class Chunk {
                 z + location.z * CHUNK_SIZE
         );
         for (Vector3 vertex : vertices) {
-            // DEBUG
-            vertex.add(new Vector3(1.0f, 1.0f, 1.0f));
-            vertex.scale(0.5f);
-
             vertex.add(translation);
         }
 
         // faces - note: indices start at 1, not zero
-        ArrayList<int[]> triangles = new ArrayList<>(List.of(
-                new int[]{2, 3, 4},
-                new int[]{8, 7, 6},
-                new int[]{5, 6, 2},
-                new int[]{6, 7, 3},
-                new int[]{3, 7, 8},
-                new int[]{1, 4, 8},
-                new int[]{1, 2, 4},
-                new int[]{5, 8, 6},
-                new int[]{1, 5, 2},
-                new int[]{2, 6, 3},
-                new int[]{4, 3, 8},
-                new int[]{5, 1, 8}
-        ));
+        ArrayList<int[]> triangles = new ArrayList<>();
+
+        // left-face
+        if (x == 0 || !blocks[x - 1][y][z].isActive()) {
+            triangles.add(new int[]{3, 7, 8});
+            triangles.add(new int[]{4, 3, 8});
+        }
+
+        // bottom-face
+        if (y == 0 || !blocks[x][y - 1][z].isActive()) {
+            triangles.add(new int[]{2, 3, 4});
+            triangles.add(new int[]{1, 2, 4});
+        }
+
+        // front-face
+        if (z == 0 || !blocks[x][y][z - 1].isActive()) {
+            triangles.add(new int[]{1, 4, 8});
+            triangles.add(new int[]{5, 1, 8});
+        }
+
+        // right-face
+        if (x == CHUNK_SIZE - 1 || !blocks[x + 1][y][z].isActive()) {
+            triangles.add(new int[]{5, 6, 2});
+            triangles.add(new int[]{1, 5, 2});
+        }
+
+        // top-face
+        if (y == CHUNK_SIZE - 1 || !blocks[x][y + 1][z].isActive()) {
+            triangles.add(new int[]{8, 7, 6});
+            triangles.add(new int[]{5, 8, 6});
+        }
+
+        // back-face
+        if (z == CHUNK_SIZE - 1 || !blocks[x][y][z + 1].isActive()) {
+            triangles.add(new int[]{6, 7, 3});
+            triangles.add(new int[]{2, 6, 3});
+        }
 
         ArrayList<Vertex> blockVertices = new ArrayList<>();
 

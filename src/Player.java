@@ -2,11 +2,13 @@ import math.Vector3;
 import controller.Controller;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL41.*;
 
 public class Player {
     private Controller controller;
     private Camera camera;
     private int[] mousePos;
+    private boolean wireframe;
     final private float cameraMovementSpeed = 6; // 1u / second
     final private float cameraRotationSpeed = (float) Math.PI / 4; // 1u / second
     final private float mouseSensitivity = 0.2f;
@@ -14,6 +16,7 @@ public class Player {
     public Player(Camera camera) {
         controller = Controller.getInstance();
         mousePos = new int[] { 0, 0 };
+        wireframe = false;
         this.camera = camera;
     }
 
@@ -42,6 +45,11 @@ public class Player {
         // up and down
         if (controller.keyPressed(GLFW_KEY_SPACE)) { camera.moveUp(dt * cameraMovementSpeed); }
         if (controller.keyPressed(GLFW_KEY_LEFT_SHIFT)) { camera.moveUp(dt * -cameraMovementSpeed); }
+
+        // wireframe
+        if (controller.keyPressed(GLFW_KEY_P)) { wireframe = false; }
+        if (controller.keyPressed(GLFW_KEY_O)) { wireframe = true; }
+        glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
     }
 
     public void update(float dt) {
