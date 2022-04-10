@@ -41,6 +41,10 @@ public class Vector2 {
         return this;
     }
 
+    public static Vector2 zeros() {
+        return new Vector2(0.0f, 0.0f);
+    }
+
     public static Vector2 sub(Vector2 u, Vector2 v) {
         return new Vector2(
                 u.x - v.x,

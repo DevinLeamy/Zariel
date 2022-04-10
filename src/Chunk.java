@@ -1,3 +1,4 @@
+import math.Vector2;
 import math.Vector3;
 import org.lwjgl.BufferUtils;
 import rendering.Mesh;
@@ -61,11 +62,7 @@ public class Chunk {
                         continue;
                     }
 
-                    if (Math.random() < 0.2) {
-                        blocks[x][y][z] = new Block(true, BlockType.DIRT);
-                    } else {
-                        blocks[x][y][z] = new Block(true, BlockType.SAND);
-                    }
+                    blocks[x][y][z] = new Block(true, worldY > Config.FLOOR_LEVEL - 30.0f ? BlockType.SAND : BlockType.DIRT);
                 }
 
                 for (int y = maxHeight; y < CHUNK_SIZE; ++y) {
@@ -178,6 +175,18 @@ public class Chunk {
             Vector3.zeros(), v1, v2, v3, v4, v5, v6, v7, v8
         ));
 
+        // vertex normals
+        Vector3 n1 = new Vector3( 0.0f, -1.0f,  0.0f);
+        Vector3 n2 = new Vector3( 0.0f,  1.0f,  0.0f);
+        Vector3 n3 = new Vector3( 1.0f,  0.0f,  0.0f);
+        Vector3 n4 = new Vector3( 0.0f,  0.0f,  1.0f);
+        Vector3 n5 = new Vector3(-1.0f,  0.0f,  0.0f);
+        Vector3 n6 = new Vector3( 0.0f,  0.0f, -1.0f);
+
+        ArrayList<Vector3> normals = new ArrayList<>(List.of(
+            Vector3.zeros(), n1, n2, n3, n4, n5, n6
+        ));
+
         // translate vertices
         Vector3 translation = new Vector3(
                 x + location.x * CHUNK_SIZE,
@@ -189,50 +198,80 @@ public class Chunk {
         }
 
         // faces - note: indices start at 1, not zero
-        ArrayList<int[]> triangles = new ArrayList<>();
+        // { { vertex, normal } }
+        ArrayList<int[][]> triangles = new ArrayList<>();
 
         // left-face
         if (x == 0 || !blocks[x - 1][y][z].isActive()) {
-            triangles.add(new int[]{3, 7, 8});
-            triangles.add(new int[]{4, 3, 8});
+            triangles.add(new int[][] {
+                    {3, 5}, {7, 5}, {8, 5}
+            });
+            triangles.add(new int[][]{
+                    {4, 5}, {3, 5}, {8, 5}
+            });
         }
 
         // bottom-face
         if (y == 0 || !blocks[x][y - 1][z].isActive()) {
-            triangles.add(new int[]{2, 3, 4});
-            triangles.add(new int[]{1, 2, 4});
+            triangles.add(new int[][]{
+                    {2, 1}, {3, 1}, {4, 1}
+            });
+            triangles.add(new int[][]{
+                    {1, 1}, {2, 1}, {4, 1}
+            });
         }
 
         // front-face
         if (z == 0 || !blocks[x][y][z - 1].isActive()) {
-            triangles.add(new int[]{1, 4, 8});
-            triangles.add(new int[]{5, 1, 8});
+            triangles.add(new int[][]{
+                    {1, 6}, {4, 6}, {8, 6}
+            });
+            triangles.add(new int[][]{
+                    {5, 6}, {1, 6}, {8, 6}
+            });
         }
 
         // right-face
         if (x == CHUNK_SIZE - 1 || !blocks[x + 1][y][z].isActive()) {
-            triangles.add(new int[]{5, 6, 2});
-            triangles.add(new int[]{1, 5, 2});
+            triangles.add(new int[][]{
+                    {5, 3}, {6, 3}, {2, 3}
+            });
+            triangles.add(new int[][]{
+                    {1, 3}, {5, 3}, {2, 3}
+            });
         }
 
         // top-face
         if (y == CHUNK_SIZE - 1 || !blocks[x][y + 1][z].isActive()) {
-            triangles.add(new int[]{8, 7, 6});
-            triangles.add(new int[]{5, 8, 6});
+            triangles.add(new int[][]{
+                    {8, 2}, {7, 2}, {6, 2}
+            });
+            triangles.add(new int[][]{
+                    {5, 2}, {8, 2}, {6, 2}
+            });
         }
 
         // back-face
         if (z == CHUNK_SIZE - 1 || !blocks[x][y][z + 1].isActive()) {
-            triangles.add(new int[]{6, 7, 3});
-            triangles.add(new int[]{2, 6, 3});
+            triangles.add(new int[][]{
+                    {6, 4}, {7, 4}, {3, 4}
+            });
+            triangles.add(new int[][]{
+                    {2, 4}, {6, 4}, {3, 4}
+            });
         }
 
         ArrayList<Vertex> blockVertices = new ArrayList<>();
 
-        for (int[] triangle : triangles) {
-            blockVertices.add(new Vertex(vertices.get(triangle[0]), blockType.color));
-            blockVertices.add(new Vertex(vertices.get(triangle[1]), blockType.color));
-            blockVertices.add(new Vertex(vertices.get(triangle[2]), blockType.color));
+        for (int[][] triangle : triangles) {
+            for (int[] vertex : triangle) {
+               blockVertices.add(new Vertex(
+                       vertices.get(vertex[0]),
+                       Vector2.zeros(),
+                       normals.get(vertex[1]),
+                       blockType.color
+               ));
+            }
         }
 
         return blockVertices;
