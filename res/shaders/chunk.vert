@@ -9,9 +9,11 @@ uniform mat4 viewM;
 uniform mat4 projectionM;
 
 out vec3 color;
+out vec3 w_normal; // world coordinate normals
 
 void main()
 {
     color = aColor;
+    w_normal = normal;
     gl_Position = projectionM * viewM * vec4(pos, 1.0f);
 }
