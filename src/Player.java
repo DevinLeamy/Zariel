@@ -11,7 +11,7 @@ public class Player {
     private boolean wireframe;
     final private float cameraMovementSpeed = 6; // 1u / second
     final private float cameraRotationSpeed = (float) Math.PI / 4; // 1u / second
-    final private float mouseSensitivity = 0.2f;
+    final private float mouseSensitivity = 0.002f;
 
     public Player(Camera camera) {
         controller = Controller.getInstance();
@@ -29,8 +29,8 @@ public class Player {
         int dx = newMousePos[0] - mousePos[0];
         int dy = newMousePos[1] - mousePos[1];
 
-        camera.updateYaw(dx * mouseSensitivity * dt);
-        camera.updatePitch(-dy * mouseSensitivity * dt);
+        camera.updateYaw(dx * mouseSensitivity);
+        camera.updatePitch(-dy * mouseSensitivity);
 
         mousePos = newMousePos;
     }

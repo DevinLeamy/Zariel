@@ -29,7 +29,7 @@ public class Chunk {
     int vao, vbo;
     int chunkVerticesCount;
     Vector3 location;
-    NoiseMap noiseMap;
+    float[][] noiseMap;
 
     public Chunk(Vector3 location) {
         this.updated = true;
@@ -37,22 +37,29 @@ public class Chunk {
         this.vbo = glGenBuffers();
         this.chunkVerticesCount = 0;
         this.location = location;
-        this.noiseMap = new NoiseMap(CHUNK_SIZE, CHUNK_SIZE);
+
+        NoiseMapGenerator noiseMapGenerator = NoiseMapGenerator.getInstance();
+        Vector3 worldCoords = chunkCoordsToWorldCoords(location);
+
+        this.noiseMap = noiseMapGenerator.generateNoiseMap((int) worldCoords.x, (int) worldCoords.z, CHUNK_SIZE, CHUNK_SIZE);
 
         /**
          * Initialize the blocks in the chunk
          */
         blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
-        initialize();
+    }
+
+    public Vector3 chunkCoordsToWorldCoords(Vector3 chunkCoords) {
+        return Vector3.scale(chunkCoords, CHUNK_SIZE);
     }
 
     public void initialize() {
         for (int x = 0; x < CHUNK_SIZE; ++x) {
             for (int z = 0; z < CHUNK_SIZE; ++z) {
-                float noise = noiseMap.noise(x, z);
+                float noise = noiseMap[x][z];
                 noise = (noise + 1.0f) / 2.0f;
 
-                int maxHeight = (int) (noise * CHUNK_SIZE);
+                int maxHeight = (int) (noise * CHUNK_SIZE) / 3 + 25;
                 for (int y = 0; y < maxHeight; ++y) {
                     float worldY = y + this.location.y * CHUNK_SIZE;
 

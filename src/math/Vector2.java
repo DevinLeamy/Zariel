@@ -1,5 +1,7 @@
 package math;
 
+import java.util.Arrays;
+
 public class Vector2 {
     public float x;
     public float y;
@@ -21,6 +23,11 @@ public class Vector2 {
                 v.x * mag,
                 v.y * mag
         );
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(toArray());
     }
 
     public float len() {

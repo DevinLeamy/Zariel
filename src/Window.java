@@ -17,8 +17,8 @@ public class Window {
     // The window handle
     private long window;
 
-    private final int WIDTH = 800;
-    private final int HEIGHT = 800;
+    private final int WIDTH = 1200;
+    private final int HEIGHT = 1000;
 
     public Window() {
         init();
@@ -64,7 +64,7 @@ public class Window {
             throw new RuntimeException("Failed to create the GLFW window");
 
         // keyboard input initialization
-        glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
+//        glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
         glfwSetKeyCallback(window, Controller::onKeyPressedCallback);
 
         // mouse input initialization

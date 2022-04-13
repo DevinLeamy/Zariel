@@ -3,6 +3,7 @@ import math.Vector3;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ChunkManager {
     public static float CHUNK_LOAD_DISTANCE = 2.0f;
@@ -65,6 +66,7 @@ public class ChunkManager {
             }
 
             loadedChunks.put(chunkLocation, new Chunk(chunkLocation));
+            loadedChunks.get(chunkLocation).initialize();
             loadedChunks.get(chunkLocation).load();
 //            System.out.println("CHUNK LOADED " + chunkLocation);
         }
@@ -76,6 +78,7 @@ public class ChunkManager {
      * @return whether the chunk should be loaded
      */
     public boolean chunkLocationInRange(Vector3 origin, Vector3 chunkLocation) {
+        // TODO: this should user the distance to the nearest point in the chunk
         float chunkDistance = Vector3.sub(origin, chunkLocation).len();
         return chunkDistance <= CHUNK_LOAD_DISTANCE;
     }
@@ -89,6 +92,37 @@ public class ChunkManager {
         }
 
         return visibleChunks;
+    }
+
+    public Optional<Chunk> getChunk(Vector3 chunkLocation) {
+        if (loadedChunks.containsKey(chunkLocation)) {
+            return Optional.of(loadedChunks.get(chunkLocation));
+        }
+        return Optional.empty();
+    }
+
+    public ArrayList<Chunk> getNeighboringChunks(Vector3 chunkLocation) {
+       ArrayList<Chunk> neighbors = new ArrayList<>();
+       int[][] offsets = {
+               {0, 0, 1},
+               {0, 0, -1},
+               {0, 1, 0},
+               {0, -1, 0},
+               {1, 0, 0},
+               {-1, 0, 0},
+       };
+
+       for (int[] offset : offsets) {
+           Vector3 location = new Vector3(
+                   chunkLocation.x + offset[0],
+                   chunkLocation.y + offset[1],
+                   chunkLocation.z + offset[2]
+           );
+           Optional<Chunk> maybeChunk = getChunk(location);
+           maybeChunk.ifPresent(neighbors::add);
+       }
+
+       return neighbors;
     }
 
     public void render(Camera perspective) {
