@@ -87,6 +87,11 @@ public class ChunkManager {
         ArrayList<Chunk> visibleChunks = new ArrayList<>();
 
         for (Chunk chunk : loadedChunks.values()) {
+            // check if a chunk has a neighbor on all sides
+            if (getNeighboringChunks(chunk.location).size() == 6) {
+                continue;
+            }
+
             // TODO: some fancy stuff to determine visibility
             visibleChunks.add(chunk);
         }
@@ -95,7 +100,7 @@ public class ChunkManager {
     }
 
     public Optional<Chunk> getChunk(Vector3 chunkLocation) {
-        if (loadedChunks.containsKey(chunkLocation)) {
+        if (loadedChunks.containsKey(chunkLocation) && loadedChunks.get(chunkLocation).isActive()) {
             return Optional.of(loadedChunks.get(chunkLocation));
         }
         return Optional.empty();

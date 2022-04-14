@@ -26,6 +26,15 @@ public class Vector2 {
     }
 
     @Override
+    public boolean equals(Object _other) {
+        if (!(_other instanceof Vector2 other)) {
+            return false;
+        }
+
+        return x == other.x && y == other.y;
+    }
+
+    @Override
     public int hashCode() {
         return Arrays.hashCode(toArray());
     }

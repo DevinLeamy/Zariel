@@ -11,6 +11,9 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL41.*;
 
+// TODO: implement the iterator interface for the blocks so we don't have to
+//       next for loops all the time.
+
 public class Chunk {
     final private static int CHUNK_SIZE = 64;
     private static VertexShader vs = new VertexShader("res/shaders/chunk.vert");
@@ -51,6 +54,25 @@ public class Chunk {
 
     public Vector3 chunkCoordsToWorldCoords(Vector3 chunkCoords) {
         return Vector3.scale(chunkCoords, CHUNK_SIZE);
+    }
+
+    /**
+     * Check if chunk contains at least one active block.
+     * TODO: this might be able to be improved using this.chunkVerticesCount
+     */
+    public boolean isActive() {
+        // TODO: refactor when Iterator interface is implemented
+        for (int i = 0; i < CHUNK_SIZE; ++i) {
+            for (int j = 0; j < CHUNK_SIZE; ++j) {
+                for (int k = 0; k < CHUNK_SIZE; ++k) {
+                    if (blocks[i][j][k].isActive()) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     public void initialize() {
