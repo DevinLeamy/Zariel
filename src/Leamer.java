@@ -1,6 +1,7 @@
-import controller.Controller;
 import math.Vector3;
 import org.lwjgl.Version;
+
+import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL41.*;
 
@@ -32,9 +33,10 @@ final public class Leamer {
         chunkManager = new ChunkManager();
 
 
+        // stores the duration of each frame in seconds
+        ArrayList<Long> frames = new ArrayList<>();
+
         long prevTime = System.currentTimeMillis();
-        int frameCount = 0;
-        long millisecondsCount = 0;
         while (running) {
             long prevEndTime = prevTime;
             long dtInMillis = System.currentTimeMillis() - prevEndTime;
@@ -58,13 +60,16 @@ final public class Leamer {
 
             // update frame count
             long trueDt = System.currentTimeMillis() - prevEndTime;
-            millisecondsCount += trueDt;
-            ++frameCount;
+            frames.add(trueDt);
 
-            if (millisecondsCount >= 1000) {
-                window.setTitle(String.format("FPS: %d POS: %s", frameCount, camera.position.toString()));
-                millisecondsCount %= 1000;
-                frameCount = 0;
+            long framesDuration = frames.stream().mapToLong(Long::longValue).sum();
+            if (framesDuration >= 1000) {
+                window.setTitle(String.format("FPS: %d POS: %s", frames.size(), camera.position.toString()));
+            }
+
+            while (framesDuration >= 1000) {
+                framesDuration -= frames.get(0);
+                frames.remove(0);
             }
         }
 

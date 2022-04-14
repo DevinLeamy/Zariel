@@ -15,7 +15,7 @@ import static org.lwjgl.opengl.GL41.*;
 //       next for loops all the time.
 
 public class Chunk {
-    final private static int CHUNK_SIZE = 64;
+    final private static int CHUNK_SIZE = Config.CHUNK_SIZE;
     private static VertexShader vs = new VertexShader("res/shaders/chunk.vert");
     private static FragmentShader fs = new FragmentShader("res/shaders/chunk.frag");
     private static ShaderProgram shader = new ShaderProgram(vs, fs);
@@ -81,7 +81,8 @@ public class Chunk {
                 float noise = noiseMap[x][z];
                 noise = (noise + 1.0f) / 2.0f;
 
-                int maxHeight = (int) (noise * CHUNK_SIZE) / 3 + 25;
+                int maxHeight = (int) (noise * CHUNK_SIZE);
+                int maxWorldHeight = (int) Float.min(this.location.y * CHUNK_SIZE + maxHeight, Config.FLOOR_LEVEL);
                 for (int y = 0; y < maxHeight; ++y) {
                     float worldY = y + this.location.y * CHUNK_SIZE;
 
@@ -91,7 +92,7 @@ public class Chunk {
                         continue;
                     }
 
-                    blocks[x][y][z] = new Block(true, worldY > Config.FLOOR_LEVEL - 30.0f ? BlockType.SAND : BlockType.DIRT);
+                    blocks[x][y][z] = new Block(true, worldY > maxWorldHeight - 2 && Math.random() > 0.7 ? BlockType.SAND : BlockType.DIRT);
                 }
 
                 for (int y = maxHeight; y < CHUNK_SIZE; ++y) {

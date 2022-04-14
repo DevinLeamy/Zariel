@@ -46,8 +46,8 @@ public class Controller {
         Controller controller = Controller.getInstance();
 
         switch (action) {
-            case GLFW_PRESS   -> controller.setKeyPressed(key, true);
-            case GLFW_RELEASE -> controller.setKeyPressed(key, false);
+            case GLFW_PRESS   -> controller.setKeyPressed(key, glfwGetKey(window, key) == GLFW_PRESS);
+            case GLFW_RELEASE -> controller.setKeyPressed(key, glfwGetKey(window, key) != GLFW_RELEASE);
         }
     }
 
