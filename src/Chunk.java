@@ -157,12 +157,14 @@ public class Chunk {
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
         glEnableVertexAttribArray(3);
+        glEnableVertexAttribArray(4);
 
-        int stride = 4 * Vertex.size; // 11 = 3 (coords) + 2 (uv) + 3 (normal) + 3 (colors)
+        int stride = 4 * Vertex.size; // 12 = 3 (coords) + 2 (uv) + 3 (normal) + 3 (colors) + 1 (AO)
         glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0L);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, stride,  3 * 4);
         glVertexAttribPointer(2, 3, GL_FLOAT, false, stride,  5 * 4);
         glVertexAttribPointer(3, 3, GL_FLOAT, false, stride,  8 * 4);
+        glVertexAttribPointer(4, 1, GL_FLOAT, false, stride,  11 * 4);
 
         // unbind vertex array
         glBindVertexArray(0);
@@ -193,8 +195,45 @@ public class Chunk {
         glBindVertexArray(0);
     }
 
+    private int calculateAmbientOcclusion(Vector3 vertexNormal, int x, int y, int z) {
+        World world = World.getInstance();
+        // Looking down (-z going up, +x going right)
+        // TODO: calculate these based on the vertex normal
+        boolean topLeft     = world.blockIsActive(x - 1, y, z);
+        boolean topRight    = world.blockIsActive(x, y, z);
+        boolean bottomLeft  = world.blockIsActive(x - 1, y, z - 1);
+        boolean bottomRight = world.blockIsActive(x, y, z - 1);
+
+        int topLeftI = topLeft ? 1 : 0;
+        int topRightI = topRight ? 1 : 0;
+        int bottomLeftI = bottomLeft ? 1 : 0;
+        int bottomRightI = bottomRight ? 1 : 0;
+
+        if (!topLeft) {
+            return calculateAO(bottomLeftI, topRightI, bottomRightI);
+        } else if (!topRight) {
+            return calculateAO(bottomRightI, topLeftI, bottomLeftI);
+        } else if (!bottomLeft) {
+           return calculateAO(topLeftI, bottomRightI, topRightI);
+        } else if (!bottomRight) {
+            return calculateAO(topRightI, bottomLeftI, topLeftI);
+        } else {
+            // Vertex is completely occluded
+            return 0;
+        }
+    }
+
+    private int calculateAO(int sideOne, int sideTwo, int corner) {
+        if (sideOne == 1 && sideTwo == 1) {
+            return 0;
+        }
+
+        return 3 - (sideOne + sideTwo + corner);
+    }
+
     private ArrayList<Vertex> createBlockVertices(BlockType blockType, int x, int y, int z) {
         // vertices
+        // TODO: Turn these into enums (eg. FRONT_LEFT_BOTTOM)
         Vector3 v1 = new Vector3 (1.0f,  0.0f, 0.0f);
         Vector3 v2 = new Vector3 (1.0f,  0.0f, 1.0f);
         Vector3 v3 = new Vector3 (0.0f, 0.0f, 1.0f);
@@ -209,15 +248,14 @@ public class Chunk {
         ));
 
         // vertex normals
-        Vector3 n1 = new Vector3( 0.0f, -1.0f,  0.0f);
-        Vector3 n2 = new Vector3( 0.0f,  1.0f,  0.0f);
-        Vector3 n3 = new Vector3( 1.0f,  0.0f,  0.0f);
-        Vector3 n4 = new Vector3( 0.0f,  0.0f,  1.0f);
-        Vector3 n5 = new Vector3(-1.0f,  0.0f,  0.0f);
-        Vector3 n6 = new Vector3( 0.0f,  0.0f, -1.0f);
-
         ArrayList<Vector3> normals = new ArrayList<>(List.of(
-            Vector3.zeros(), n1, n2, n3, n4, n5, n6
+            Vector3.zeros(),
+            Direction.DOWN.normal,
+            Direction.UP.normal,
+            Direction.RIGHT.normal,
+            Direction.BACK.normal,
+            Direction.LEFT.normal,
+            Direction.FRONT.normal
         ));
 
         // translate vertices
@@ -304,12 +342,16 @@ public class Chunk {
 
         for (int[][] triangle : triangles) {
             for (int[] vertex : triangle) {
-               blockVertices.add(new Vertex(
-                       vertices.get(vertex[0]),
-                       Vector2.zeros(),
-                       normals.get(vertex[1]),
-                       blockType.color
-               ));
+                Vector3 pos = vertices.get(vertex[0]);
+                Vector3 normal = normals.get(vertex[1]);
+                Vector3 color = blockType.color;
+                int ambientOcclusion = calculateAmbientOcclusion(normal, (int) pos.x, (int) pos.y, (int) pos.z);
+//                System.out.println(ambientOcclusion);
+
+                Vertex v = new Vertex(pos, Vector2.zeros(), normal, color);
+                v.setAmbientOcclusion(ambientOcclusion);
+
+                blockVertices.add(v);
             }
         }
 

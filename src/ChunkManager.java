@@ -157,7 +157,7 @@ public class ChunkManager {
     }
 
     public void render(Camera perspective) {
-        for (Chunk chunk : getVisibleChunks(perspective)) {
+    for (Chunk chunk : getVisibleChunks(perspective)) {
             chunk.render(perspective);
         }
     }
