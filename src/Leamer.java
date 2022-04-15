@@ -11,27 +11,13 @@ final public class Leamer {
     final static private long MILLISECONDS_PER_FRAME = (long) (SECONDS_PER_FRAME * 1000f);
     private static boolean running = true;
 
-    static private Window window;
-    static private Player player;
-    static private Camera camera;
-    static private ChunkManager chunkManager;
-
     public static void main(String[] args) {
-        window = new Window();
+        World world = World.getInstance();
 
         // versions
         System.out.println("LWJGL_VERSION: " + Version.getVersion());
         System.out.println("GL_SHADING_LANGUAGE_VERSION: " + glGetString (GL_SHADING_LANGUAGE_VERSION));
         System.out.println("OPEN_GL_VERSION: " + glGetString (GL_VERSION));
-
-        camera = new Camera(
-                (float) Math.PI - (float) Math.PI / 2,
-                window.getAspectRatio(),
-                new Vector3(0, Config.FLOOR_LEVEL + 6.0f, 0)
-        );
-        player = new Player(camera);
-        chunkManager = new ChunkManager();
-
 
         // stores the duration of each frame in seconds
         ArrayList<Long> frames = new ArrayList<>();
@@ -44,10 +30,7 @@ final public class Leamer {
             prevTime += dtInMillis;
 
             // updates
-            update(dt);
-            // rendering
-            prepareRender();
-            render(camera);
+            world.update(dt);
 
             // waiting
             try {
@@ -64,7 +47,13 @@ final public class Leamer {
 
             long framesDuration = frames.stream().mapToLong(Long::longValue).sum();
             if (framesDuration >= 1000) {
-                window.setTitle(String.format("FPS: %d POS: %s", frames.size(), camera.position.toString()));
+                world.window.setTitle(String.format(
+//                        "FPS: %d POS: %s CHUNK: %s",
+                        "CHUNK: %s",
+//                        frames.size(),
+//                        world.camera.position.toString(),
+                        ChunkManager.getChunkCoords(world.camera.position).toString()
+                ));
             }
 
             while (framesDuration >= 1000) {
@@ -73,21 +62,6 @@ final public class Leamer {
             }
         }
 
-        window.cleanUp();
-    }
-
-    private static void update(float dt) {
-        player.update(dt);
-        chunkManager.update(camera);
-    }
-
-    private static void prepareRender() {
-        window.prepareWindow();
-    }
-
-
-    private static void render(Camera perspective) {
-        chunkManager.render(perspective);
-        window.render();
+        world.window.cleanUp();
     }
 }

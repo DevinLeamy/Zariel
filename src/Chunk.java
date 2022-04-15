@@ -28,18 +28,19 @@ public class Chunk {
      */
 
     Block[][][] blocks;
-    boolean updated;
     int vao, vbo;
     int chunkVerticesCount;
     Vector3 location;
     float[][] noiseMap;
+    public boolean loaded;
 
     public Chunk(Vector3 location) {
-        this.updated = true;
         this.vao = glGenVertexArrays();
         this.vbo = glGenBuffers();
         this.chunkVerticesCount = 0;
         this.location = location;
+        this.loaded = false;
+
 
         NoiseMapGenerator noiseMapGenerator = NoiseMapGenerator.getInstance();
         Vector3 worldCoords = chunkCoordsToWorldCoords(location);
@@ -92,7 +93,7 @@ public class Chunk {
                         continue;
                     }
 
-                    blocks[x][y][z] = new Block(true, worldY > maxWorldHeight - 2 && Math.random() > 0.7 ? BlockType.SAND : BlockType.DIRT);
+                    blocks[x][y][z] = new Block(true, worldY > maxWorldHeight - 2 ? BlockType.GRASS : BlockType.DIRT);
                 }
 
                 for (int y = maxHeight; y < CHUNK_SIZE; ++y) {
@@ -165,6 +166,8 @@ public class Chunk {
 
         // unbind vertex array
         glBindVertexArray(0);
+
+        loaded = true;
     }
 
     public void render(Camera perspective) {
@@ -231,8 +234,14 @@ public class Chunk {
         // { { vertex, normal } }
         ArrayList<int[][]> triangles = new ArrayList<>();
 
+        int worldX = (int) translation.x;
+        int worldY = (int) translation.y;
+        int worldZ = (int) translation.z;
+
+        World world = World.getInstance();
+
         // left-face
-        if (x == 0 || !blocks[x - 1][y][z].isActive()) {
+        if (!world.blockIsActive(worldX - 1, worldY, worldZ)) {
             triangles.add(new int[][] {
                     {3, 5}, {7, 5}, {8, 5}
             });
@@ -242,7 +251,7 @@ public class Chunk {
         }
 
         // bottom-face
-        if (y == 0 || !blocks[x][y - 1][z].isActive()) {
+        if (!world.blockIsActive(worldX, worldY - 1, worldZ)) {
             triangles.add(new int[][]{
                     {2, 1}, {3, 1}, {4, 1}
             });
@@ -252,7 +261,7 @@ public class Chunk {
         }
 
         // front-face
-        if (z == 0 || !blocks[x][y][z - 1].isActive()) {
+        if (!world.blockIsActive(worldX, worldY, worldZ - 1)) {
             triangles.add(new int[][]{
                     {1, 6}, {4, 6}, {8, 6}
             });
@@ -262,7 +271,7 @@ public class Chunk {
         }
 
         // right-face
-        if (x == CHUNK_SIZE - 1 || !blocks[x + 1][y][z].isActive()) {
+        if (!world.blockIsActive(worldX + 1, worldY, worldZ)) {
             triangles.add(new int[][]{
                     {5, 3}, {6, 3}, {2, 3}
             });
@@ -272,7 +281,7 @@ public class Chunk {
         }
 
         // top-face
-        if (y == CHUNK_SIZE - 1 || !blocks[x][y + 1][z].isActive()) {
+        if (!world.blockIsActive(worldX, worldY + 1, worldZ)) {
             triangles.add(new int[][]{
                     {8, 2}, {7, 2}, {6, 2}
             });
@@ -282,7 +291,7 @@ public class Chunk {
         }
 
         // back-face
-        if (z == CHUNK_SIZE - 1 || !blocks[x][y][z + 1].isActive()) {
+        if (!world.blockIsActive(worldX, worldY, worldZ + 1)) {
             triangles.add(new int[][]{
                     {6, 4}, {7, 4}, {3, 4}
             });
@@ -313,9 +322,18 @@ public class Chunk {
     public void unload() {
         glDeleteVertexArrays(vao);
         glDeleteBuffers(vbo);
+        loaded = false;
+    }
+
+    public void update() {
+        load();
     }
 
     public Vector3 getLocation() {
         return location;
+    }
+
+    public boolean blockIsActive(int x, int y, int z) {
+        return blocks[x][y][z].isActive();
     }
 }
