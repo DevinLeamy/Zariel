@@ -61,7 +61,7 @@ public class Camera {
         yaw += mag;
     }
 
-    private Vector3 getForwardAxis() {
+    public Vector3 getForwardAxis() {
         Vector3 from = position;
         Vector3 to = calculateDirection(yaw, pitch);
         return Vector3.sub(from, to).normalize();

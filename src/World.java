@@ -1,4 +1,7 @@
 import math.Vector3;
+import math.Vector3i;
+
+import java.util.ArrayList;
 
 public class World {
     private ChunkManager chunkManager;
@@ -27,8 +30,20 @@ public class World {
     }
 
     public void update(float dt) {
-        player.update(dt);
+        ArrayList<Action> updates = new ArrayList<>();
+        // Game Logic Updates
+        updates.addAll(player.update(dt));
+        // ai.updates(dt) etc...
+
+        for (Action action : updates) {
+            if (action instanceof SelectAction) {
+                action.execute();
+            }
+        }
+
+        // Chunk updates
         chunkManager.update(camera);
+        // ---
         render();
     }
 
@@ -43,7 +58,12 @@ public class World {
         window.render();
     }
 
+    // TODO: REMOVE
     public boolean blockIsActive(int x, int y, int z) {
-        return chunkManager.blockIsActive(x, y, z);
+        return chunkManager.blockIsActive(new Vector3i(x, y, z));
+    }
+
+    public boolean blockIsActive(Vector3i loc) {
+        return chunkManager.blockIsActive(loc);
     }
 }

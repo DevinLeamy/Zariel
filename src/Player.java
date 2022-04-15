@@ -1,6 +1,9 @@
 import math.Vector3;
 import controller.Controller;
 
+import java.util.ArrayList;
+import java.util.Optional;
+
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL41.*;
 
@@ -35,6 +38,33 @@ public class Player {
         mousePos = newMousePos;
     }
 
+    /**
+     * Change the color of the currently selected block
+     */
+    private Optional<Action> pick() {
+        float MAX_PICK_DISTANCE = 15.0f;
+        World world = World.getInstance();
+
+        Vector3 source = camera.position;
+        Vector3 direction = camera.getForwardAxis();
+
+        float dist = 0.0f;
+
+        while (dist < MAX_PICK_DISTANCE) {
+            Vector3 pos = Vector3.add(source, Vector3.scale(direction, dist));
+            int x = (int) pos.x, y = (int) pos.y, z = (int) pos.z;
+
+            if (world.blockIsActive(x, y, z)) {
+                return Optional.of(new SelectAction(x, y, z));
+            }
+
+            // increment by half of a block width
+            dist += 0.5f;
+        }
+
+        return Optional.empty();
+    }
+
     private void handleKeyPresses(float dt) {
         // forwards and backwards
         if (controller.keyPressed(GLFW_KEY_W)) { camera.moveForward(dt * -cameraMovementSpeed); }
@@ -52,8 +82,13 @@ public class Player {
         glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
     }
 
-    public void update(float dt) {
+    public ArrayList<Action> update(float dt) {
+        ArrayList<Action> updates = new ArrayList<>();
         handleMouseUpdate(dt, controller.mousePosition());
         handleKeyPresses(dt);
+
+        pick().ifPresent(updates::add);
+
+        return updates;
     }
 }

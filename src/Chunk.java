@@ -1,5 +1,6 @@
 import math.Vector2;
 import math.Vector3;
+import math.Vector3i;
 import org.lwjgl.BufferUtils;
 import rendering.Mesh;
 import rendering.MeshLoader;
@@ -30,16 +31,18 @@ public class Chunk {
     Block[][][] blocks;
     int vao, vbo;
     int chunkVerticesCount;
-    Vector3 location;
+    Vector3i location;
     float[][] noiseMap;
     public boolean loaded;
+    boolean updated;
 
-    public Chunk(Vector3 location) {
+    public Chunk(Vector3i location) {
         this.vao = glGenVertexArrays();
         this.vbo = glGenBuffers();
         this.chunkVerticesCount = 0;
         this.location = location;
         this.loaded = false;
+        this.updated = false;
 
 
         NoiseMapGenerator noiseMapGenerator = NoiseMapGenerator.getInstance();
@@ -53,8 +56,8 @@ public class Chunk {
         blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
     }
 
-    public Vector3 chunkCoordsToWorldCoords(Vector3 chunkCoords) {
-        return Vector3.scale(chunkCoords, CHUNK_SIZE);
+    public Vector3 chunkCoordsToWorldCoords(Vector3i chunkCoords) {
+        return Vector3i.scale(chunkCoords, CHUNK_SIZE).toVector3();
     }
 
     /**
@@ -101,6 +104,12 @@ public class Chunk {
                 }
             }
         }
+    }
+
+    // TODO: implement some kind of block update Action
+    public void updateBlock(int x, int y, int z, Block newBlock) {
+        blocks[x][y][z] = newBlock;
+        updated = true;
     }
 
     public static Vector3 worldCoordToChunkLocation(Vector3 coord) {
@@ -371,11 +380,21 @@ public class Chunk {
         load();
     }
 
-    public Vector3 getLocation() {
+    public Vector3i getLocation() {
         return location;
     }
 
-    public boolean blockIsActive(int x, int y, int z) {
-        return blocks[x][y][z].isActive();
+    public Block getBlock(Vector3i pos) {
+        return blocks[pos.x][pos.y][pos.z];
+    }
+
+    public static Vector3i getChunkLocalCoords(Vector3i worldCoords) {
+        int x = worldCoords.x, y = worldCoords.y, z = worldCoords.z;
+
+        int innerX = Utils.mod(x, CHUNK_SIZE);
+        int innerY = Utils.mod(y, CHUNK_SIZE);
+        int innerZ = Utils.mod(z, CHUNK_SIZE);
+
+        return new Vector3i(innerX, innerY, innerZ);
     }
 }

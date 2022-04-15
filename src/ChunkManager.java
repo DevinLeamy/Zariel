@@ -1,4 +1,5 @@
 import math.Vector3;
+import math.Vector3i;
 
 import java.util.*;
 
@@ -12,17 +13,17 @@ public class ChunkManager {
      *
      * All chunks are in the loaded chunks list.
      */
-    Map<Vector3, Chunk> chunkStore;
-    Set<Vector3> loadQueue;
+    Map<Vector3i, Chunk> chunkStore;
+    Set<Vector3i> loadQueue;
 
     ChunkManager() {
         this.chunkStore = new HashMap<>();
         this.loadQueue = new HashSet<>();
     }
 
-    private ArrayList<Vector3> getLoadedChunks() {
-        ArrayList<Vector3> loadedChunks = new ArrayList<>();
-        for (Vector3 location : chunkStore.keySet()) {
+    private ArrayList<Vector3i> getLoadedChunks() {
+        ArrayList<Vector3i> loadedChunks = new ArrayList<>();
+        for (Vector3i location : chunkStore.keySet()) {
             if (chunkStore.get(location).loaded) {
                 loadedChunks.add(location);
             }
@@ -33,38 +34,38 @@ public class ChunkManager {
 
     public void unloadDistantChunks(Camera perspective) {
         Vector3 origin = Chunk.worldCoordToChunkLocation(perspective.position);
-        ArrayList<Vector3> unload = new ArrayList<>();
+        ArrayList<Vector3i> unload = new ArrayList<>();
 
-        for (Vector3 chunkLocation : getLoadedChunks()) {
+        for (Vector3i chunkLocation : getLoadedChunks()) {
             if (!chunkLocationInRange(origin, chunkLocation)) {
                 unload.add(chunkLocation);
             }
         }
 
         // remove irrelevant chunk
-        for (Vector3 chunkLocation : unload) {
+        for (Vector3i chunkLocation : unload) {
             unloadChunk(chunkLocation);
         }
     }
 
-    public void createChunk(Vector3 chunkLocation, Chunk chunk) {
+    public void createChunk(Vector3i chunkLocation, Chunk chunk) {
         chunk.initialize();
         chunkStore.put(chunkLocation, chunk);
         loadQueue.add(chunkLocation);
     }
 
-    public void unloadChunk(Vector3 chunkLocation) {
+    public void unloadChunk(Vector3i chunkLocation) {
         chunkStore.get(chunkLocation).unload();
         chunkStore.remove(chunkLocation);
     }
 
-    public void loadChunk(Vector3 chunkLocation) {
+    public void loadChunk(Vector3i chunkLocation) {
         chunkStore.get(chunkLocation).load();
     }
 
     public void createRelevantChunks(Camera perspective) {
         Vector3 origin = Chunk.worldCoordToChunkLocation(perspective.position);
-        ArrayList<Vector3> create = new ArrayList<>();
+        ArrayList<Vector3i> create = new ArrayList<>();
 
         int lowX = (int) Math.floor(origin.x - CHUNK_LOAD_DISTANCE);
         int lowY = (int) Math.floor(origin.y - CHUNK_LOAD_DISTANCE);
@@ -75,7 +76,7 @@ public class ChunkManager {
         for (int x = lowX; x <= lowX + lowHighSpread; ++x) {
             for (int y = lowY; y <= lowY + lowHighSpread; ++y) {
                 for (int z = lowZ; z <= lowZ + lowHighSpread; ++z) {
-                    Vector3 chunkLocation = new Vector3(x, y, z);
+                    Vector3i chunkLocation = new Vector3i(x, y, z);
                     if (chunkLocationInRange(origin, chunkLocation) && !chunkStore.containsKey(chunkLocation)) {
                         create.add(chunkLocation);
                     }
@@ -83,13 +84,13 @@ public class ChunkManager {
             }
         }
 
-        for (Vector3 chunkLocation : create) {
+        for (Vector3i chunkLocation : create) {
             createChunk(chunkLocation, new Chunk(chunkLocation));
             addNeighborsToLoadQueue(chunkLocation);
         }
     }
 
-    public void addNeighborsToLoadQueue(Vector3 location) {
+    public void addNeighborsToLoadQueue(Vector3i location) {
         for (Chunk chunk : getNeighboringChunks(location)) {
             loadQueue.add(chunk.location);
         }
@@ -100,16 +101,16 @@ public class ChunkManager {
      * @param chunkLocation: location of chunk of interest, in chunk coordinates
      * @return whether the chunk should be loaded
      */
-    public boolean chunkLocationInRange(Vector3 origin, Vector3 chunkLocation) {
+    public boolean chunkLocationInRange(Vector3 origin, Vector3i chunkLocation) {
         // TODO: this should user the distance to the nearest point in the chunk
-        float chunkDistance = Vector3.sub(origin, chunkLocation).len();
+        float chunkDistance = Vector3.sub(origin, chunkLocation.toVector3()).len();
         return chunkDistance <= CHUNK_LOAD_DISTANCE;
     }
 
     public ArrayList<Chunk> getVisibleChunks(Camera perspective) {
         ArrayList<Chunk> visibleChunks = new ArrayList<>();
 
-        for (Vector3 location : chunkStore.keySet()) {
+        for (Vector3i location : chunkStore.keySet()) {
             Chunk chunk = chunkStore.get(location);
             // check if a chunk has a neighbor on all sides
             if (getNeighboringChunks(chunk.location).size() == 6) {
@@ -123,7 +124,7 @@ public class ChunkManager {
         return visibleChunks;
     }
 
-    public Optional<Chunk> getChunk(Vector3 chunkLocation) {
+    public Optional<Chunk> getChunk(Vector3i chunkLocation) {
         if (!chunkStore.containsKey(chunkLocation)) {
             return Optional.empty();
         }
@@ -132,23 +133,19 @@ public class ChunkManager {
         return chunk.isActive() ? Optional.of(chunk) : Optional.empty();
     }
 
-    public ArrayList<Chunk> getNeighboringChunks(Vector3 chunkLocation) {
+    public ArrayList<Chunk> getNeighboringChunks(Vector3i chunkLocation) {
        ArrayList<Chunk> neighbors = new ArrayList<>();
-       int[][] offsets = {
-               {0, 0, 1},
-               {0, 0, -1},
-               {0, 1, 0},
-               {0, -1, 0},
-               {1, 0, 0},
-               {-1, 0, 0},
+       Vector3i[] offsets = {
+               new Vector3i(0, 0, 1),
+               new Vector3i(0, 0, -1),
+               new Vector3i(0, 1, 0),
+               new Vector3i(0, -1, 0),
+               new Vector3i(1, 0, 0),
+               new Vector3i(-1, 0, 0)
        };
 
-       for (int[] offset : offsets) {
-           Vector3 location = new Vector3(
-                   chunkLocation.x + offset[0],
-                   chunkLocation.y + offset[1],
-                   chunkLocation.z + offset[2]
-           );
+       for (Vector3i offset : offsets) {
+           Vector3i location = Vector3i.add(chunkLocation, offset);
            Optional<Chunk> maybeChunk = getChunk(location);
            maybeChunk.ifPresent(neighbors::add);
        }
@@ -166,7 +163,7 @@ public class ChunkManager {
         unloadDistantChunks(perspective);
         createRelevantChunks(perspective);
 
-        for (Vector3 location : new ArrayList<>(loadQueue)) {
+        for (Vector3i location : new ArrayList<>(loadQueue)) {
             loadChunk(location);
         }
 
@@ -175,24 +172,18 @@ public class ChunkManager {
 
 
     // TODO: don't know where to put this
-    public boolean blockIsActive(int x, int y, int z) {
-        int innerX = ((x % Config.CHUNK_SIZE) + Config.CHUNK_SIZE) % Config.CHUNK_SIZE;
-        int innerY = ((y % Config.CHUNK_SIZE) + Config.CHUNK_SIZE) % Config.CHUNK_SIZE;
-        int innerZ = ((z % Config.CHUNK_SIZE) + Config.CHUNK_SIZE) % Config.CHUNK_SIZE;
+    public boolean blockIsActive(Vector3i loc) {
+        Vector3i chunkInnerCoords = Chunk.getChunkLocalCoords(loc);
+        Vector3i chunkLocation = Vector3i.scale(Vector3i.sub(loc, chunkInnerCoords), 1.0f / Config.CHUNK_SIZE);
 
-        int chunkX = (x - innerX) / Config.CHUNK_SIZE;
-        int chunkY = (y - innerY) / Config.CHUNK_SIZE;
-        int chunkZ = (z - innerZ) / Config.CHUNK_SIZE;
-
-
-        Optional<Chunk> maybeChunk = getChunk(new Vector3(chunkX, chunkY, chunkZ));
+        Optional<Chunk> maybeChunk = getChunk(chunkLocation);
 
         if (maybeChunk.isEmpty()) {
             return false;
         }
 
         Chunk chunk = maybeChunk.get();
-        return chunk.blockIsActive(innerX, innerY, innerZ);
+        return chunk.getBlock(chunkInnerCoords).isActive();
     }
 
     public static Vector3 getChunkCoords(Vector3 v) {

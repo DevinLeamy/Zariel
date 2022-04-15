@@ -18,4 +18,10 @@ public class Utils {
     public static float clamp(float low, float high, float v) {
         return Math.max(Math.min(high, v), low);
     }
+
+    // TODO: move to Math package
+    // Handles mods for negative numbers as well
+    public static int mod(int x, int mod) {
+        return ((x % mod) + mod) % mod;
+    }
 }
