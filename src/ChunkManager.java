@@ -153,8 +153,22 @@ public class ChunkManager {
        return neighbors;
     }
 
+    private void checkForChunkUpdates() {
+        for (Vector3i location: getLoadedChunks()) {
+            if (chunkStore.get(location).updated) {
+                // reload chunk
+                loadQueue.add(location);
+
+                // TODO: reload neighboring chunks
+//                for (Chunk chunk : getNeighboringChunks(location)) {
+//                    loadQueue.add(chunk.location);
+//                }
+            }
+        }
+    }
+
     public void render(Camera perspective) {
-    for (Chunk chunk : getVisibleChunks(perspective)) {
+        for (Chunk chunk : getVisibleChunks(perspective)) {
             chunk.render(perspective);
         }
     }
@@ -162,6 +176,7 @@ public class ChunkManager {
     public void update(Camera perspective) {
         unloadDistantChunks(perspective);
         createRelevantChunks(perspective);
+        checkForChunkUpdates();
 
         for (Vector3i location : new ArrayList<>(loadQueue)) {
             loadChunk(location);
@@ -170,22 +185,7 @@ public class ChunkManager {
         loadQueue.clear();
     }
 
-
-    // TODO: don't know where to put this
-    public boolean blockIsActive(Vector3i loc) {
-        Vector3i chunkInnerCoords = Chunk.getChunkLocalCoords(loc);
-        Vector3i chunkLocation = Vector3i.scale(Vector3i.sub(loc, chunkInnerCoords), 1.0f / Config.CHUNK_SIZE);
-
-        Optional<Chunk> maybeChunk = getChunk(chunkLocation);
-
-        if (maybeChunk.isEmpty()) {
-            return false;
-        }
-
-        Chunk chunk = maybeChunk.get();
-        return chunk.getBlock(chunkInnerCoords).isActive();
-    }
-
+    // TODO: Remove??
     public static Vector3 getChunkCoords(Vector3 v) {
         int innerX = (((int) v.x % Config.CHUNK_SIZE) + Config.CHUNK_SIZE) % Config.CHUNK_SIZE;
         int innerY = (((int) v.y % Config.CHUNK_SIZE) + Config.CHUNK_SIZE) % Config.CHUNK_SIZE;
@@ -196,5 +196,19 @@ public class ChunkManager {
         int chunkZ = ((int) v.z - innerZ) / Config.CHUNK_SIZE;
 
         return new Vector3(chunkX, chunkY, chunkZ);
+    }
+
+    public Optional<Block> getBlock(Vector3i loc) {
+        Vector3i chunkInnerCoords = Chunk.getChunkLocalCoords(loc);
+        Vector3i chunkLocation = Vector3i.scale(Vector3i.sub(loc, chunkInnerCoords), 1.0f / Config.CHUNK_SIZE);
+
+        Optional<Chunk> maybeChunk = getChunk(chunkLocation);
+
+        if (maybeChunk.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Chunk chunk = maybeChunk.get();
+        return Optional.of(chunk.getBlock(chunkInnerCoords));
     }
 }

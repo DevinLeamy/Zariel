@@ -97,18 +97,21 @@ public class Chunk {
                     }
 
                     blocks[x][y][z] = new Block(true, worldY > maxWorldHeight - 2 ? BlockType.GRASS : BlockType.DIRT);
+
+                    blocks[x][y][z].setUpdateCallback(this::onBlockUpdate);
                 }
 
                 for (int y = maxHeight; y < CHUNK_SIZE; ++y) {
                     blocks[x][y][z] = new Block(false, BlockType.EMPTY);
+
+                    blocks[x][y][z].setUpdateCallback(this::onBlockUpdate);
                 }
+
             }
         }
     }
 
-    // TODO: implement some kind of block update Action
-    public void updateBlock(int x, int y, int z, Block newBlock) {
-        blocks[x][y][z] = newBlock;
+    public void onBlockUpdate() {
         updated = true;
     }
 
@@ -179,6 +182,7 @@ public class Chunk {
         glBindVertexArray(0);
 
         loaded = true;
+        updated = false;
     }
 
     public void render(Camera perspective) {
@@ -355,7 +359,6 @@ public class Chunk {
                 Vector3 normal = normals.get(vertex[1]);
                 Vector3 color = blockType.color;
                 int ambientOcclusion = calculateAmbientOcclusion(normal, (int) pos.x, (int) pos.y, (int) pos.z);
-//                System.out.println(ambientOcclusion);
 
                 Vertex v = new Vertex(pos, Vector2.zeros(), normal, color);
                 v.setAmbientOcclusion(ambientOcclusion);

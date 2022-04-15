@@ -2,6 +2,7 @@ import math.Vector3;
 import math.Vector3i;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class World {
     private ChunkManager chunkManager;
@@ -36,7 +37,7 @@ public class World {
         // ai.updates(dt) etc...
 
         for (Action action : updates) {
-            if (action instanceof SelectAction) {
+            if (action instanceof BlockUpdateAction) {
                 action.execute();
             }
         }
@@ -60,10 +61,15 @@ public class World {
 
     // TODO: REMOVE
     public boolean blockIsActive(int x, int y, int z) {
-        return chunkManager.blockIsActive(new Vector3i(x, y, z));
+        return blockIsActive(new Vector3i(x, y, z));
     }
 
     public boolean blockIsActive(Vector3i loc) {
-        return chunkManager.blockIsActive(loc);
+        Optional<Block> block = chunkManager.getBlock(loc);
+        return block.isPresent() && block.get().isActive();
+    }
+
+    public Optional<Block> getBlock(Vector3i loc) {
+        return chunkManager.getBlock(loc);
     }
 }

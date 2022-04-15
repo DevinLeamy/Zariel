@@ -101,6 +101,10 @@ public class Vector3 {
         );
     }
 
+    public Vector3i toVector3i() {
+        return new Vector3i((int) x, (int) y, (int) z);
+    }
+
     public static Vector3 zeros() {
         return new Vector3(0, 0, 0);
     }
