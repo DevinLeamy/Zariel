@@ -2,8 +2,6 @@ import math.Vector2;
 import math.Vector3;
 import math.Vector3i;
 import org.lwjgl.BufferUtils;
-import rendering.Mesh;
-import rendering.MeshLoader;
 import rendering.Vertex;
 
 import java.nio.FloatBuffer;
@@ -80,12 +78,14 @@ public class Chunk {
     }
 
     public void initialize() {
+        ArrayList<Vector3i> trees = new ArrayList<>();
         for (int x = 0; x < CHUNK_SIZE; ++x) {
             for (int z = 0; z < CHUNK_SIZE; ++z) {
                 float noise = noiseMap[x][z];
                 noise = (noise + 1.0f) / 2.0f;
+//                noise = 1.0f - noise * noise;
 
-                int maxHeight = (int) (noise * CHUNK_SIZE);
+                int maxHeight = Integer.min((int) (noise * CHUNK_SIZE), CHUNK_SIZE - 1);
                 int maxWorldHeight = (int) Float.min(this.location.y * CHUNK_SIZE + maxHeight, Config.FLOOR_LEVEL);
                 for (int y = 0; y < maxHeight; ++y) {
                     float worldY = y + this.location.y * CHUNK_SIZE;
@@ -97,18 +97,64 @@ public class Chunk {
                     }
 
                     blocks[x][y][z] = new Block(true, worldY > maxWorldHeight - 2 ? BlockType.GRASS : BlockType.DIRT);
-
-                    blocks[x][y][z].setUpdateCallback(this::onBlockUpdate);
                 }
 
                 for (int y = maxHeight; y < CHUNK_SIZE; ++y) {
                     blocks[x][y][z] = new Block(false, BlockType.EMPTY);
-
-                    blocks[x][y][z].setUpdateCallback(this::onBlockUpdate);
                 }
 
+                if (0.001f > Math.random()) {
+                    trees.add(new Vector3i(x, maxHeight, z));
+                }
             }
         }
+
+        trees.forEach(this::spawnTree);
+
+        for (int i = 0; i < CHUNK_SIZE; ++i) {
+            for (int j = 0; j < CHUNK_SIZE; ++j) {
+                for (int k = 0; k < CHUNK_SIZE; ++k) {
+                    blocks[i][j][k].setUpdateCallback(this::onBlockUpdate);
+                }
+            }
+        }
+    }
+
+    public void spawnTree(Vector3i chunkSpawnPoint) {
+        int lowerY = location.y * CHUNK_SIZE + chunkSpawnPoint.y;
+        int upperY = lowerY + 5;
+
+        for (int i = lowerY; i <= upperY; ++i) {
+            if (i < Config.GROUND_LEVEL || i >= Config.FLOOR_LEVEL) {
+                return;
+            }
+        }
+
+        int x = chunkSpawnPoint.x;
+        int y = chunkSpawnPoint.y;
+        int z = chunkSpawnPoint.z;
+
+        try {
+            BlockType truck = BlockType.DIRT;
+            BlockType leaf = BlockType.SAND;
+            // truck
+            blocks[x][y][z] = new Block(true, truck);
+            blocks[x][y + 1][z] = new Block(true, truck);
+            blocks[x][y + 2][z] = new Block(true, truck);
+            blocks[x][y + 3][z] = new Block(true, truck);
+
+            // foliage
+            blocks[x][y + 3][z + 1] = new Block(true, leaf);
+            blocks[x][y + 3][z - 1] = new Block(true, leaf);
+            blocks[x + 1][y + 3][z] = new Block(true, leaf);
+            blocks[x - 1][y + 3][z] = new Block(true, leaf);
+            blocks[x][y + 4][z] = new Block(true, leaf);
+            blocks[x + 1][y + 4][z + 1] = new Block(true, leaf);
+            blocks[x - 1][y + 4][z + 1] = new Block(true, leaf);
+            blocks[x - 1][y + 4][z - 1] = new Block(true, leaf);
+            blocks[x + 1][y + 4][z - 1] = new Block(true, leaf);
+            blocks[x][y + 5][z] = new Block(true, leaf);
+        } catch (ArrayIndexOutOfBoundsException e) {}
     }
 
     public void onBlockUpdate() {

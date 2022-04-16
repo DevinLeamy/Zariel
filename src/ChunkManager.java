@@ -4,7 +4,7 @@ import math.Vector3i;
 import java.util.*;
 
 public class ChunkManager {
-    public static float CHUNK_LOAD_DISTANCE = 2.0f;
+    public static float CHUNK_LOAD_DISTANCE = Config.CHUNK_LOAD_DISTANCE;
     /**
      * @field chunks: Chunks that may be visible
      * @field renderQueue: Queue of chunks we want to render

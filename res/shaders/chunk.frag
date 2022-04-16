@@ -6,7 +6,7 @@ in float ao;
 
 vec3 light = vec3(0.5f, -1.0f, 0.0f);
 float diffuse_intensity = 0.6f;
-float ambient_intensity = 0.5f;
+float ambient_intensity = 0.4f;
 
 out vec4 fragColor;
 
