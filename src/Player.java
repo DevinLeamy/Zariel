@@ -16,6 +16,7 @@ public class Player {
     final private float cameraMovementSpeed = 6; // 1u / second
     final private float cameraRotationSpeed = (float) Math.PI / 4; // 1u / second
     final private float mouseSensitivity = 0.002f;
+    final private float scrollSensitivity = 0.03f;
     private Vector3i previousSelection;
 
     public Player(Camera camera) {
@@ -101,10 +102,16 @@ public class Player {
         return updates;
     }
 
+    private void handleScrollUpdate(float scrollDelta) {
+        camera.fov += scrollDelta * scrollSensitivity;
+        camera.fov = Utils.clamp(0.1f * (float) Math.PI, 0.7f * (float) Math.PI, camera.fov);
+    }
+
     public ArrayList<Action> update(float dt) {
         ArrayList<Action> updates = new ArrayList<>();
 
         handleMouseUpdate(dt, controller.mousePosition());
+        handleScrollUpdate(controller.pollScrollDelta());
         updates.addAll(handleKeyPresses(dt));
 
         getSelectedBlock().ifPresent(selection -> {

@@ -188,19 +188,6 @@ public class ChunkManager {
         loadQueue.clear();
     }
 
-    // TODO: Remove??
-    public static Vector3 getChunkCoords(Vector3 v) {
-        int innerX = (((int) v.x % Config.CHUNK_SIZE) + Config.CHUNK_SIZE) % Config.CHUNK_SIZE;
-        int innerY = (((int) v.y % Config.CHUNK_SIZE) + Config.CHUNK_SIZE) % Config.CHUNK_SIZE;
-        int innerZ = (((int) v.z % Config.CHUNK_SIZE) + Config.CHUNK_SIZE) % Config.CHUNK_SIZE;
-
-        int chunkX = ((int) v.x - innerX) / Config.CHUNK_SIZE;
-        int chunkY = ((int) v.y - innerY) / Config.CHUNK_SIZE;
-        int chunkZ = ((int) v.z - innerZ) / Config.CHUNK_SIZE;
-
-        return new Vector3(chunkX, chunkY, chunkZ);
-    }
-
     public Optional<Block> getBlock(Vector3i loc) {
         Vector3i chunkInnerCoords = Chunk.getChunkLocalCoords(loc);
         Vector3i chunkLocation = Vector3i.scale(Vector3i.sub(loc, chunkInnerCoords), 1.0f / Config.CHUNK_SIZE);

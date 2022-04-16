@@ -15,6 +15,7 @@ public class Controller {
     private Map<Integer, Boolean> keyPressed;
     private int mouseX;
     private int mouseY;
+    private float scrollDelta;
     private static Controller instance;
 
     private Controller() {
@@ -24,6 +25,14 @@ public class Controller {
 
     public boolean keyPressed(int key) {
         return keyPressed.getOrDefault(key, false);
+    }
+
+    public float pollScrollDelta() {
+        float scrollDelta = this.scrollDelta;
+        // reset delta
+        this.scrollDelta = 0.0f;
+
+        return scrollDelta;
     }
 
     public int[] mousePosition() {
@@ -56,5 +65,11 @@ public class Controller {
 
         controller.mouseX = (int) mouseX;
         controller.mouseY = (int) mouseY;
+    }
+
+    public static void onScrollCallback(long window, double scrollXDelta, double scrollYDelta) {
+        Controller controller = Controller.getInstance();
+
+        controller.scrollDelta = (float) scrollYDelta;
     }
 }

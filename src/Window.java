@@ -71,6 +71,9 @@ public class Window {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetCursorPosCallback(window, Controller::onMousePositionCallback);
 
+        // scroll
+        glfwSetScrollCallback(window, Controller::onScrollCallback);
+
         // Get the thread stack and push a new frame
         try ( MemoryStack stack = stackPush() ) {
             IntBuffer pWidth = stack.mallocInt(1); // int*
