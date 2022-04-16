@@ -72,11 +72,11 @@ public class Player {
         ArrayList<Action> updates = new ArrayList<>();
 
         // forwards and backwards
-        if (controller.keyPressed(GLFW_KEY_W)) { camera.moveForward(dt * -cameraMovementSpeed); }
-        if (controller.keyPressed(GLFW_KEY_S)) { camera.moveForward(dt * cameraMovementSpeed); }
+        if (controller.keyPressed(GLFW_KEY_W)) { camera.moveForward(dt * cameraMovementSpeed); }
+        if (controller.keyPressed(GLFW_KEY_S)) { camera.moveForward(dt * -cameraMovementSpeed); }
         // left and right
-        if (controller.keyPressed(GLFW_KEY_A)) { camera.moveLeft(dt * cameraMovementSpeed); }
-        if (controller.keyPressed(GLFW_KEY_D)) { camera.moveLeft(dt * -cameraMovementSpeed); }
+        if (controller.keyPressed(GLFW_KEY_A)) { camera.moveRight(-dt * cameraMovementSpeed); }
+        if (controller.keyPressed(GLFW_KEY_D)) { camera.moveRight(dt * cameraMovementSpeed); }
         // up and down
         if (controller.keyPressed(GLFW_KEY_SPACE)) { camera.moveUp(dt * cameraMovementSpeed); }
         if (controller.keyPressed(GLFW_KEY_LEFT_SHIFT)) { camera.moveUp(dt * -cameraMovementSpeed); }

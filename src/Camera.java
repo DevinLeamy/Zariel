@@ -20,7 +20,7 @@ public class Camera {
     public Camera(float fov, float aspect, Vector3 position) {
         this.position = position;
         this.fov    = fov;
-        this.aspect = 1; // aspect;
+        this.aspect = aspect; // aspect;
         this.pitch  = 0.0f; // centered
         this.yaw    = (float) -Math.PI / 2 + 0.01f; // centered
         this.ncp    = 0.01f;  // near clip plane (NCP)
@@ -64,18 +64,18 @@ public class Camera {
     public Vector3 getForwardAxis() {
         Vector3 from = position;
         Vector3 to = calculateDirection(yaw, pitch);
-        return Vector3.sub(from, to).normalize();
+        return Vector3.sub(to, from).normalize();
     }
 
 
-    private Vector3 getLeftAxis() {
+    private Vector3 getRightAxis() {
         Vector3 tempUp = new Vector3(0, 1, 0);
         Vector3 forward = getForwardAxis();
-        return Vector3.cross(tempUp, forward);
+        return Vector3.cross(forward, tempUp);
     }
 
-    public void moveLeft(float mag) {
-        position.add(Vector3.scale(getLeftAxis(), mag));
+    public void moveRight(float mag) {
+        position.add(Vector3.scale(getRightAxis(), mag));
     }
 
     public void moveForward(float mag) {
@@ -88,15 +88,15 @@ public class Camera {
     }
 
      public Matrix4 lookAt(Vector3 from, Vector3 to, Vector3 tempUp) {
-         Vector3 forward = Vector3.sub(from, to).normalize();
-         Vector3 side = Vector3.cross(forward, tempUp).normalize();
-         Vector3 up = Vector3.cross(side, forward).normalize();
+         Vector3 forward = Vector3.sub(to, from).normalize(); // -z axis
+         Vector3 right = Vector3.cross(forward, tempUp).normalize(); // +x axis
+         Vector3 up = Vector3.cross(right, forward).normalize(); // (0, 1, 0)
 
          // TODO: why does the forward vector how to be inverted?
          Matrix4 m1 = new Matrix4(new float[][]{
-                 {side.x,     side.y,     side.z,     0.0f},
+                 {right.x,     right.y,     right.z,     0.0f},
                  {up.x,       up.y,       up.z,       0.0f},
-                 {-forward.x,  -forward.y,  -forward.z,  0.0f},
+                 {forward.x,  forward.y,  forward.z,  0.0f},
                  {0.0f,       0.0f,       0.0f,       1.0f}
          });
          Matrix4 m2 = Matrix4.genTranslationMatrix(-from.x, -from.y, -from.z);
