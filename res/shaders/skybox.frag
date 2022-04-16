@@ -1,11 +1,13 @@
 #version 410 core
 
-in vec3 textureCoord;
+// direction representating a 3D cube coordinate
+in vec3 textureDirection;
 
-uniform sampler2D skybox_sample;
+// sample from the CUBE_MAP texture
+uniform samplerCube skybox_sample;
 
 out vec4 fragColor;
 
 void main() {
-   fragColor = texture(skybox_sample, textureCoord);
+   fragColor = texture(skybox_sample, textureDirection);
 }

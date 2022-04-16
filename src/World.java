@@ -9,6 +9,7 @@ public class World {
     public Window window;
     private Player player;
     public Camera camera;
+    public SkyBox skyBox;
     private static World world;
 
     private World() {
@@ -20,6 +21,14 @@ public class World {
                 new Vector3(0, Config.FLOOR_LEVEL + 6.0f, 0)
         );
         player = new Player(camera);
+        skyBox = new SkyBox(new String[] {
+                "res/images/skybox/right.png",
+                "res/images/skybox/left.png",
+                "res/images/skybox/top.png",
+                "res/images/skybox/bottom.png",
+                "res/images/skybox/front.png",
+                "res/images/skybox/back.png",
+        });
     }
 
     public static World getInstance() {
@@ -55,6 +64,7 @@ public class World {
 
     private void render() {
         prepareRender();
+        skyBox.render(camera);
         chunkManager.render(camera);
         window.render();
     }
