@@ -446,4 +446,8 @@ public class Chunk {
 
         return new Vector3i(innerX, innerY, innerZ);
     }
+
+    public BoundingBox getBoundingBox() {
+        return new BoundingBox(Vector3.scale(location.toVector3(), CHUNK_SIZE), CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
+    }
 }

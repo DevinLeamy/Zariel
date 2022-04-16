@@ -73,10 +73,34 @@ public class Vector3 {
         );
     }
 
+    public static Vector3 mult(Vector3 u, Vector3 v) {
+        return new Vector3(
+                u.x * v.x,
+                u.y * v.y,
+                u.z * v.z
+        );
+    }
+
     public Vector3 add(Vector3 other) {
         x += other.x;
         y += other.y;
         z += other.z;
+
+        return this;
+    }
+
+    public Vector3 sub(Vector3 other) {
+        x -= other.x;
+        y -= other.y;
+        z -= other.z;
+
+        return this;
+    }
+
+    public Vector3 negate() {
+        x *= -1;
+        y *= -1;
+        z *= -1;
 
         return this;
     }
@@ -105,12 +129,16 @@ public class Vector3 {
         return new Vector3i((int) x, (int) y, (int) z);
     }
 
+    public Vector3 clone() {
+        return new Vector3(x, y, z);
+    }
+
     public static Vector3 zeros() {
         return new Vector3(0, 0, 0);
     }
 
     public String toString() {
-        return "x: " + x + " y: " + y + " z: " + z + "\n";
+        return String.format("x: %.2f y: %.2f, z: %.2f", x, y, z);
     }
 
     public static float dot(Vector3 u, Vector3 v) {

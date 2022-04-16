@@ -24,7 +24,7 @@ public class Camera {
         this.pitch  = 0.0f; // centered
         this.yaw    = (float) -Math.PI / 2 + 0.01f; // centered
         this.ncp    = 0.01f;  // near clip plane (NCP)
-        this.fcp    = 1000.0f; // far clip plane (FCP)
+        this.fcp    = 500.0f; // far clip plane (FCP)
     }
 
     public Matrix4 projectionMatrix() {
@@ -87,12 +87,11 @@ public class Camera {
         position.add(new Vector3(0, 1, 0).scale(mag));
     }
 
-     public Matrix4 lookAt(Vector3 from, Vector3 to, Vector3 tempUp) {
+    public Matrix4 lookAt(Vector3 from, Vector3 to, Vector3 tempUp) {
          Vector3 forward = Vector3.sub(to, from).normalize(); // -z axis
          Vector3 right = Vector3.cross(forward, tempUp).normalize(); // +x axis
          Vector3 up = Vector3.cross(right, forward).normalize(); // (0, 1, 0)
 
-         // TODO: why does the forward vector how to be inverted?
          Matrix4 m1 = new Matrix4(new float[][]{
                  {right.x,     right.y,     right.z,     0.0f},
                  {up.x,       up.y,       up.z,       0.0f},
@@ -101,5 +100,9 @@ public class Camera {
          });
          Matrix4 m2 = Matrix4.genTranslationMatrix(-from.x, -from.y, -from.z);
          return Matrix4.mult(m1, m2);
-     }
+    }
+
+    public Frustum getViewFrustum() {
+        return new Frustum(fov, aspect, position, calculateDirection(yaw, pitch), new Vector3(0, 1, 0), ncp, fcp);
+    }
 }

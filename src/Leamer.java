@@ -48,11 +48,11 @@ final public class Leamer {
             long framesDuration = frames.stream().mapToLong(Long::longValue).sum();
             if (framesDuration >= 1000) {
                 world.window.setTitle(String.format(
-//                        "FPS: %d POS: %s CHUNK: %s",
-                        "CHUNK: %s",
-//                        frames.size(),
-//                        world.camera.position.toString(),
-                        ChunkManager.getChunkCoords(world.camera.position).toString()
+                        "FPS: %d POS: %s",
+//                        "CHUNK: %s",
+                        frames.size(),
+                        world.camera.position.toString()
+//                        ChunkManager.getChunkCoords(world.camera.position).toString()
                 ));
             }
 

@@ -109,15 +109,17 @@ public class ChunkManager {
 
     public ArrayList<Chunk> getVisibleChunks(Camera perspective) {
         ArrayList<Chunk> visibleChunks = new ArrayList<>();
+        Frustum viewFrustum = perspective.getViewFrustum();
 
         for (Vector3i location : chunkStore.keySet()) {
             Chunk chunk = chunkStore.get(location);
-            // check if a chunk has a neighbor on all sides
-            if (getNeighboringChunks(chunk.location).size() == 6) {
-                continue;
-            }
+            BoundingBox chunkBBox = chunk.getBoundingBox();
 
-            // TODO: some fancy stuff to determine visibility
+            // check if a chunk has a neighbor on all sides
+            if (getNeighboringChunks(chunk.location).size() == 6) { continue; }
+            if (!viewFrustum.boxInOrIntersectsFrustum(chunkBBox)) { continue; }
+            if (!chunk.isActive()) { continue; }
+
             visibleChunks.add(chunk);
         }
 
@@ -168,9 +170,10 @@ public class ChunkManager {
     }
 
     public void render(Camera perspective) {
-        for (Chunk chunk : getVisibleChunks(perspective)) {
-            chunk.render(perspective);
-        }
+        ArrayList<Chunk> visibleChunks = getVisibleChunks(perspective);
+        visibleChunks.forEach(chunk -> chunk.render(perspective));
+
+//        System.out.printf("Rendered chunks: %d%n", visibleChunks.size());
     }
 
     public void update(Camera perspective) {
