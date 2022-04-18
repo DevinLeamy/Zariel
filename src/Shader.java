@@ -3,17 +3,25 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL41.*;
 
 public class Shader {
     protected int type;
     protected int shaderHandle;
+    protected Uniform[] uniforms;
 
-    public Shader(String shaderPath, int type) {
+    public Shader(String shaderPath, int type, Uniform[] uniforms) {
         this.type = type;
+        this.uniforms = uniforms;
 
         compileShader(shaderPath, type);
+    }
+
+    public Uniform[] getUniforms() {
+        return uniforms;
     }
 
     private String loadSource(String path) {

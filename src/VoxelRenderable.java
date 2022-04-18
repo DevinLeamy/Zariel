@@ -14,7 +14,4 @@ abstract public class VoxelRenderable {
     abstract public ArrayList<Action> update(float dt);
 
     abstract public void render();
-//    {
-//        renderer.renderMesh(World.getInstance().camera, mesh, transform.position);
-//    }
 }

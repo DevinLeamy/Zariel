@@ -1,3 +1,4 @@
+import math.Matrix4;
 import math.Vector3;
 import controller.Controller;
 import math.Vector3i;
@@ -9,8 +10,12 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL41.*;
 
 public class Player extends VoxelRenderable {
-    private static VertexShader vs = new VertexShader("res/shaders/chunk.vert");
-    private static FragmentShader fs = new FragmentShader("res/shaders/chunk.frag");
+    private static VertexShader vs = new VertexShader("res/shaders/chunk.vert", new Uniform[] {
+            new Uniform("viewM", Uniform.UniformT.MATRIX_4F),
+            new Uniform("projectionM", Uniform.UniformT.MATRIX_4F),
+            new Uniform("location", Uniform.UniformT.VECTOR_3F)
+    });
+    private static FragmentShader fs = new FragmentShader("res/shaders/chunk.frag", new Uniform[] {});
     private static ShaderProgram shader = new ShaderProgram(vs, fs);
 
     final private float CAMERA_OFFSET_BACK = 10;
@@ -44,7 +49,17 @@ public class Player extends VoxelRenderable {
 
     @Override
     public void render() {
-        renderer.renderMesh(camera, mesh, transform.position);
+        Vector3 cameraPos = camera.transform.position;
+        Vector3 playerPos = World.getInstance().player.transform.position;
+
+        Matrix4 viewMatrix = Camera.lookAt(cameraPos, playerPos, new Vector3(0, 1, 0));
+        Matrix4 projectionMatrix = camera.projectionMatrix();
+
+        renderer.shader.setUniform("viewM", viewMatrix);
+        renderer.shader.setUniform("location", transform.position);
+        renderer.shader.setUniform("projectionM", projectionMatrix);
+
+        renderer.renderMesh(mesh);
     }
 
     private void handleMouseUpdate(float dt, int[] newMousePos) {

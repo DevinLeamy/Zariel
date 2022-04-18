@@ -1,3 +1,4 @@
+import math.Matrix4;
 import math.Vector3;
 import math.Vector3i;
 
@@ -10,8 +11,12 @@ import static org.lwjgl.opengl.GL41.*;
 
 public class Chunk {
     final private static int CHUNK_SIZE = Config.CHUNK_SIZE;
-    private static VertexShader vs = new VertexShader("res/shaders/chunk.vert");
-    private static FragmentShader fs = new FragmentShader("res/shaders/chunk.frag");
+    private static VertexShader vs = new VertexShader("res/shaders/chunk.vert", new Uniform[] {
+        new Uniform("viewM", Uniform.UniformT.MATRIX_4F),
+        new Uniform("projectionM", Uniform.UniformT.MATRIX_4F),
+        new Uniform("location", Uniform.UniformT.VECTOR_3F)
+    });
+    private static FragmentShader fs = new FragmentShader("res/shaders/chunk.frag", new Uniform[] {});
     private static ShaderProgram shader = new ShaderProgram(vs, fs);
 
     /**
@@ -162,8 +167,18 @@ public class Chunk {
             return;
         }
 
-//        System.out.println(mesh.vertices());
-        renderer.renderMesh(perspective, mesh, location.toVector3().scale(CHUNK_SIZE));
+        Vector3 cameraPos = perspective.transform.position;
+        Vector3 playerPos = World.getInstance().player.transform.position;
+
+        Matrix4 viewMatrix = Camera.lookAt(cameraPos, playerPos, new Vector3(0, 1, 0));
+        Matrix4 projectionMatrix = perspective.projectionMatrix();
+        Vector3i location = Vector3i.scale(this.location, CHUNK_SIZE);
+
+        renderer.shader.setUniform("viewM", viewMatrix);
+        renderer.shader.setUniform("projectionM", projectionMatrix);
+        renderer.shader.setUniform("location", location);
+
+        renderer.renderMesh(mesh);
     }
 
     public Block getBlock(Vector3i pos) {

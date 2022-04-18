@@ -14,8 +14,11 @@ import static org.lwjgl.stb.STBImageResize.*;
  * Implemented using a cube map as described here: https://learnopengl.com/Advanced-OpenGL/Cubemaps
  */
 public class SkyBox {
-    private static VertexShader vs = new VertexShader("res/shaders/skybox.vert");
-    private static FragmentShader fs = new FragmentShader("res/shaders/skybox.frag");
+    private static VertexShader vs = new VertexShader("res/shaders/skybox.vert", new Uniform[] {
+            new Uniform("viewM", Uniform.UniformT.MATRIX_4F),
+            new Uniform("projectionM", Uniform.UniformT.MATRIX_4F),
+    });
+    private static FragmentShader fs = new FragmentShader("res/shaders/skybox.frag", new Uniform[] {});
     private static ShaderProgram shader = new ShaderProgram(vs, fs);
 
     private int textureHandle;
