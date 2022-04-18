@@ -76,9 +76,7 @@ public class World {
             }
         }
 
-        // Chunk updates
         chunkManager.update(camera);
-        // ---
         render();
     }
 
@@ -95,9 +93,7 @@ public class World {
         window.render();
     }
 
-    // TODO: REMOVE
     public boolean blockIsActive(int x, int y, int z) {
-//        return false;
         return blockIsActive(new Vector3i(x, y, z));
     }
 

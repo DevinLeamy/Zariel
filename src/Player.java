@@ -1,6 +1,5 @@
 import math.Matrix4;
 import math.Vector3;
-import controller.Controller;
 import math.Vector3i;
 
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ public class Player extends VoxelRenderable {
     private static ShaderProgram shader = new ShaderProgram(vs, fs);
 
     final private float CAMERA_OFFSET_BACK = 10;
-    final private float CAMERA_OFFSET_UP = 5;
+    private float CAMERA_OFFSET_UP = 5;
 
     final private float cameraMovementSpeed = 10; // 1u / second
     final private float cameraRotationSpeed = (float) Math.PI / 4; // 1u / second
@@ -29,6 +28,8 @@ public class Player extends VoxelRenderable {
 
     private Controller controller;
     private Camera camera;
+    private Vector3 velocity;
+    private Vector3 acceleration;
     private int[] mousePos;
     private boolean wireframe;
 
@@ -37,10 +38,13 @@ public class Player extends VoxelRenderable {
         super(transform, shape, new Renderer(shader));
 
         this.camera = camera;
+        this.velocity = Vector3.zeros();
+        this.acceleration = Vector3.zeros();
         controller = Controller.getInstance();
         mousePos = new int[] { 0, 0 };
         wireframe = false;
         previousSelection = new Vector3i(0, 0, 0);
+
     }
 
     public Camera getPerspective() {
@@ -69,9 +73,11 @@ public class Player extends VoxelRenderable {
         }
 
         int dx = newMousePos[0] - mousePos[0];
-//        int dy = newMousePos[1] - mousePos[1];
+        int dy = newMousePos[1] - mousePos[1];
 
         transform.updateYaw(dx * mouseSensitivity);
+        CAMERA_OFFSET_UP += dy * mouseSensitivity * 3;
+        CAMERA_OFFSET_UP = Utils.clamp(0, 25, CAMERA_OFFSET_UP);
 //        transform.updatePitch(-dy * mouseSensitivity);
 
         mousePos = newMousePos;
@@ -113,8 +119,10 @@ public class Player extends VoxelRenderable {
         if (controller.keyPressed(GLFW_KEY_A)) { transform.moveRight(-dt * cameraMovementSpeed); }
         if (controller.keyPressed(GLFW_KEY_D)) { transform.moveRight(dt * cameraMovementSpeed); }
         // up and down
-        if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.moveUp(dt * cameraMovementSpeed); }
-        if (controller.keyPressed(GLFW_KEY_LEFT_SHIFT)) { transform.moveUp(dt * -cameraMovementSpeed); }
+//        if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.moveUp(dt * cameraMovementSpeed); }
+//        if (controller.keyPressed(GLFW_KEY_LEFT_SHIFT)) { transform.moveUp(dt * -cameraMovementSpeed); }
+
+        if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.moveUp(1); }
 
         if (controller.keyPressed(GLFW_KEY_M)) {
             Optional<Vector3i> selected = getSelectedBlock();
@@ -146,6 +154,20 @@ public class Player extends VoxelRenderable {
     public ArrayList<Action> update(float dt) {
         ArrayList<Action> updates = new ArrayList<>();
 
+        Vector3 position = transform.position.clone();
+
+        handleMouseUpdate(dt, controller.mousePosition());
+        handleScrollUpdate(controller.pollScrollDelta());
+        updates.addAll(handleKeyPresses(dt));
+
+        if (!onGround()) {
+            transform.position.sub(Vector3.scale(transform.up, 0.25f));
+        }
+
+        if (colliding()) {
+            transform.position = position;
+        }
+
         // update camera position
         camera.transform.position = transform.position.clone();
         Vector3 offsetBack = Vector3.scale(transform.getForwardAxis(), -CAMERA_OFFSET_BACK);
@@ -155,9 +177,6 @@ public class Player extends VoxelRenderable {
         camera.transform.translate(offsetUp);
         camera.transform.translate(offsetBack);
 
-        handleMouseUpdate(dt, controller.mousePosition());
-        handleScrollUpdate(controller.pollScrollDelta());
-        updates.addAll(handleKeyPresses(dt));
 
         getSelectedBlock().ifPresent(selection -> {
 //            if (!selection.equals(previousSelection)) {
@@ -170,5 +189,22 @@ public class Player extends VoxelRenderable {
 
 
         return updates;
+    }
+
+    public boolean colliding() {
+        World world = World.getInstance();
+        if (world.blockIsActive(transform.position.toVector3i())) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean onGround() {
+        World world = World.getInstance();
+        Vector3i position = transform.position.toVector3i();
+        if (world.blockIsActive(position) || world.blockIsActive(Vector3i.sub(position, new Vector3i(0, 1, 0)))) {
+            return true;
+        }
+        return false;
     }
 }

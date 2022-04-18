@@ -1,7 +1,3 @@
-package controller;
-
-import math.Vector2;
-
 import static org.lwjgl.glfw.GLFW.*;
 
 import java.util.*;
@@ -55,8 +51,8 @@ public class Controller {
         Controller controller = Controller.getInstance();
 
         switch (action) {
-            case GLFW_PRESS   -> controller.setKeyPressed(key, glfwGetKey(window, key) == GLFW_PRESS);
-            case GLFW_RELEASE -> controller.setKeyPressed(key, glfwGetKey(window, key) != GLFW_RELEASE);
+            case GLFW_PRESS   -> controller.setKeyPressed(key, true);
+            case GLFW_RELEASE -> controller.setKeyPressed(key, false);
         }
     }
 

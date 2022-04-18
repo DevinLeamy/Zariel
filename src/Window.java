@@ -1,5 +1,3 @@
-import controller.Controller;
-import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
@@ -15,7 +13,7 @@ import static org.lwjgl.system.MemoryUtil.*;
 public class Window {
 
     // The window handle
-    private long window;
+    public long window;
 
     private final int WIDTH = 1100;
     private final int HEIGHT = 1100;
@@ -65,7 +63,7 @@ public class Window {
 
         // keyboard input initialization
 //        glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
-        glfwSetKeyCallback(window, Controller::onKeyPressedCallback);
+        glfwSetKeyCallback(window, GLFWKeyCallback.create(Controller::onKeyPressedCallback));
 
         // mouse input initialization
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
