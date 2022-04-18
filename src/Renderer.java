@@ -10,7 +10,6 @@ class Renderer {
     }
 
     public void renderMesh(Camera perspective, VoxelMesh mesh, Vector3 location) {
-//        System.out.println("RENDER");
         shader.link();
         int shaderHandle = shader.getProgramHandle();
 
@@ -21,6 +20,7 @@ class Renderer {
 
         Vector3 cameraPos = perspective.transform.position;
         Vector3 playerPos = World.getInstance().player.transform.position;
+//        Matrix4 viewMatrix = Camera.lookAt(cameraPos, Vector3.zeros(), new Vector3(0, 1, 0));
         Matrix4 viewMatrix = Camera.lookAt(cameraPos, playerPos, new Vector3(0, 1, 0));
 
         glUniformMatrix4fv(viewMHandler, true, viewMatrix.toFloatBuffer());

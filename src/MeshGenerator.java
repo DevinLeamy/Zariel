@@ -20,7 +20,7 @@ public class MeshGenerator {
         for (int i = 0; i < dimensions.x; ++i) {
             for (int j = 0; j < dimensions.y; ++j) {
                 for (int k = 0; k < dimensions.z; ++k) {
-                    Block block = voxels.getBlock(i, j, k);
+                    Block block = voxels.getBlock(i, j, k).get();
                     if (!block.isActive()) {
                         continue;
                     }
@@ -68,10 +68,11 @@ public class MeshGenerator {
         return new VoxelMesh(vertices.size(), vao, vbo);
     }
 
+
+
+
     private static ArrayList<Vertex> createBlockVertices(VoxelGeometry voxels, BlockType blockType, int x, int y, int z,
                                                          Vector3i location) {
-        // vertices
-        // TODO: Turn these into enums (eg. FRONT_LEFT_BOTTOM)
         Vector3 v1 = new Vector3 (1.0f,  0.0f, 0.0f);
         Vector3 v2 = new Vector3 (1.0f,  0.0f, 1.0f);
         Vector3 v3 = new Vector3 (0.0f, 0.0f, 1.0f);
@@ -81,11 +82,6 @@ public class MeshGenerator {
         Vector3 v7 = new Vector3 (0.0f, 1.0f, 1.0f);
         Vector3 v8 = new Vector3 (0.0f, 1.0f, 0.0f);
 
-        ArrayList<Vector3> vertices = new ArrayList<>(List.of(
-                Vector3.zeros(), v1, v2, v3, v4, v5, v6, v7, v8
-        ));
-
-        // vertex normals
         ArrayList<Vector3> normals = new ArrayList<>(List.of(
                 Vector3.zeros(),
                 Direction.DOWN.normal,
@@ -95,13 +91,12 @@ public class MeshGenerator {
                 Direction.LEFT.normal,
                 Direction.FRONT.normal
         ));
-
         // translate vertices
         Vector3 translation = new Vector3(x, y, z);
-        for (Vector3 vertex : vertices) {
-            vertex.add(translation);
-        }
-//        vertices.forEach(vertex -> vertex.add(translation));
+        ArrayList<Vector3> vertices = new ArrayList<>(List.of(
+                Vector3.zeros(), v1, v2, v3, v4, v5, v6, v7, v8
+        ));
+        vertices.forEach(vertex -> vertex.add(translation));
 
         // faces - note: indices start at 1, not zero
         // { { vertex, normal } }
@@ -114,8 +109,7 @@ public class MeshGenerator {
         World world = World.getInstance();
 
         // left-face
-//        if (!world.blockIsActive(worldX - 1, worldY, worldZ)) {
-        if (!voxels.blockIsActive(x - 1, y, z)) {
+        if (!world.blockIsActive(worldX - 1, worldY, worldZ)) {
             triangles.add(new int[][] {
                     {3, 5}, {7, 5}, {8, 5}
             });
@@ -125,8 +119,7 @@ public class MeshGenerator {
         }
 
         // bottom-face
-//        if (!world.blockIsActive(worldX, worldY - 1, worldZ)) {
-        if (!voxels.blockIsActive(x, y - 1, y)) {
+        if (!world.blockIsActive(worldX, worldY - 1, worldZ)) {
             triangles.add(new int[][]{
                     {2, 1}, {3, 1}, {4, 1}
             });
@@ -136,8 +129,7 @@ public class MeshGenerator {
         }
 
         // front-face
-//        if (!world.blockIsActive(worldX, worldY, worldZ - 1)) {
-        if (!voxels.blockIsActive(x, y, z - 1)) {
+        if (!world.blockIsActive(worldX, worldY, worldZ - 1)) {
             triangles.add(new int[][]{
                     {1, 6}, {4, 6}, {8, 6}
             });
@@ -147,8 +139,7 @@ public class MeshGenerator {
         }
 
         // right-face
-        if (!voxels.blockIsActive(x + 1, y, z)) {
-//        if (!world.blockIsActive(worldX + 1, worldY, worldZ)) {
+        if (!world.blockIsActive(worldX + 1, worldY, worldZ)) {
             triangles.add(new int[][]{
                     {5, 3}, {6, 3}, {2, 3}
             });
@@ -158,8 +149,7 @@ public class MeshGenerator {
         }
 
         // top-face
-//        if (!world.blockIsActive(worldX, worldY + 1, worldZ)) {
-        if (!voxels.blockIsActive(x, y + 1, z)) {
+        if (!world.blockIsActive(worldX, worldY + 1, worldZ)) {
             triangles.add(new int[][]{
                     {8, 2}, {7, 2}, {6, 2}
             });
@@ -169,8 +159,7 @@ public class MeshGenerator {
         }
 
         // back-face
-//        if (!world.blockIsActive(worldX, worldY, worldZ + 1)) {
-        if (!voxels.blockIsActive(x, y, z + 1)) {
+        if (!world.blockIsActive(worldX, worldY, worldZ + 1)) {
             triangles.add(new int[][]{
                     {6, 4}, {7, 4}, {3, 4}
             });
@@ -186,10 +175,10 @@ public class MeshGenerator {
                 Vector3 pos = vertices.get(vertex[0]);
                 Vector3 normal = normals.get(vertex[1]);
                 Vector3 color = blockType.color;
-                int ambientOcclusion = calculateAmbientOcclusion(voxels, normal,
-                        (int) pos.x, //+ location.x,
-                        (int) pos.y, // + location.y,
-                        (int) pos.z // + location.z
+                int ambientOcclusion = calculateAmbientOcclusion(
+                        (int) pos.x + location.x,
+                        (int) pos.y + location.y,
+                        (int) pos.z + location.z
                 );
 
                 Vertex v = new Vertex(pos, Vector2.zeros(), normal, color);
@@ -202,14 +191,14 @@ public class MeshGenerator {
         return blockVertices;
     }
 
-    private static int calculateAmbientOcclusion(VoxelGeometry voxels, Vector3 vertexNormal, int x, int y, int z) {
+    private static int calculateAmbientOcclusion(int x, int y, int z) {
         World world = World.getInstance();
         // Looking down (-z going up, +x going right)
         // TODO: calculate these based on the vertex normal
-        boolean topLeft     = voxels.blockIsActive(x - 1, y, z);
-        boolean topRight    = voxels.blockIsActive(x, y, z);
-        boolean bottomLeft  = voxels.blockIsActive(x - 1, y, z - 1);
-        boolean bottomRight = voxels.blockIsActive(x, y, z - 1);
+        boolean topLeft     = world.blockIsActive(x - 1, y, z);
+        boolean topRight    = world.blockIsActive(x, y, z);
+        boolean bottomLeft  = world.blockIsActive(x - 1, y, z - 1);
+        boolean bottomRight = world.blockIsActive(x, y, z - 1);
 
         int topLeftI = topLeft ? 1 : 0;
         int topRightI = topRight ? 1 : 0;

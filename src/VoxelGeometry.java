@@ -1,93 +1,72 @@
 import math.Vector3i;
 
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Optional;
 
 public class VoxelGeometry {
-//    private Block[] voxels;
     public Block[][][] voxels;
     private Vector3i dimensions;
+    private int activeBlocks;
     public VoxelGeometry(Block[][][] voxels) {
-//        this.voxels = flatten(voxels);
+        this.activeBlocks = 0;
         this.voxels = voxels;
         this.dimensions = new Vector3i(voxels.length, voxels[0].length, voxels[0][0].length);
+
+        for (int i = 0; i < dimensions.x; ++i) {
+            for (int j = 0; j < dimensions.y; ++j) {
+                for (int k = 0; k < dimensions.z; ++k) {
+                    activeBlocks += voxels[i][j][k].isActive() ? 1 : 0;
+                }
+            }
+        }
     }
     public VoxelGeometry(Vector3i dimensions) {
         this.dimensions = dimensions;
         this.voxels = new Block[dimensions.x][dimensions.y][dimensions.z];
-//        this.voxels = new Block[dimensions.x * dimensions.y * dimensions.z];
+        this.activeBlocks = 0;
     }
 
     public boolean isActive() {
-        boolean active = false;
-        for (int i = 0; i < dimensions.x; ++i) {
-            for (int j = 0; j < dimensions.y; ++j) {
-                for (int k = 0; k < dimensions.z; ++k) {
-                    active |= voxels[i][j][k].isActive();
-                }
-            }
-        }
-//        for (Block voxel : voxels) {
-//            if (voxel != null) {
-//                active |= voxel.isActive();
-//            }
-//        }
-
-        return active;
-    }
-
-    private Block[] flatten(Block[][][] voxels) {
-        Vector3i dims = new Vector3i(voxels.length, voxels[0].length, voxels[0][0].length);
-        Block[] flattened = Arrays.stream(voxels)
-                .flatMap(Arrays::stream)
-                .flatMap(Arrays::stream).toList()
-                .toArray(new Block[dims.x * dims.y * dims.z]);
-        return flattened;
+        return activeBlocks > 0;
     }
 
     public Vector3i dimensions() {
         return dimensions;
     }
 
-    public Block getBlock(Vector3i index) {
-        if (voxels[index.x][index.y][index.z] == null) {
-            voxels[index.x][index.y][index.z] = new Block();
-        }
-        return voxels[index.x][index.y][index.z];
-//        if (voxels[index(index)] == null) {
-//            voxels[index(index)] = new Block();
-//        }
-//        return voxels[index(index)];
+    public Optional<Block> getBlock(Vector3i index) {
+        return getBlock(index.x, index.y, index.z);
     }
 
-    public boolean blockIsActive(int i, int j, int k) {
-        if (0 <= i && i < dimensions.x && 0 <= j && j < dimensions.y && 0 <= k && k < dimensions.z) {
-            return voxels[i][j][k].isActive();
-        }
-        return false;
+    private boolean validIndex(int x, int y, int z) {
+        return 0 <= x && x < dimensions.x && 0 <= y && y < dimensions.y && 0 <= z && z < dimensions.z;
+    }
+    private boolean validIndex(Vector3i index) {
+        return validIndex(index.x, index.y, index.z);
     }
 
-    public Block getBlock(int i, int j, int k) {
+    public Optional<Block> getBlock(int i, int j, int k) {
+        if (!validIndex(i, j, k)) {
+            return Optional.empty();
+        }
+
         if (voxels[i][j][k] == null) {
             voxels[i][j][k] = new Block();
         }
-        return voxels[i][j][k];
-//        if (voxels[index(i, j, k)] == null) {
-//            voxels[index(i, j, k)] = new Block();
-//        }
-//        return voxels[index(i, j, k)];
+        return Optional.of(voxels[i][j][k]);
     }
 
-    private int index(int i, int j, int k) {
-        return i * dimensions.x + j * dimensions.y + k * dimensions.z;
-    }
-
-    private int index(Vector3i i) {
-        return Vector3i.dot(dimensions, i);
-    }
 
     public void setBlock(int i, int j, int k, Block newBlock) {
-//        voxels[index(i, j, k)] = newBlock;
+        if (!validIndex(i, j, k)) {
+            System.out.println("Cannot set");
+            return;
+        }
+        if (getBlock(i, j, k).get().isActive()) {
+            activeBlocks -= 1;
+        }
+        if (newBlock.isActive()) {
+            activeBlocks += 1;
+        }
         voxels[i][j][k] = newBlock;
     }
 }

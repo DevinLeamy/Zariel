@@ -198,7 +198,7 @@ public class ChunkManager {
         ArrayList<Chunk> visibleChunks = getVisibleChunks(perspective);
         visibleChunks.forEach(chunk -> chunk.render(perspective));
 
-        System.out.printf("Rendered chunks: %d%n", visibleChunks.size());
+//        System.out.printf("Rendered chunks: %d%n", visibleChunks.size());
     }
 
     public void update(Camera perspective) {
@@ -206,11 +206,16 @@ public class ChunkManager {
         createRelevantChunks(perspective);
         checkForChunkUpdates();
 
-        for (Vector3i location : new ArrayList<>(loadQueue)) {
-            loadChunk(location);
-        }
-
+        ArrayList<Vector3i> temp = new ArrayList<>(loadQueue);
         loadQueue.clear();
+
+        for (int i = 0; i < temp.size(); ++i) {
+            if (i < Config.LOAD_LIMIT) {
+                loadChunk(temp.get(i));
+            } else {
+                loadQueue.add(temp.get(i));
+            }
+        }
     }
 
     public Optional<Block> getBlock(Vector3i loc) {

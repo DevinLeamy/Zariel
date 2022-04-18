@@ -9,7 +9,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL41.*;
 
 public class Player {
-    final private float CAMERA_OFFSET_BACK = 5;
+    final private float CAMERA_OFFSET_BACK = 10;
     final private float CAMERA_OFFSET_UP = 5;
 
     final private float cameraMovementSpeed = 6; // 1u / second
@@ -50,7 +50,7 @@ public class Player {
         int dy = newMousePos[1] - mousePos[1];
 
         transform.updateYaw(-dx * mouseSensitivity);
-        transform.updatePitch(-dy * mouseSensitivity);
+//        transform.updatePitch(-dy * mouseSensitivity);
 
         mousePos = newMousePos;
     }
@@ -126,6 +126,7 @@ public class Player {
         // update camera position
         camera.transform.position = transform.position.clone();
         Vector3 offsetBack = Vector3.scale(transform.getForwardAxis(), -CAMERA_OFFSET_BACK);
+        offsetBack.y = 0;
         Vector3 offsetUp = Vector3.scale(transform.up, CAMERA_OFFSET_UP);
 
         camera.transform.translate(offsetUp);

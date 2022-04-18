@@ -84,53 +84,51 @@ public class Chunk {
             }
         }
 
-//        trees.forEach(this::spawnTree);
+        trees.forEach(this::spawnTree);
 
         for (int i = 0; i < CHUNK_SIZE; ++i) {
             for (int j = 0; j < CHUNK_SIZE; ++j) {
                 for (int k = 0; k < CHUNK_SIZE; ++k) {
-                    voxels.getBlock(i, j, k).setUpdateCallback(this::onBlockUpdate);
+                    voxels.getBlock(i, j, k).get().setUpdateCallback(this::onBlockUpdate);
                 }
             }
         }
     }
 
-//    public void spawnTree(Vector3i chunkSpawnPoint) {
-//        int lowerY = location.y * CHUNK_SIZE + chunkSpawnPoint.y;
-//        int upperY = lowerY + 5;
-//
-//        for (int i = lowerY; i <= upperY; ++i) {
-//            if (i < Config.GROUND_LEVEL || i >= Config.FLOOR_LEVEL) {
-//                return;
-//            }
-//        }
-//
-//        int x = chunkSpawnPoint.x;
-//        int y = chunkSpawnPoint.y;
-//        int z = chunkSpawnPoint.z;
-//
-//        try {
-//            BlockType truck = BlockType.DIRT;
-//            BlockType leaf = BlockType.SAND;
-//            // truck
-//            blocks[x][y][z] = new Block(true, truck);
-//            blocks[x][y + 1][z] = new Block(true, truck);
-//            blocks[x][y + 2][z] = new Block(true, truck);
-//            blocks[x][y + 3][z] = new Block(true, truck);
-//
-//            // foliage
-//            blocks[x][y + 3][z + 1] = new Block(true, leaf);
-//            blocks[x][y + 3][z - 1] = new Block(true, leaf);
-//            blocks[x + 1][y + 3][z] = new Block(true, leaf);
-//            blocks[x - 1][y + 3][z] = new Block(true, leaf);
-//            blocks[x][y + 4][z] = new Block(true, leaf);
-//            blocks[x + 1][y + 4][z + 1] = new Block(true, leaf);
-//            blocks[x - 1][y + 4][z + 1] = new Block(true, leaf);
-//            blocks[x - 1][y + 4][z - 1] = new Block(true, leaf);
-//            blocks[x + 1][y + 4][z - 1] = new Block(true, leaf);
-//            blocks[x][y + 5][z] = new Block(true, leaf);
-//        } catch (ArrayIndexOutOfBoundsException e) {}
-//    }
+    public void spawnTree(Vector3i chunkSpawnPoint) {
+        int lowerY = chunkSpawnPoint.y;
+        int upperY = lowerY + 5;
+
+        if (upperY >= CHUNK_SIZE) {
+            return;
+        }
+
+        int x = chunkSpawnPoint.x;
+        int y = chunkSpawnPoint.y;
+        int z = chunkSpawnPoint.z;
+
+        try {
+            BlockType truck = BlockType.DIRT;
+            BlockType leaf = BlockType.SAND;
+            // truck
+            voxels.setBlock(x, y, z, new Block(true, truck));
+            voxels.setBlock(x, y + 1, z, new Block(true, truck));
+            voxels.setBlock(x, y + 2, z, new Block(true, truck));
+            voxels.setBlock(x, y + 3, z, new Block(true, truck));
+
+            // foliage
+            voxels.setBlock(x, y + 3, z + 1, new Block(true, leaf));
+            voxels.setBlock(x, y + 3,z - 1, new Block(true, leaf));
+            voxels.setBlock(x + 1,y + 3,z, new Block(true, leaf));
+            voxels.setBlock(x - 1,y + 3,z, new Block(true, leaf));
+            voxels.setBlock(x,y + 4,z, new Block(true, leaf));
+            voxels.setBlock(x + 1,y + 4,z + 1, new Block(true, leaf));
+            voxels.setBlock(x - 1,y + 4,z + 1, new Block(true, leaf));
+            voxels.setBlock(x - 1,y + 4,z - 1, new Block(true, leaf));
+            voxels.setBlock(x + 1,y + 4,z - 1, new Block(true, leaf));
+            voxels.setBlock(x, y + 5,z, new Block(true, leaf));
+        } catch (ArrayIndexOutOfBoundsException e) {}
+    }
 
     public void onBlockUpdate() {
         updated = true;
@@ -150,9 +148,8 @@ public class Chunk {
      */
     public void load() {
         this.mesh = MeshGenerator.generateVoxelMesh(voxels, Vector3i.scale(location, CHUNK_SIZE));
-//        System.out.println("LOADED");
-        loaded = true;
         updated = false;
+        loaded = true;
     }
 
     /**
@@ -166,6 +163,7 @@ public class Chunk {
             return;
         }
 
+//        System.out.println(mesh.vertices());
         renderer.renderMesh(perspective, mesh, location.toVector3().scale(CHUNK_SIZE));
     }
 

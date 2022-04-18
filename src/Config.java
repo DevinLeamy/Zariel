@@ -3,5 +3,6 @@ public class Config {
     final public static int WORLD_LENGTH = 10; // z axis
     final public static int WORLD_WIDTH = 10;  // x axis
     final public static int WORLD_HEIGHT = 1;  // y axis
-    final public static float CHUNK_LOAD_DISTANCE = 3f;
+    final public static float CHUNK_LOAD_DISTANCE = 6f;
+    final public static int LOAD_LIMIT = 2;
 }
