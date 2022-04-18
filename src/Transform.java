@@ -37,7 +37,7 @@ public class Transform {
 
     public Matrix4 modelMatrix() {
         // TODO: add pitch and roll
-        Matrix4 rotationM    = Matrix4.genRotationMatrix(0, yaw, 0);
+        Matrix4 rotationM    = Matrix4.genRotationMatrix(pitch, yaw, pitch); // (float) Math.PI * 0.5f);
         Matrix4 scalingM     = Matrix4.genScalingMatrix(scale.x, scale.y, scale.z);
         Matrix4 translationM = Matrix4.genTranslationMatrix(position.x, position.y, position.z);
 

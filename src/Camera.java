@@ -6,8 +6,6 @@ public class Camera {
     public Transform transform;
     float fov;
     float aspect;
-    float pitch;
-    float yaw;
     float ncp;
     float fcp;
 

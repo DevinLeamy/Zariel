@@ -1,17 +1,20 @@
 import math.Vector3;
+import math.Vector3i;
 
-public enum BlockType {
-    GENERAL(new Vector3(0.0f, 0.0f, 1.0f)),
-    SAND(new Vector3(252 / 255f, 232 / 255f, 177 / 255f)),
-    DIRT(new Vector3(117 / 255f, 74 / 255f, 21 / 255f)),
-    GRASS(new Vector3(52 / 255f, 140 / 255f, 49 / 255f)),
-    SNOW(new Vector3(235 / 255f, 235 / 255f, 235 / 255f)),
-    RED(new Vector3(255 / 255f, 40 / 255f, 0 / 255f)),
-    EMPTY(new Vector3(0.0f, 0.0f, 0.0f));
+public class BlockType {
+    public static BlockType EMPTY = new BlockType(Vector3i.zeros());
+    public static BlockType SAND = new BlockType(new Vector3i(252, 232, 177));
+    public static BlockType DIRT = new BlockType(new Vector3i(117, 74, 21));
+    public static BlockType BEDROCK = new BlockType(new Vector3i(117, 74, 21));
+    public static BlockType GRASS = new BlockType(new Vector3i(52, 140, 49));
+    public static BlockType STONE = new BlockType(new Vector3i(140, 140, 140));
+    public static BlockType WATER = new BlockType(new Vector3i(40, 40, 230));
+    public static BlockType SNOW = new BlockType(new Vector3i(235, 235, 235));
+    public static BlockType RED = new BlockType(new Vector3i(255, 40, 0));
 
     public final Vector3 color;
 
-    BlockType(Vector3 color) {
-        this.color = color;
+    public BlockType(Vector3i rgb) {
+        this.color = Vector3.scale(rgb.toVector3(), 1.0f / 255f);
     }
 }

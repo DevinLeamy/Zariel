@@ -118,9 +118,6 @@ public class Player extends VoxelRenderable {
         // left and right
         if (controller.keyPressed(GLFW_KEY_A)) { transform.moveRight(-dt * cameraMovementSpeed); }
         if (controller.keyPressed(GLFW_KEY_D)) { transform.moveRight(dt * cameraMovementSpeed); }
-        // up and down
-//        if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.moveUp(dt * cameraMovementSpeed); }
-//        if (controller.keyPressed(GLFW_KEY_LEFT_SHIFT)) { transform.moveUp(dt * -cameraMovementSpeed); }
 
         if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.moveUp(1.0f); }
 
@@ -171,6 +168,7 @@ public class Player extends VoxelRenderable {
         // update camera position
         camera.transform.position = transform.position.clone();
         Vector3 offsetBack = Vector3.scale(transform.getForwardAxis(), -CAMERA_OFFSET_BACK);
+//        Vector3 offsetBack = Vector3.scale(new Vector3(0, 0, 1), -CAMERA_OFFSET_BACK);
         offsetBack.y = 0;
         Vector3 offsetUp = Vector3.scale(transform.up, CAMERA_OFFSET_UP);
 

@@ -61,29 +61,27 @@ public class Chunk {
     public void initializeGeometry() {
         ArrayList<Vector3i> trees = new ArrayList<>();
 
+        TerrainGenerator terrainGenerator = new TerrainGenerator();
         voxels = new VoxelGeometry(new Vector3i(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
 
         for (int x = 0; x < CHUNK_SIZE; ++x) {
             for (int z = 0; z < CHUNK_SIZE; ++z) {
                 float noise = noiseMap[x][z];
                 noise = (noise + 1.0f) / 2.0f;
+                int height = (int) Math.floor(noise * Config.MAX_LEVEL);
+                int chunkBase = this.location.y * CHUNK_SIZE;
 
-                int maxHeight = Integer.min((int) (noise * CHUNK_SIZE), CHUNK_SIZE - 1);
-                int maxWorldHeight = (int) Float.min(this.location.y * CHUNK_SIZE + maxHeight, 17);
-                for (int y = 0; y < maxHeight; ++y) {
-                    float worldY = y + this.location.y * CHUNK_SIZE;
-
-                    // check if the block is within spawning range
-                    if (worldY > 17) {
-                        voxels.setBlock(x, y, z, new Block(true, BlockType.SNOW));
-                    } else {
-                        voxels.setBlock(x, y, z, new Block(true, worldY > maxWorldHeight - 2 ? BlockType.GRASS : BlockType.DIRT));
+                for (int y = 0; y < CHUNK_SIZE; ++y) {
+                    int worldHeight = chunkBase + y;
+                    if (worldHeight > height) {
+                        break;
                     }
 
+                    voxels.setBlock(x, y, z, terrainGenerator.getBlock(height));
                 }
 
-                if (0.001f > Math.random()) {
-                    trees.add(new Vector3i(x, maxHeight, z));
+                if (0.001f > Math.random() && height >= chunkBase && height < chunkBase + CHUNK_SIZE) {
+                    trees.add(new Vector3i(x, height, z));
                 }
             }
         }

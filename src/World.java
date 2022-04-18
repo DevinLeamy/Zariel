@@ -8,20 +8,14 @@ public class World {
     private ChunkManager chunkManager;
     public Window window;
     public Player player;
-    public Camera camera;
+    public DebugCamera debugCamera;
     public SkyBox skyBox;
     private static World world;
 
     private World() {
-        window = new Window();
-        chunkManager = new ChunkManager();
-        camera = new Camera(
-                (float) Math.PI - (float) Math.PI / 2,
-                window.getAspectRatio(),
-                new Vector3(0, 17 + 6.0f, 0)
-        );
-
-        skyBox = new SkyBox(new String[] {
+        this.window = new Window();
+        this.chunkManager = new ChunkManager();
+        this.skyBox = new SkyBox(new String[] {
                 "res/images/skybox/right.png",
                 "res/images/skybox/left.png",
                 "res/images/skybox/top.png",
@@ -32,11 +26,18 @@ public class World {
     }
 
     private void init() {
-        player = new Player(
+//        NoiseMapGenerator noiseMapGenerator = NoiseMapGenerator.getInstance();
+        Camera playerPerspective = new Camera(
+                (float) Math.PI - (float) Math.PI / 2,
+                window.getAspectRatio(),
+                new Vector3(0, 17 + 6.0f, 0)
+        );
+        this.debugCamera = new DebugCamera();
+        this.player = new Player(
                 new Transform(
                     new Vector3(
                         Config.WORLD_WIDTH / 2.0f * Config.CHUNK_SIZE,
-                        17,
+                        60,
                         Config.WORLD_LENGTH / 2.0f * Config.CHUNK_SIZE
                     ),
                         new Vector3(0, 0, 0),
@@ -51,7 +52,7 @@ public class World {
                         }
                     }
                 ),
-                camera
+                playerPerspective
         );
     }
 
@@ -67,7 +68,11 @@ public class World {
     public void update(float dt) {
         ArrayList<Action> updates = new ArrayList<>();
         // Game Logic Updates
-        updates.addAll(player.update(dt));
+        if (Debug.DEBUG) {
+            debugCamera.update(dt);
+        } else {
+            updates.addAll(player.update(dt));
+        }
         // ai.updates(dt) etc...
 
         for (Action action : updates) {
@@ -76,7 +81,7 @@ public class World {
             }
         }
 
-        chunkManager.update(camera);
+        chunkManager.update(getPerspective());
         render();
     }
 
@@ -84,11 +89,19 @@ public class World {
         window.prepareWindow();
     }
 
+    private Camera getPerspective() {
+        if (Debug.DEBUG) {
+            return debugCamera.getPerspective();
+        } else {
+            return player.getPerspective();
+        }
+    }
+
 
     private void render() {
         prepareRender();
-        skyBox.render(camera);
-        chunkManager.render(camera);
+        skyBox.render(getPerspective());
+        chunkManager.render(getPerspective());
         player.render();
         window.render();
     }

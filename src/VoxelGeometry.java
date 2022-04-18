@@ -1,5 +1,9 @@
+import com.scs.voxlib.*;
 import math.Vector3i;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -85,5 +89,62 @@ public class VoxelGeometry {
             activeBlocks += 1;
         }
         voxels[i][j][k] = newBlock;
+    }
+
+    public static int[] readRGBA(int raw) {
+        return new int[] {
+                ((raw >> 0) & 0xFF),
+                ((raw >> 8) & 0xFF),
+                ((raw >> 16) & 0xFF),
+                ((raw >> 24) & 0xFF)
+        };
+    }
+
+    public static VoxelGeometry loadFromFile(String path) {
+        try (VoxReader reader = new VoxReader(new FileInputStream(path))) {
+            VoxFile voxFile = reader.read();
+            int[] rawPalette = voxFile.getPalette();
+            Vector3i[] palette = new Vector3i[rawPalette.length];
+
+            for (int i = 0; i < rawPalette.length; ++i) {
+                int[] rgba = readRGBA(rawPalette[i]);
+                palette[i] = new Vector3i(rgba[0], rgba[1], rgba[2]);
+            }
+
+
+            for (VoxModelInstance model_instance : voxFile.getModelInstances()) {
+                VoxModelBlueprint model = model_instance.model;
+                int maxX = 0, maxY = 0, maxZ = 0;
+
+                for (Voxel voxel : model.getVoxels()) {
+                    int x = voxel.getPosition().x;
+                    int z = voxel.getPosition().y;
+                    int y = voxel.getPosition().z;
+
+                    maxX = Integer.max(maxX, x);
+                    maxY = Integer.max(maxY, y);
+                    maxZ = Integer.max(maxZ, z);
+                }
+
+                VoxelGeometry geometry = new VoxelGeometry(new Vector3i(maxX, maxY, maxZ));
+
+                for (Voxel voxel : model.getVoxels()) {
+                    int x = voxel.getPosition().x;
+                    int z = voxel.getPosition().y;
+                    int y = voxel.getPosition().z;
+                    int index = voxel.getColourIndex() & 0xFF;
+
+                    geometry.setBlock(x, y, z, new Block(true, new BlockType(palette[index])));
+                }
+
+                return geometry;
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.err.println("Error reading voxel file");
+        return new VoxelGeometry(new Vector3i(1, 1, 1));
     }
 }

@@ -136,5 +136,8 @@ public class Window {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
             glfwDestroyWindow(window);
         }
+        if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) {
+            Debug.DEBUG = !Debug.DEBUG;
+        }
     }
 }
