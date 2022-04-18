@@ -13,21 +13,27 @@ public class ChunkManager {
      *
      * All chunks are in the loaded chunks list.
      */
-    Map<Vector3i, Chunk> chunkStore;
+    Chunk[][][] chunks;
     Set<Vector3i> loadQueue;
 
     ChunkManager() {
-        this.chunkStore = new HashMap<>();
+        this.chunks = new Chunk[Config.WORLD_LENGTH][Config.WORLD_HEIGHT][Config.WORLD_WIDTH];
         this.loadQueue = new HashSet<>();
     }
 
     private ArrayList<Vector3i> getLoadedChunks() {
         ArrayList<Vector3i> loadedChunks = new ArrayList<>();
-        for (Vector3i location : chunkStore.keySet()) {
-            if (chunkStore.get(location).loaded) {
-                loadedChunks.add(location);
+        for (int i = 0; i < chunks.length; ++i) {
+            for (int j = 0; j < chunks[0].length; ++j) {
+                for (int k = 0; k < chunks[0][0].length; ++k) {
+                    Optional<Chunk> chunk = getChunk(i, j, k);
+                    if (chunk.isPresent() && chunk.get().loaded) {
+                        loadedChunks.add(chunk.get().location);
+                    }
+                }
             }
         }
+
 
         return loadedChunks;
     }
@@ -48,36 +54,47 @@ public class ChunkManager {
         }
     }
 
+    private boolean validCoord(Vector3i location) {
+        return validCoord(location.x, location.y, location.z);
+    }
+
+    private boolean validCoord(int x, int y, int z) {
+        if (0 > x || x >= chunks.length || 0 > y || y >= chunks[0].length || 0 > z || z >= chunks[0][0].length) {
+            return false;
+        }
+        return true;
+    }
+
+    private void setChunk(Vector3i location, Chunk chunk) {
+        if (validCoord(location)) {
+            chunks[location.x][location.y][location.z] = chunk;
+        }
+    }
+
     public void createChunk(Vector3i chunkLocation, Chunk chunk) {
         chunk.initializeGeometry();
-        chunkStore.put(chunkLocation, chunk);
+        setChunk(chunkLocation, chunk);
         loadQueue.add(chunkLocation);
     }
 
     public void unloadChunk(Vector3i chunkLocation) {
-        chunkStore.get(chunkLocation).unload();
-        chunkStore.remove(chunkLocation);
+        getChunk(chunkLocation).get().unload();
+        setChunk(chunkLocation, null);
     }
 
     public void loadChunk(Vector3i chunkLocation) {
-        chunkStore.get(chunkLocation).load();
+        getChunk(chunkLocation).get().load();
     }
 
     public void createRelevantChunks(Camera perspective) {
         Vector3 origin = Chunk.worldCoordToChunkLocation(perspective.transform.position);
         ArrayList<Vector3i> create = new ArrayList<>();
 
-        int lowX = (int) Math.floor(origin.x - CHUNK_LOAD_DISTANCE);
-        int lowY = (int) Math.floor(origin.y - CHUNK_LOAD_DISTANCE);
-        int lowZ = (int) Math.floor(origin.z - CHUNK_LOAD_DISTANCE);
-
-        int lowHighSpread = (int) Math.ceil(CHUNK_LOAD_DISTANCE * 2);
-
-        for (int x = lowX; x <= lowX + lowHighSpread; ++x) {
-            for (int y = lowY; y <= lowY + lowHighSpread; ++y) {
-                for (int z = lowZ; z <= lowZ + lowHighSpread; ++z) {
+        for (int x = 0; x < chunks.length; ++x) {
+            for (int y = 0; y < chunks[0].length; ++y) {
+                for (int z = 0; z < chunks[0][0].length; ++z) {
                     Vector3i chunkLocation = new Vector3i(x, y, z);
-                    if (chunkLocationInRange(origin, chunkLocation) && !chunkStore.containsKey(chunkLocation)) {
+                    if (chunkLocationInRange(origin, chunkLocation) && getChunk(chunkLocation).isEmpty()) {
                         create.add(chunkLocation);
                     }
                 }
@@ -111,13 +128,13 @@ public class ChunkManager {
         ArrayList<Chunk> visibleChunks = new ArrayList<>();
         Frustum viewFrustum = perspective.getViewFrustum();
 
-        for (Vector3i location : chunkStore.keySet()) {
-            Chunk chunk = chunkStore.get(location);
+        for (Vector3i location : getLoadedChunks()) {
+            Chunk chunk = getChunk(location).get();
             BoundingBox chunkBBox = chunk.getBoundingBox();
 
             // check if a chunk has a neighbor on all sides
             if (getNeighboringChunks(chunk.location).size() == 6) { continue; }
-            if (!viewFrustum.boxInOrIntersectsFrustum(chunkBBox)) { continue; }
+//            if (!viewFrustum.boxInOrIntersectsFrustum(chunkBBox)) { continue; }
             if (!chunk.isActive()) { continue; }
 
             visibleChunks.add(chunk);
@@ -126,13 +143,21 @@ public class ChunkManager {
         return visibleChunks;
     }
 
-    public Optional<Chunk> getChunk(Vector3i chunkLocation) {
-        if (!chunkStore.containsKey(chunkLocation)) {
+    public Optional<Chunk> getChunk(int x, int y, int z) {
+        if (!validCoord(x, y, z)) {
+            return Optional.empty();
+        }
+        Chunk chunk = chunks[x][y][z];
+
+        if (chunk == null || !chunk.isActive()) {
             return Optional.empty();
         }
 
-        Chunk chunk = chunkStore.get(chunkLocation);
-        return chunk.isActive() ? Optional.of(chunk) : Optional.empty();
+        return Optional.of(chunk);
+    }
+
+    public Optional<Chunk> getChunk(Vector3i location) {
+        return getChunk(location.x, location.y, location.z);
     }
 
     public ArrayList<Chunk> getNeighboringChunks(Vector3i chunkLocation) {
@@ -157,7 +182,7 @@ public class ChunkManager {
 
     private void checkForChunkUpdates() {
         for (Vector3i location: getLoadedChunks()) {
-            if (chunkStore.get(location).updated) {
+            if (getChunk(location).get().updated) {
                 // reload chunk
                 loadQueue.add(location);
 

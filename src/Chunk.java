@@ -65,16 +65,12 @@ public class Chunk {
 //                noise = 1.0f - noise * noise;
 
                 int maxHeight = Integer.min((int) (noise * CHUNK_SIZE), CHUNK_SIZE - 1);
-                int maxWorldHeight = (int) Float.min(this.location.y * CHUNK_SIZE + maxHeight, Config.FLOOR_LEVEL);
+                int maxWorldHeight = (int) Float.min(this.location.y * CHUNK_SIZE + maxHeight, 17);
                 for (int y = 0; y < maxHeight; ++y) {
                     float worldY = y + this.location.y * CHUNK_SIZE;
 
                     // check if the block is within spawning range
-                    if (worldY < Config.GROUND_LEVEL || worldY >= Config.FLOOR_LEVEL) {
-                        continue;
-                    }
-
-                    if (worldY > Config.FLOOR_LEVEL - 17) {
+                    if (worldY > 17) {
                         voxels.setBlock(x, y, z, new Block(true, BlockType.SNOW));
                     } else {
                         voxels.setBlock(x, y, z, new Block(true, worldY > maxWorldHeight - 2 ? BlockType.GRASS : BlockType.DIRT));
@@ -97,8 +93,6 @@ public class Chunk {
                 }
             }
         }
-
-//        this.voxels = new VoxelGeometry(voxels);
     }
 
 //    public void spawnTree(Vector3i chunkSpawnPoint) {

@@ -18,9 +18,13 @@ public class World {
         camera = new Camera(
                 (float) Math.PI - (float) Math.PI / 2,
                 window.getAspectRatio(),
-                new Vector3(0, Config.FLOOR_LEVEL + 6.0f, 0)
+                new Vector3(0, 17 + 6.0f, 0)
         );
-        player = new Player(new Vector3(0, Config.FLOOR_LEVEL, 0), camera);
+        player = new Player(new Vector3(
+                Config.WORLD_WIDTH / 2.0f * Config.CHUNK_SIZE,
+                17,
+                Config.WORLD_LENGTH / 2.0f * Config.CHUNK_SIZE
+        ), camera);
         skyBox = new SkyBox(new String[] {
                 "res/images/skybox/right.png",
                 "res/images/skybox/left.png",
