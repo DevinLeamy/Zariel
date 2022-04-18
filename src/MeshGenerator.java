@@ -25,7 +25,7 @@ public class MeshGenerator {
                         continue;
                     }
 //
-                    ArrayList<Vertex> blockVertices = createBlockVertices(voxels, block.getBlockType(), i, j, k,
+                    ArrayList<Vertex> blockVertices = createBlockVertices(block.getBlockType(), i, j, k,
                         location);
                     vertices.addAll(blockVertices);
                 }
@@ -68,10 +68,7 @@ public class MeshGenerator {
         return new VoxelMesh(vertices.size(), vao, vbo);
     }
 
-
-
-
-    private static ArrayList<Vertex> createBlockVertices(VoxelGeometry voxels, BlockType blockType, int x, int y, int z,
+    private static ArrayList<Vertex> createBlockVertices(BlockType blockType, int x, int y, int z,
                                                          Vector3i location) {
         Vector3 v1 = new Vector3 (1.0f,  0.0f, 0.0f);
         Vector3 v2 = new Vector3 (1.0f,  0.0f, 1.0f);

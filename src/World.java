@@ -20,11 +20,7 @@ public class World {
                 window.getAspectRatio(),
                 new Vector3(0, 17 + 6.0f, 0)
         );
-        player = new Player(new Vector3(
-                Config.WORLD_WIDTH / 2.0f * Config.CHUNK_SIZE,
-                17,
-                Config.WORLD_LENGTH / 2.0f * Config.CHUNK_SIZE
-        ), camera);
+
         skyBox = new SkyBox(new String[] {
                 "res/images/skybox/right.png",
                 "res/images/skybox/left.png",
@@ -35,9 +31,22 @@ public class World {
         });
     }
 
+    private void init() {
+        player = new Player(
+                new Transform(new Vector3(
+                        Config.WORLD_WIDTH / 2.0f * Config.CHUNK_SIZE,
+                        17,
+                        Config.WORLD_LENGTH / 2.0f * Config.CHUNK_SIZE
+                )),
+                new VoxelGeometry(new Block[][][] {{{ new Block(true, BlockType.SAND )}}}),
+                camera
+        );
+    }
+
     public static World getInstance() {
         if (World.world == null) {
             World.world = new World();
+            World.world.init();
         }
 
         return World.world;
@@ -70,6 +79,7 @@ public class World {
         prepareRender();
         skyBox.render(camera);
         chunkManager.render(camera);
+        player.render();
         window.render();
     }
 

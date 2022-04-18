@@ -134,7 +134,7 @@ public class ChunkManager {
 
             // check if a chunk has a neighbor on all sides
             if (getNeighboringChunks(chunk.location).size() == 6) { continue; }
-//            if (!viewFrustum.boxInOrIntersectsFrustum(chunkBBox)) { continue; }
+            if (!viewFrustum.boxInOrIntersectsFrustum(chunkBBox)) { continue; }
             if (!chunk.isActive()) { continue; }
 
             visibleChunks.add(chunk);

@@ -1,17 +1,20 @@
-public class VoxelRenderable {
+import java.util.ArrayList;
+
+abstract public class VoxelRenderable {
     Transform transform;
     VoxelMesh mesh;
+    Renderer renderer;
 
-    public VoxelRenderable(Transform transform, VoxelMesh mesh) {
+    public VoxelRenderable(Transform transform, VoxelGeometry shape, Renderer renderer) {
         this.transform = transform;
-        this.mesh = mesh;
+        this.mesh = MeshGenerator.generateVoxelMesh(shape, transform.position.toVector3i());
+        this.renderer = renderer;
     }
 
-    public void update(double dt) {
+    abstract public ArrayList<Action> update(float dt);
 
-    }
-
-    public void render(double dt) {
-
-    }
+    abstract public void render();
+//    {
+//        renderer.renderMesh(World.getInstance().camera, mesh, transform.position);
+//    }
 }

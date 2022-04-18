@@ -62,7 +62,6 @@ public class Chunk {
             for (int z = 0; z < CHUNK_SIZE; ++z) {
                 float noise = noiseMap[x][z];
                 noise = (noise + 1.0f) / 2.0f;
-//                noise = 1.0f - noise * noise;
 
                 int maxHeight = Integer.min((int) (noise * CHUNK_SIZE), CHUNK_SIZE - 1);
                 int maxWorldHeight = (int) Float.min(this.location.y * CHUNK_SIZE + maxHeight, 17);

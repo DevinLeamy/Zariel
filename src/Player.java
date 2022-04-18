@@ -8,7 +8,11 @@ import java.util.Optional;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL41.*;
 
-public class Player {
+public class Player extends VoxelRenderable {
+    private static VertexShader vs = new VertexShader("res/shaders/chunk.vert");
+    private static FragmentShader fs = new FragmentShader("res/shaders/chunk.frag");
+    private static ShaderProgram shader = new ShaderProgram(vs, fs);
+
     final private float CAMERA_OFFSET_BACK = 10;
     final private float CAMERA_OFFSET_UP = 5;
 
@@ -19,17 +23,15 @@ public class Player {
     private Vector3i previousSelection;
 
     private Controller controller;
-    public Transform transform;
-    public VoxelMesh mesh;
     private Camera camera;
     private int[] mousePos;
     private boolean wireframe;
 
 
-    public Player(Vector3 position, Camera camera) {
-        this.transform = new Transform(position);
-        this.camera = camera;
+    public Player(Transform transform, VoxelGeometry shape, Camera camera) {
+        super(transform, shape, new Renderer(shader));
 
+        this.camera = camera;
         controller = Controller.getInstance();
         mousePos = new int[] { 0, 0 };
         wireframe = false;
@@ -40,6 +42,11 @@ public class Player {
         return camera;
     }
 
+    @Override
+    public void render() {
+        renderer.renderMesh(camera, mesh, transform.position);
+    }
+
     private void handleMouseUpdate(float dt, int[] newMousePos) {
         if (mousePos[0] == 0 && newMousePos[0] != 0) {
             // initialize mouse position
@@ -47,7 +54,7 @@ public class Player {
         }
 
         int dx = newMousePos[0] - mousePos[0];
-        int dy = newMousePos[1] - mousePos[1];
+//        int dy = newMousePos[1] - mousePos[1];
 
         transform.updateYaw(-dx * mouseSensitivity);
 //        transform.updatePitch(-dy * mouseSensitivity);
@@ -120,6 +127,7 @@ public class Player {
         camera.fov = Utils.clamp(0.1f * (float) Math.PI, 0.7f * (float) Math.PI, camera.fov);
     }
 
+    @Override
     public ArrayList<Action> update(float dt) {
         ArrayList<Action> updates = new ArrayList<>();
 
