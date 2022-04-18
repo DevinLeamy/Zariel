@@ -10,18 +10,18 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL41.*;
 
 public class Player extends VoxelRenderable {
-    private static VertexShader vs = new VertexShader("res/shaders/chunk.vert", new Uniform[] {
+    private static VertexShader vs = new VertexShader("res/shaders/voxel_renderable.vert", new Uniform[] {
             new Uniform("viewM", Uniform.UniformT.MATRIX_4F),
             new Uniform("projectionM", Uniform.UniformT.MATRIX_4F),
-            new Uniform("location", Uniform.UniformT.VECTOR_3F)
+            new Uniform("modelM", Uniform.UniformT.MATRIX_4F)
     });
-    private static FragmentShader fs = new FragmentShader("res/shaders/chunk.frag", new Uniform[] {});
+    private static FragmentShader fs = new FragmentShader("res/shaders/voxel_renderable.frag", new Uniform[] {});
     private static ShaderProgram shader = new ShaderProgram(vs, fs);
 
     final private float CAMERA_OFFSET_BACK = 10;
     final private float CAMERA_OFFSET_UP = 5;
 
-    final private float cameraMovementSpeed = 6; // 1u / second
+    final private float cameraMovementSpeed = 10; // 1u / second
     final private float cameraRotationSpeed = (float) Math.PI / 4; // 1u / second
     final private float mouseSensitivity = 0.002f;
     final private float scrollSensitivity = 0.03f;
@@ -56,7 +56,7 @@ public class Player extends VoxelRenderable {
         Matrix4 projectionMatrix = camera.projectionMatrix();
 
         renderer.shader.setUniform("viewM", viewMatrix);
-        renderer.shader.setUniform("location", transform.position);
+        renderer.shader.setUniform("modelM", transform.modelMatrix());
         renderer.shader.setUniform("projectionM", projectionMatrix);
 
         renderer.renderMesh(mesh);
@@ -71,7 +71,7 @@ public class Player extends VoxelRenderable {
         int dx = newMousePos[0] - mousePos[0];
 //        int dy = newMousePos[1] - mousePos[1];
 
-        transform.updateYaw(-dx * mouseSensitivity);
+        transform.updateYaw(dx * mouseSensitivity);
 //        transform.updatePitch(-dy * mouseSensitivity);
 
         mousePos = newMousePos;

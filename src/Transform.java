@@ -5,14 +5,12 @@ public class Transform {
     final public Vector3 up = new Vector3(0, 1, 0);
 
     public Vector3 position;
-    public Vector3 rotation;
     public Vector3 scale;
     private float pitch;
     private float yaw;
 
     public Transform(Vector3 position, Vector3 rotation, Vector3 scale) {
         this.position = position;
-        this.rotation = rotation;
         this.scale    = scale;
         this.pitch    = 0.0f; // centered
         this.yaw      = (float) -Math.PI / 2 + 0.01f; // centered
@@ -38,7 +36,8 @@ public class Transform {
     }
 
     public Matrix4 modelMatrix() {
-        Matrix4 rotationM    = Matrix4.genRotationMatrix(rotation.x, rotation.y, rotation.z);
+        // TODO: add pitch and roll
+        Matrix4 rotationM    = Matrix4.genRotationMatrix(0, yaw, 0);
         Matrix4 scalingM     = Matrix4.genScalingMatrix(scale.x, scale.y, scale.z);
         Matrix4 translationM = Matrix4.genTranslationMatrix(position.x, position.y, position.z);
 
@@ -78,9 +77,4 @@ public class Transform {
     public void updateYaw(float mag) {
         yaw += mag;
     }
-
-    // TODO: updates pitch and yaw so the lookAt vector points at the point
-//    public void lookAt(Vector3 point) {
-//        this.forward = Vector3.sub(point, position);
-//    }
 }

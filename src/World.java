@@ -33,12 +33,24 @@ public class World {
 
     private void init() {
         player = new Player(
-                new Transform(new Vector3(
+                new Transform(
+                    new Vector3(
                         Config.WORLD_WIDTH / 2.0f * Config.CHUNK_SIZE,
                         17,
                         Config.WORLD_LENGTH / 2.0f * Config.CHUNK_SIZE
-                )),
-                new VoxelGeometry(new Block[][][] {{{ new Block(true, BlockType.SAND )}}}),
+                    ),
+                        new Vector3(0, 0, 0),
+                        new Vector3(0.5f, 0.5f, 0.5f)
+                ),
+                new VoxelGeometry(
+                    new Block[][][] {
+                        {
+                            { new Block(true, BlockType.SNOW ), new Block(true, BlockType.SNOW ), new Block(true, BlockType.SNOW ) },
+                            { new Block(), new Block(true, BlockType.RED ), new Block() },
+                            { new Block(), new Block(true, BlockType.RED ), new Block() }
+                        }
+                    }
+                ),
                 camera
         );
     }
