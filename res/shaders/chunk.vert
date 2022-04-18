@@ -8,8 +8,8 @@ layout (location = 4) in float oaIndex;
 
 uniform mat4 viewM;
 uniform mat4 projectionM;
+uniform vec3 location;
 
-//vec4 oaCurve = vec4(0.75, 0.825, 0.9, 1.0);
 vec4 oaCurve = vec4(0.5, 0.65, 0.80, 1.0);
 
 out vec3 color;
@@ -21,5 +21,6 @@ void main()
     w_normal = normal;
     ao = oaCurve[int(oaIndex)];
     color = aColor;
-    gl_Position = projectionM * viewM * vec4(pos, 1.0f);
+
+    gl_Position = projectionM * viewM * vec4(pos + location, 1.0f);
 }

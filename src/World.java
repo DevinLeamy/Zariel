@@ -7,7 +7,7 @@ import java.util.Optional;
 public class World {
     private ChunkManager chunkManager;
     public Window window;
-    private Player player;
+    public Player player;
     public Camera camera;
     public SkyBox skyBox;
     private static World world;
@@ -20,7 +20,7 @@ public class World {
                 window.getAspectRatio(),
                 new Vector3(0, Config.FLOOR_LEVEL + 6.0f, 0)
         );
-        player = new Player(camera);
+        player = new Player(new Vector3(0, Config.FLOOR_LEVEL, 0), camera);
         skyBox = new SkyBox(new String[] {
                 "res/images/skybox/right.png",
                 "res/images/skybox/left.png",
@@ -71,6 +71,7 @@ public class World {
 
     // TODO: REMOVE
     public boolean blockIsActive(int x, int y, int z) {
+//        return false;
         return blockIsActive(new Vector3i(x, y, z));
     }
 

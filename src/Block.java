@@ -8,6 +8,11 @@ public class Block {
         this.blockType = blockType;
     }
 
+    public Block() {
+        this.active = false;
+        this.blockType = BlockType.EMPTY;
+    }
+
     public void setUpdateCallback(Runnable onUpdateCallback) {
         this.onUpdateCallback = onUpdateCallback;
     }

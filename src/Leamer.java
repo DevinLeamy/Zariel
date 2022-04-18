@@ -51,7 +51,7 @@ final public class Leamer {
                         "FPS: %d POS: %s",
 //                        "CHUNK: %s",
                         frames.size(),
-                        world.camera.position.toString()
+                        world.camera.transform.position.toString()
 //                        ChunkManager.getChunkCoords(world.camera.position).toString()
                 ));
             }

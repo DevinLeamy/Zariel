@@ -1,4 +1,5 @@
 import math.Matrix4;
+import math.Vector3;
 import org.lwjgl.BufferUtils;
 
 import java.nio.ByteBuffer;
@@ -89,7 +90,7 @@ public class SkyBox {
         int viewMHander = glGetUniformLocation(shaderHandle, "viewM");
         int projectionMHandler = glGetUniformLocation(shaderHandle, "projectionM");
 
-        Matrix4 viewMatrix = perspective.viewMatrix();
+        Matrix4 viewMatrix = Camera.lookAt(perspective.transform.position, World.getInstance().player.transform.position, new Vector3(0, 1, 0));
         // remove translation
         // https://stackoverflow.com/questions/47225368/simplest-way-to-convert-mat3-to-mat4
         viewMatrix.m[0][3] = 0;

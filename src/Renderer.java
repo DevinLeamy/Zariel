@@ -1,53 +1,41 @@
-import rendering.Mesh;
+import math.Matrix4;
+import math.Vector3;
 
-import java.util.ArrayList;
+import static org.lwjgl.opengl.GL41.*;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-
-public class Renderer {
-    static void renderScene(Scene scene) {
-        ArrayList<Model> models = scene.getModels();
-        Camera perspective = scene.getPerspective();
-
-        for (Model model : models) {
-            renderModel(perspective, model);
-        }
+class Renderer {
+    private ShaderProgram shader;
+    public Renderer(ShaderProgram shader) {
+        this.shader = shader;
     }
 
-    static void renderModel(Camera perspective, Model model) {
-        ShaderProgram shader = model.getShaderProgram();
-        Transform transform = model.getTransform();
-        Mesh mesh = model.getMesh();
-
+    public void renderMesh(Camera perspective, VoxelMesh mesh, Vector3 location) {
+//        System.out.println("RENDER");
         shader.link();
-
         int shaderHandle = shader.getProgramHandle();
 
-        int transformMHandler   = glGetUniformLocation(shaderHandle,  "transformM");
-        int viewMHander         = glGetUniformLocation(shaderHandle, "viewM");
+        // set uniforms
+        int locationHandler = glGetUniformLocation(shaderHandle, "location");
+        int viewMHandler         = glGetUniformLocation(shaderHandle, "viewM");
         int projectionMHandler  = glGetUniformLocation(shaderHandle, "projectionM");
 
-        // transpose: true! This implies that the matrix will be read row by row (not column by column!)
-        glUniformMatrix4fv(transformMHandler, true, transform.toMatrix().toFloatBuffer());
-        glUniformMatrix4fv(viewMHander, true, perspective.viewMatrix().toFloatBuffer());
+        Vector3 cameraPos = perspective.transform.position;
+        Vector3 playerPos = World.getInstance().player.transform.position;
+        Matrix4 viewMatrix = Camera.lookAt(cameraPos, playerPos, new Vector3(0, 1, 0));
+
+        glUniformMatrix4fv(viewMHandler, true, viewMatrix.toFloatBuffer());
         glUniformMatrix4fv(projectionMHandler, true, perspective.projectionMatrix().toFloatBuffer());
+        glUniform3fv(locationHandler, location.toArray());
 
-        model.setUniforms();
 
-        // bind vertex array
-        glBindVertexArray(mesh.vao);
+//        glEnable(GL_CULL_FACE);
+//        glCullFace(GL_BACK);
+//        glFrontFace(GL_CCW);
 
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-        glFrontFace(GL_CW);
+        mesh.link();
 
-        // draw 'vertices' many vertices
-        glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, mesh.vertices());
 
-        // unbind
-        glBindVertexArray(0);
+        mesh.unlink();
     }
 }

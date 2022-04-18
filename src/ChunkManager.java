@@ -33,7 +33,7 @@ public class ChunkManager {
     }
 
     public void unloadDistantChunks(Camera perspective) {
-        Vector3 origin = Chunk.worldCoordToChunkLocation(perspective.position);
+        Vector3 origin = Chunk.worldCoordToChunkLocation(perspective.transform.position);
         ArrayList<Vector3i> unload = new ArrayList<>();
 
         for (Vector3i chunkLocation : getLoadedChunks()) {
@@ -49,7 +49,7 @@ public class ChunkManager {
     }
 
     public void createChunk(Vector3i chunkLocation, Chunk chunk) {
-        chunk.initialize();
+        chunk.initializeGeometry();
         chunkStore.put(chunkLocation, chunk);
         loadQueue.add(chunkLocation);
     }
@@ -64,7 +64,7 @@ public class ChunkManager {
     }
 
     public void createRelevantChunks(Camera perspective) {
-        Vector3 origin = Chunk.worldCoordToChunkLocation(perspective.position);
+        Vector3 origin = Chunk.worldCoordToChunkLocation(perspective.transform.position);
         ArrayList<Vector3i> create = new ArrayList<>();
 
         int lowX = (int) Math.floor(origin.x - CHUNK_LOAD_DISTANCE);
@@ -173,7 +173,7 @@ public class ChunkManager {
         ArrayList<Chunk> visibleChunks = getVisibleChunks(perspective);
         visibleChunks.forEach(chunk -> chunk.render(perspective));
 
-//        System.out.printf("Rendered chunks: %d%n", visibleChunks.size());
+        System.out.printf("Rendered chunks: %d%n", visibleChunks.size());
     }
 
     public void update(Camera perspective) {
