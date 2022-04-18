@@ -45,9 +45,9 @@ public class World {
                 new VoxelGeometry(
                     new Block[][][] {
                         {
-                            { new Block(true, BlockType.SNOW ), new Block(true, BlockType.SNOW ), new Block(true, BlockType.SNOW ) },
-                            { new Block(), new Block(true, BlockType.RED ), new Block() },
-                            { new Block(), new Block(true, BlockType.RED ), new Block() }
+                            { new Block(true, BlockType.SNOW ) },
+                            { new Block(true, BlockType.RED ) },
+                            { new Block(true, BlockType.RED ) }
                         }
                     }
                 ),

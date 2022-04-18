@@ -122,7 +122,7 @@ public class Player extends VoxelRenderable {
 //        if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.moveUp(dt * cameraMovementSpeed); }
 //        if (controller.keyPressed(GLFW_KEY_LEFT_SHIFT)) { transform.moveUp(dt * -cameraMovementSpeed); }
 
-        if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.moveUp(1); }
+        if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.moveUp(1.0f); }
 
         if (controller.keyPressed(GLFW_KEY_M)) {
             Optional<Vector3i> selected = getSelectedBlock();
@@ -193,9 +193,19 @@ public class Player extends VoxelRenderable {
 
     public boolean colliding() {
         World world = World.getInstance();
-        if (world.blockIsActive(transform.position.toVector3i())) {
+        Vector3 position = transform.position;
+
+//        for (Vector3i offset: this.shape.activeOffsets()) {
+//            Vector3 scaled = Vector3.mult(offset.toVector3(), transform.scale);
+//
+//            if (world.blockIsActive(Vector3.add(position, scaled).toVector3i())) {
+//                return true;
+//            }
+//        }
+
+        if (world.blockIsActive(position.toVector3i())) {
             return true;
-        }
+            }
         return false;
     }
 

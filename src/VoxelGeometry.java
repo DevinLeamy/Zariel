@@ -1,5 +1,6 @@
 import math.Vector3i;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class VoxelGeometry {
@@ -19,6 +20,7 @@ public class VoxelGeometry {
             }
         }
     }
+
     public VoxelGeometry(Vector3i dimensions) {
         this.dimensions = dimensions;
         this.voxels = new Block[dimensions.x][dimensions.y][dimensions.z];
@@ -27,6 +29,21 @@ public class VoxelGeometry {
 
     public boolean isActive() {
         return activeBlocks > 0;
+    }
+
+    public ArrayList<Vector3i> activeOffsets() {
+        ArrayList<Vector3i> offsets = new ArrayList<>();
+        for (int i = 0; i < dimensions.x; ++i) {
+            for (int j = 0; j < dimensions.y; ++j) {
+                for (int k = 0; k < dimensions.z; ++k) {
+                    if (voxels[i][j][k].isActive()) {
+                        offsets.add(new Vector3i(i, j, k));
+                    }
+                }
+            }
+        }
+
+        return offsets;
     }
 
     public Vector3i dimensions() {
