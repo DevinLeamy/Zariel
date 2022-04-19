@@ -23,6 +23,9 @@ void main()
     ao = oaCurve[int(oaIndex)];
     color = aColor;
     texture_coord = uv;
+    vec3 temp = pos + location;
 
-    gl_Position = projectionM * viewM * vec4(pos + location, 1.0f);
+    temp = floor(temp * 256) / 256.0;
+
+    gl_Position = projectionM * viewM * vec4(temp, 1.0f);
 }

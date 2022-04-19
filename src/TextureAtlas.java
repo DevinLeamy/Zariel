@@ -11,7 +11,7 @@ public class TextureAtlas {
     private int atlasHandle;
     final private float tileWidth;
     final private float tileHeight;
-    final private float margin = 0.0001f;
+    final private float margin = 0.0000f;
 
     /**
      * @param path: path the texture atlas image
@@ -61,11 +61,8 @@ public class TextureAtlas {
             stbi_image_free(data);
         }
 
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         return textureHandle;
     }

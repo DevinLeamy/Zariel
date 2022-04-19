@@ -1,4 +1,3 @@
-import math.Matrix3;
 import math.Matrix4;
 import math.Vector3;
 
@@ -22,16 +21,20 @@ public class Camera {
         this.fcp    = 500.0f; // far clip plane (FCP)
     }
 
-    public Matrix4 projectionMatrix() {
+    public Matrix4 prospectiveProjectionMatrix() {
         // Note: z is copied into w for perspective division
         // res: https://ogldev.org/www/tutorial12/tutorial12.html
         float inverseTanHalfFov = (float) (1 / Math.tan(fov / 2));
         return new Matrix4(new float[][] {
-            {inverseTanHalfFov / aspect, 0,                 0,                          0                            },
-            {0,                          inverseTanHalfFov, 0,                          0                            },
-            {0,                          0,                 (-fcp - ncp) / (ncp - fcp), (2 * fcp * ncp) / (ncp - fcp)},
-            {0,                          0,                 1,                          0                            }
+                {inverseTanHalfFov / aspect, 0,                 0,                          0                            },
+                {0,                          inverseTanHalfFov, 0,                          0                            },
+                {0,                          0,                 (-fcp - ncp) / (ncp - fcp), (2 * fcp * ncp) / (ncp - fcp)},
+                {0,                          0,                 1,                          0                            }
         });
+    }
+
+    public Matrix4 projectionMatrix() {
+        return orthographicProjectionMatrix();
     }
 
     public static Matrix4 lookAt(Vector3 from, Vector3 to, Vector3 tempUp) {
@@ -51,5 +54,31 @@ public class Camera {
 
     public Frustum getViewFrustum() {
         return new Frustum(fov, aspect, transform.position, transform.computeTarget(), new Vector3(0, 1, 0), ncp, fcp);
+    }
+
+    public Matrix4 orthographicProjectionMatrix() {
+        int width = 30;
+        int height = 30;
+        int depth = 1000;
+
+        /**
+         * Note: We create our view box around vec3(0, 0, 0) because we are working in
+         * camera space where the camera is located at the origin.
+         */
+
+        Vector3 pos = Vector3.zeros();
+        float left = pos.x - width/2.0f;
+        float right = left + width;
+        float bottom = pos.y - height/2.0f;
+        float top = bottom + height;
+        float near = pos.z + depth/2.0f;
+        float far = near - depth;
+
+        return new Matrix4(new float[][] {
+                {2 / (right - left), 0,                  0,                 -((left + right) / (right - left))},
+                {0,                  2 / (top - bottom), 0,                 -((top + bottom) / (top - bottom))},
+                {0,                  0,                  -2 / (far - near), -((far + near) / (far - near))    },
+                {0,                  0,                  0,                 1                                 }
+        });
     }
 }

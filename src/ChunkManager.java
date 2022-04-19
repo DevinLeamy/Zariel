@@ -83,7 +83,10 @@ public class ChunkManager {
     }
 
     public void loadChunk(Vector3i chunkLocation) {
-        getChunk(chunkLocation).get().load();
+        Optional<Chunk> chunk = getChunk(chunkLocation);
+        if (chunk.isPresent() && chunk.get().isActive()) {
+            chunk.get().load();
+        }
     }
 
     public void createRelevantChunks(Camera perspective) {
