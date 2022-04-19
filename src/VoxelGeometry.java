@@ -79,7 +79,7 @@ public class VoxelGeometry {
 
     public void setBlock(int i, int j, int k, Block newBlock) {
         if (!validIndex(i, j, k)) {
-            System.out.println("Cannot set");
+//            System.out.println("Cannot set");
             return;
         }
         if (getBlock(i, j, k).get().isActive()) {

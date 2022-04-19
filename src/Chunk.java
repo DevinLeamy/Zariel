@@ -62,13 +62,21 @@ public class Chunk {
         ArrayList<Vector3i> trees = new ArrayList<>();
 
         TerrainGenerator terrainGenerator = new TerrainGenerator();
+        NoiseMapGenerator noiseMap = NoiseMapGenerator.getInstance();
         voxels = new VoxelGeometry(new Vector3i(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
 
         for (int x = 0; x < CHUNK_SIZE; ++x) {
             for (int z = 0; z < CHUNK_SIZE; ++z) {
-                float noise = noiseMap[x][z];
-                noise = (noise + 1.0f) / 2.0f;
+                int nx = location.x * CHUNK_SIZE + x;
+                int ny = location.z * CHUNK_SIZE + z;
+                float noise = 1 * noiseMap.noise(1 * nx, 1 * ny) / 2.0f
+//                                +  Config.debug2 * noiseMap.noise(2 * nx + 65, 2 * ny + 97)
+                            +  -0.72f * noiseMap.noise(2 * nx + 65, 2 * ny + 97)
+                        + 0.25f * noiseMap.noise(4 * nx + 30, 4 * ny + 20);
+                noise /= 1.07f;
+                noise = (float) Math.pow(noise, 1.2f);
                 int height = (int) Math.floor(noise * Config.MAX_LEVEL);
+                height -= height % 2;
                 int chunkBase = this.location.y * CHUNK_SIZE;
 
                 for (int y = 0; y < CHUNK_SIZE; ++y) {
@@ -111,7 +119,7 @@ public class Chunk {
 
         try {
             BlockType truck = BlockType.DIRT;
-            BlockType leaf = BlockType.SAND;
+            BlockType leaf = BlockType.GRASS;
             // truck
             voxels.setBlock(x, y, z, new Block(true, truck));
             voxels.setBlock(x, y + 1, z, new Block(true, truck));

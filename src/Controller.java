@@ -8,7 +8,7 @@ import java.util.*;
  */
 
 public class Controller {
-    private Map<Integer, Boolean> keyPressed;
+    private Map<Integer, Integer> keyPressed;
     private int mouseX;
     private int mouseY;
     private float scrollDelta;
@@ -20,8 +20,14 @@ public class Controller {
     }
 
     public boolean keyPressed(int key) {
-        return keyPressed.getOrDefault(key, false);
+        return keyPressed.getOrDefault(key, GLFW_RELEASE) == GLFW_PRESS || keyPressed.getOrDefault(key, GLFW_RELEASE) == GLFW_REPEAT;
     }
+    // TODO: swap keyPressed and keyDown
+
+    public boolean keyDown(int key) {
+        return keyPressed.getOrDefault(key, GLFW_RELEASE) == GLFW_PRESS;
+    }
+
 
     public float pollScrollDelta() {
         float scrollDelta = this.scrollDelta;
@@ -35,10 +41,6 @@ public class Controller {
         return new int[] { mouseX, mouseY };
     }
 
-    private void setKeyPressed(int key, boolean pressed) {
-        keyPressed.put(key, pressed);
-    }
-
     public static Controller getInstance() {
         if (Controller.instance == null) {
             Controller.instance = new Controller();
@@ -47,12 +49,17 @@ public class Controller {
         return Controller.instance;
     }
 
+    private void setKeyState(int key, int action) {
+        keyPressed.put(key, action);
+    }
+
     public static void onKeyPressedCallback(long window, int key, int scancode, int action, int mods) {
         Controller controller = Controller.getInstance();
 
         switch (action) {
-            case GLFW_PRESS   -> controller.setKeyPressed(key, true);
-            case GLFW_RELEASE -> controller.setKeyPressed(key, false);
+            case GLFW_PRESS  -> controller.setKeyState(key, GLFW_PRESS);
+            case GLFW_REPEAT -> controller.setKeyState(key, GLFW_REPEAT);
+            case GLFW_RELEASE -> controller.setKeyState(key, GLFW_RELEASE);
         }
     }
 

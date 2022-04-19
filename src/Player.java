@@ -89,9 +89,8 @@ public class Player extends VoxelRenderable {
     private Optional<Vector3i> getSelectedBlock() {
         float MAX_SELECT_DISTANCE = 15.0f;
         World world = World.getInstance();
-
-        Vector3 source = camera.transform.position;
-        Vector3 direction = camera.transform.getForwardAxis();
+        Vector3 source = transform.position;
+        Vector3 direction = transform.getForwardAxis();
 
         float dist = 0.0f;
 
@@ -121,9 +120,9 @@ public class Player extends VoxelRenderable {
 
         if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.moveUp(1.0f); }
 
-        if (controller.keyPressed(GLFW_KEY_M)) {
+        if (controller.keyDown(GLFW_KEY_M)) {
             Optional<Vector3i> selected = getSelectedBlock();
-            Block newBlock = new Block(false, BlockType.SAND);
+            Block newBlock = new Block(false, BlockType.RED);
             selected.ifPresent((Vector3i location) -> {
                 updates.add(new BlockUpdateAction(location, newBlock));
 

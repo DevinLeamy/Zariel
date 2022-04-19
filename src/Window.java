@@ -15,7 +15,7 @@ public class Window {
     // The window handle
     public long window;
 
-    private final int WIDTH = 1100;
+    private final int WIDTH = 1750;
     private final int HEIGHT = 1100;
 
     public Window() {

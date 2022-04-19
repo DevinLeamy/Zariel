@@ -9,7 +9,7 @@ public class BlockType {
     public static BlockType GRASS = new BlockType(new Vector3i(52, 140, 49));
     public static BlockType STONE = new BlockType(new Vector3i(140, 140, 140));
     public static BlockType WATER = new BlockType(new Vector3i(40, 40, 230));
-    public static BlockType SNOW = new BlockType(new Vector3i(235, 235, 235));
+    public static BlockType SNOW = new BlockType(new Vector3i(245, 245, 245));
     public static BlockType RED = new BlockType(new Vector3i(255, 40, 0));
 
     public final Vector3 color;

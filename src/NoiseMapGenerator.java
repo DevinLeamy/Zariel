@@ -19,7 +19,7 @@ public class NoiseMapGenerator {
     }
 
     public static NoiseMapGenerator getInstance() {
-        int blockSize = 32;
+        int blockSize = Config.CHUNK_SIZE;
         if (!instances.containsKey(blockSize)) {
             instances.put(blockSize, new NoiseMapGenerator(blockSize));
         }
@@ -52,7 +52,7 @@ public class NoiseMapGenerator {
      * @param m: Col in noise map
      * @return Noise at point in noise map
      */
-    private float noise(int n, int m) {
+    public float noise(int n, int m) {
         // noise map point in noise map grid coords
         Vector2 point = new Vector2(n / (float) blockSize, m / (float) blockSize);
 
@@ -87,11 +87,13 @@ public class NoiseMapGenerator {
         Vector2 weights = new Vector2(topLeftOffset.x, topLeftOffset.y);
 
         // interpolate corners
-        return interpolate(
+        float noise = interpolate(
                 interpolate(topLeftDot, bottomLeftDot, weights.x),
                 interpolate(topRightDot, bottomRightDot, weights.x),
                 weights.y
         );
+        // normalize (0 - 1)
+        return (noise + 1.0f) / 2.0f;
     }
 
     private float interpolate(float a, float b, float weight) {

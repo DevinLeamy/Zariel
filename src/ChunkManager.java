@@ -133,7 +133,7 @@ public class ChunkManager {
             BoundingBox chunkBBox = chunk.getBoundingBox();
 
             // check if a chunk has a neighbor on all sides
-            if (getNeighboringChunks(chunk.location).size() == 6) { continue; }
+//            if (getNeighboringChunks(chunk.location).size() == 6) { continue; }
             // TODO: fix
 //            if (!viewFrustum.boxInOrIntersectsFrustum(chunkBBox)) { continue; }
             if (!chunk.isActive()) { continue; }
@@ -150,7 +150,7 @@ public class ChunkManager {
         }
         Chunk chunk = chunks[x][y][z];
 
-        if (chunk == null || !chunk.isActive()) {
+        if (chunk == null) {
             return Optional.empty();
         }
 
@@ -175,7 +175,9 @@ public class ChunkManager {
        for (Vector3i offset : offsets) {
            Vector3i location = Vector3i.add(chunkLocation, offset);
            Optional<Chunk> maybeChunk = getChunk(location);
-           maybeChunk.ifPresent(neighbors::add);
+           if (maybeChunk.isPresent() && maybeChunk.get().isActive()) {
+               neighbors.add(maybeChunk.get());
+           }
        }
 
        return neighbors;
@@ -217,6 +219,11 @@ public class ChunkManager {
                 loadQueue.add(temp.get(i));
             }
         }
+    }
+
+    public void clearAll() {
+        this.chunks = new Chunk[Config.WORLD_LENGTH][Config.WORLD_HEIGHT][Config.WORLD_WIDTH];
+        this.loadQueue = new HashSet<>();
     }
 
     public Optional<Block> getBlock(Vector3i loc) {

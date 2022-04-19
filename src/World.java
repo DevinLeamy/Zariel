@@ -2,6 +2,7 @@ import math.Vector3;
 import math.Vector3i;
 
 import java.util.ArrayList;
+import static org.lwjgl.glfw.GLFW.*;
 import java.util.Optional;
 
 public class World {
@@ -36,8 +37,9 @@ public class World {
         this.player = new Player(
                 new Transform(
                     new Vector3(
-                        Config.WORLD_WIDTH / 2.0f * Config.CHUNK_SIZE,
-                        60,
+                        Config.WORLD_WIDTH / 2.0f * Config.CHUNK_SIZE - Config.CHUNK_SIZE - 10,
+//                        Config.WORLD_HEIGHT * Config.CHUNK_SIZE,
+                            50,
                         Config.WORLD_LENGTH / 2.0f * Config.CHUNK_SIZE
                     ),
                         new Vector3(0, 0, 0),
@@ -65,6 +67,36 @@ public class World {
         return World.world;
     }
 
+    public static void updateDebug() {
+        Controller controller = Controller.getInstance();
+        if (controller.keyPressed(GLFW_KEY_1)) {
+            Config.debug1 += 0.01;
+            World.getInstance().chunkManager.clearAll();
+        }
+        if (controller.keyPressed(GLFW_KEY_2)) {
+            Config.debug1 -= 0.01;
+            World.getInstance().chunkManager.clearAll();
+        }
+        if (controller.keyPressed(GLFW_KEY_3)) {
+            Config.debug2 += 0.01;
+            World.getInstance().chunkManager.clearAll();
+        }
+        if (controller.keyPressed(GLFW_KEY_4)) {
+            Config.debug2 -= 0.01;
+            World.getInstance().chunkManager.clearAll();
+        }
+        if (controller.keyPressed(GLFW_KEY_5)) {
+            Config.debug3 += 0.01;
+            World.getInstance().chunkManager.clearAll();
+        }
+        if (controller.keyPressed(GLFW_KEY_6)) {
+            Config.debug3 -= 0.01;
+            World.getInstance().chunkManager.clearAll();
+        }
+
+//        System.out.printf("Debug 1: %f Debug 2: %f Debug 3: %f\n", Config.debug1, Config.debug2, Config.debug3);
+    }
+
     public void update(float dt) {
         ArrayList<Action> updates = new ArrayList<>();
         // Game Logic Updates
@@ -73,6 +105,8 @@ public class World {
         } else {
             updates.addAll(player.update(dt));
         }
+
+        updateDebug();
         // ai.updates(dt) etc...
 
         for (Action action : updates) {
