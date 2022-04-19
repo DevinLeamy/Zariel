@@ -11,7 +11,6 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class Window {
-
     // The window handle
     public long window;
 

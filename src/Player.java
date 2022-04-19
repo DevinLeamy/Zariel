@@ -20,7 +20,7 @@ public class Player extends VoxelRenderable {
     final private float CAMERA_OFFSET_BACK = 10;
     private float CAMERA_OFFSET_UP = 5;
 
-    final private float cameraMovementSpeed = 10; // 1u / second
+    final private float cameraMovementSpeed = 20; // 1u / second
     final private float cameraRotationSpeed = (float) Math.PI / 4; // 1u / second
     final private float mouseSensitivity = 0.002f;
     final private float scrollSensitivity = 0.03f;
@@ -167,7 +167,6 @@ public class Player extends VoxelRenderable {
         // update camera position
         camera.transform.position = transform.position.clone();
         Vector3 offsetBack = Vector3.scale(transform.getForwardAxis(), -CAMERA_OFFSET_BACK);
-//        Vector3 offsetBack = Vector3.scale(new Vector3(0, 0, 1), -CAMERA_OFFSET_BACK);
         offsetBack.y = 0;
         Vector3 offsetUp = Vector3.scale(transform.up, CAMERA_OFFSET_UP);
 

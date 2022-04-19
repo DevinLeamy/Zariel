@@ -134,7 +134,7 @@ public class VoxelGeometry {
                     int y = voxel.getPosition().z;
                     int index = voxel.getColourIndex() & 0xFF;
 
-                    geometry.setBlock(x, y, z, new Block(true, new BlockType(palette[index])));
+//                    geometry.setBlock(x, y, z, new Block(true, new BlockType(palette[index])));
                 }
 
                 return geometry;

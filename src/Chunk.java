@@ -118,8 +118,8 @@ public class Chunk {
         int z = chunkSpawnPoint.z;
 
         try {
-            BlockType truck = BlockType.DIRT;
-            BlockType leaf = BlockType.GRASS;
+            BlockType truck = BlockType.WOOD;
+            BlockType leaf = BlockType.LEAF;
             // truck
             voxels.setBlock(x, y, z, new Block(true, truck));
             voxels.setBlock(x, y + 1, z, new Block(true, truck));

@@ -11,15 +11,19 @@ public class TerrainGenerator {
     private Pair[] levels;
     public TerrainGenerator() {
         levels = new Pair[] {
-                new Pair(Config.BEDROCK_LEVEL, BlockType.SAND),
-                new Pair(Config.WATER_LEVEL, BlockType.SNOW),
-                new Pair(Config.SAND_LEVEL, BlockType.SNOW),
-                new Pair(Config.GRASS_LEVEL, BlockType.GRASS),
-                new Pair(Config.STONE_LEVEL, BlockType.STONE),
-                new Pair(Config.SNOW_LEVEL, BlockType.SNOW),
+                new Pair(0, BlockType.BEDROCK),
+                new Pair(7, BlockType.STONE),
+                new Pair(13, BlockType.SNOW),
+                new Pair(40, BlockType.SNOW),
+//                new Pair(Config.BEDROCK_LEVEL, BlockType.STONE),
+//                new Pair(Config.WATER_LEVEL, BlockType.SNOW),
+//                new Pair(Config.SAND_LEVEL, BlockType.SNOW),
+//                new Pair(Config.GRASS_LEVEL, BlockType.GRASS),
+//                new Pair(Config.STONE_LEVEL, BlockType.STONE),
+//                new Pair(Config.SNOW_LEVEL, BlockType.SNOW),
         };
         for (Pair pair : levels) {
-            pair.first *= 2;
+//            pair.first *= 2;
         }
     }
 

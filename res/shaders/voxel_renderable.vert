@@ -15,12 +15,14 @@ vec4 oaCurve = vec4(0.5, 0.65, 0.80, 1.0);
 out vec3 color;
 out vec3 w_normal; // world coordinate normals
 out float ao;
+out vec2 texture_coord;
 
 void main()
 {
     w_normal = normal;
     ao = oaCurve[int(oaIndex)];
     color = aColor;
+    texture_coord = uv;
 
     gl_Position = projectionM * viewM * modelM * vec4(pos, 1.0f);
 }

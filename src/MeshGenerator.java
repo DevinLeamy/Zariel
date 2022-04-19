@@ -11,6 +11,7 @@ import java.util.List;
 import static org.lwjgl.opengl.GL41.*;
 
 public class MeshGenerator {
+
     public static VoxelMesh generateVoxelMesh(VoxelGeometry voxels, Vector3i location) {
         int vao = glGenVertexArrays();
         int vbo = glGenBuffers();
@@ -24,7 +25,6 @@ public class MeshGenerator {
                     if (!block.isActive()) {
                         continue;
                     }
-//
                     ArrayList<Vertex> blockVertices = createBlockVertices(block.getBlockType(), i, j, k,
                         location);
                     vertices.addAll(blockVertices);
@@ -79,6 +79,8 @@ public class MeshGenerator {
         Vector3 v7 = new Vector3 (0.0f, 1.0f, 1.0f);
         Vector3 v8 = new Vector3 (0.0f, 1.0f, 0.0f);
 
+        Vector2[] uvs = World.atlas.getUVs(blockType.textureRow, blockType.textureCol);
+
         ArrayList<Vector3> normals = new ArrayList<>(List.of(
                 Vector3.zeros(),
                 Direction.DOWN.normal,
@@ -108,60 +110,60 @@ public class MeshGenerator {
         // left-face
         if (!world.blockIsActive(worldX - 1, worldY, worldZ)) {
             triangles.add(new int[][] {
-                    {3, 5}, {7, 5}, {8, 5}
+                    {3, 5, 3}, {7, 5, 0}, {8, 5, 1}
             });
             triangles.add(new int[][]{
-                    {4, 5}, {3, 5}, {8, 5}
+                    {4, 5, 2}, {3, 5, 3}, {8, 5, 1}
             });
         }
 
         // bottom-face
         if (!world.blockIsActive(worldX, worldY - 1, worldZ)) {
             triangles.add(new int[][]{
-                    {2, 1}, {3, 1}, {4, 1}
+                    {2, 1, 3}, {3, 1, 0}, {4, 1, 1}
             });
             triangles.add(new int[][]{
-                    {1, 1}, {2, 1}, {4, 1}
+                    {1, 1, 2}, {2, 1, 3}, {4, 1, 1}
             });
         }
 
         // front-face
         if (!world.blockIsActive(worldX, worldY, worldZ - 1)) {
             triangles.add(new int[][]{
-                    {1, 6}, {4, 6}, {8, 6}
+                    {1, 6, 3}, {4, 6, 0}, {8, 6, 1}
             });
             triangles.add(new int[][]{
-                    {5, 6}, {1, 6}, {8, 6}
+                    {5, 6, 2}, {1, 6, 3}, {8, 6, 1}
             });
         }
 
         // right-face
         if (!world.blockIsActive(worldX + 1, worldY, worldZ)) {
             triangles.add(new int[][]{
-                    {5, 3}, {6, 3}, {2, 3}
+                    {5, 3, 3}, {6, 3, 0}, {2, 3, 1}
             });
             triangles.add(new int[][]{
-                    {1, 3}, {5, 3}, {2, 3}
+                    {1, 3, 2}, {5, 3, 3}, {2, 3, 1}
             });
         }
 
         // top-face
         if (!world.blockIsActive(worldX, worldY + 1, worldZ)) {
             triangles.add(new int[][]{
-                    {8, 2}, {7, 2}, {6, 2}
+                    {8, 2, 3}, {7, 2, 0}, {6, 2, 1}
             });
             triangles.add(new int[][]{
-                    {5, 2}, {8, 2}, {6, 2}
+                    {5, 2, 2}, {8, 2, 3}, {6, 2, 1}
             });
         }
 
         // back-face
         if (!world.blockIsActive(worldX, worldY, worldZ + 1)) {
             triangles.add(new int[][]{
-                    {6, 4}, {7, 4}, {3, 4}
+                    {6, 4, 3}, {7, 4, 0}, {3, 4, 1}
             });
             triangles.add(new int[][]{
-                    {2, 4}, {6, 4}, {3, 4}
+                    {2, 4, 2}, {6, 4, 3}, {3, 4, 1}
             });
         }
 
@@ -171,14 +173,15 @@ public class MeshGenerator {
             for (int[] vertex : triangle) {
                 Vector3 pos = vertices.get(vertex[0]);
                 Vector3 normal = normals.get(vertex[1]);
-                Vector3 color = blockType.color;
+                Vector2 uv = uvs[vertex[2]];
+                Vector3 color = Vector3.zeros(); // blockType.color;
                 int ambientOcclusion = calculateAmbientOcclusion(
                         (int) pos.x + location.x,
                         (int) pos.y + location.y,
                         (int) pos.z + location.z
                 );
 
-                Vertex v = new Vertex(pos, Vector2.zeros(), normal, color);
+                Vertex v = new Vertex(pos, uv, normal, color);
                 v.setAmbientOcclusion(ambientOcclusion);
 
                 blockVertices.add(v);

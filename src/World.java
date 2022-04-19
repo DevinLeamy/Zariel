@@ -6,6 +6,8 @@ import static org.lwjgl.glfw.GLFW.*;
 import java.util.Optional;
 
 public class World {
+    public static TextureAtlas atlas;
+
     private ChunkManager chunkManager;
     public Window window;
     public Player player;
@@ -28,6 +30,8 @@ public class World {
 
     private void init() {
 //        NoiseMapGenerator noiseMapGenerator = NoiseMapGenerator.getInstance();
+        atlas = new TextureAtlas("res/images/minecraft_atlas.png", 16, 16);
+//        atlas = new TextureAtlas("res/images/atlas.png", 8, 8);
         Camera playerPerspective = new Camera(
                 (float) Math.PI - (float) Math.PI / 2,
                 window.getAspectRatio(),
