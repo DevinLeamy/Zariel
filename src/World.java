@@ -35,15 +35,15 @@ public class World {
         Camera playerPerspective = new Camera(
                 (float) Math.PI - (float) Math.PI / 2,
                 window.getAspectRatio(),
-                new Vector3(0, 17 + 6.0f, 0)
+                new Vector3(0, Config.CHUNK_SIZE * 4, 0)
         );
         this.debugCamera = new DebugCamera();
         this.player = new Player(
                 new Transform(
                     new Vector3(
                         Config.WORLD_WIDTH / 2.0f * Config.CHUNK_SIZE - Config.CHUNK_SIZE - 10,
-//                        Config.WORLD_HEIGHT * Config.CHUNK_SIZE,
-                            50,
+                        Config.WORLD_HEIGHT * Config.CHUNK_SIZE,
+//                            50,
                         Config.WORLD_LENGTH / 2.0f * Config.CHUNK_SIZE
                     ),
                         new Vector3(0, 0, 0),
@@ -97,6 +97,12 @@ public class World {
             Config.debug3 -= 0.01;
             World.getInstance().chunkManager.clearAll();
         }
+        if (controller.keyDown(GLFW_KEY_8)) {
+            Config.orthographic = true;
+        }
+        if (controller.keyDown(GLFW_KEY_7)) {
+            Config.orthographic = false;
+        }
 
 //        System.out.printf("Debug 1: %f Debug 2: %f Debug 3: %f\n", Config.debug1, Config.debug2, Config.debug3);
     }
@@ -127,7 +133,7 @@ public class World {
         window.prepareWindow();
     }
 
-    private Camera getPerspective() {
+    public Camera getPerspective() {
         if (Debug.DEBUG) {
             return debugCamera.getPerspective();
         } else {

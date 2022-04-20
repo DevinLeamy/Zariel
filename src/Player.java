@@ -51,20 +51,20 @@ public class Player extends VoxelRenderable {
         return camera;
     }
 
-    @Override
-    public void render() {
-        Vector3 cameraPos = camera.transform.position;
-        Vector3 playerPos = World.getInstance().player.transform.position;
-
-        Matrix4 viewMatrix = Camera.lookAt(cameraPos, playerPos, new Vector3(0, 1, 0));
-        Matrix4 projectionMatrix = camera.projectionMatrix();
-
-        renderer.shader.setUniform("viewM", viewMatrix);
-        renderer.shader.setUniform("modelM", transform.modelMatrix());
-        renderer.shader.setUniform("projectionM", projectionMatrix);
-
-        renderer.renderMesh(mesh);
-    }
+//    @Override
+//    public void render() {
+//        Vector3 cameraPos = camera.transform.position;
+//        Vector3 playerPos = World.getInstance().player.transform.position;
+//
+//        Matrix4 viewMatrix = Camera.lookAt(cameraPos, playerPos, new Vector3(0, 1, 0));
+//        Matrix4 projectionMatrix = camera.projectionMatrix();
+//
+//        renderer.shader.setUniform("viewM", viewMatrix);
+//        renderer.shader.setUniform("modelM", transform.modelMatrix());
+//        renderer.shader.setUniform("projectionM", projectionMatrix);
+//
+//        renderer.renderMesh(mesh);
+//    }
 
     private void handleMouseUpdate(float dt, int[] newMousePos) {
         if (mousePos[0] == 0 && newMousePos[0] != 0) {

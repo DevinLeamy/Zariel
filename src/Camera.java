@@ -34,7 +34,10 @@ public class Camera {
     }
 
     public Matrix4 projectionMatrix() {
-        return orthographicProjectionMatrix();
+        if (Config.orthographic) {
+            return orthographicProjectionMatrix();
+        }
+        return prospectiveProjectionMatrix();
     }
 
     public static Matrix4 lookAt(Vector3 from, Vector3 to, Vector3 tempUp) {
@@ -57,8 +60,8 @@ public class Camera {
     }
 
     public Matrix4 orthographicProjectionMatrix() {
-        int width = 30;
-        int height = 30;
+        int width = 20;
+        int height = 20;
         int depth = 1000;
 
         /**
