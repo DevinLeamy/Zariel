@@ -13,9 +13,11 @@ public class World {
     public Player player;
     public DebugCamera debugCamera;
     public SkyBox skyBox;
+    public ArrayList<VoxelRenderable> gameObjects;
     private static World world;
 
     private World() {
+        this.gameObjects = new ArrayList<>();
         this.window = new Window();
         this.chunkManager = new ChunkManager();
         this.skyBox = new SkyBox(new String[] {
@@ -28,10 +30,12 @@ public class World {
         });
     }
 
+    public void addGameObject(VoxelRenderable gameObject) {
+        gameObjects.add(gameObject);
+    }
+
     private void init() {
-//        NoiseMapGenerator noiseMapGenerator = NoiseMapGenerator.getInstance();
         atlas = new TextureAtlas("res/images/minecraft_atlas.png", 16, 16);
-//        atlas = new TextureAtlas("res/images/atlas.png", 8, 8);
         Camera playerPerspective = new Camera(
                 (float) Math.PI - (float) Math.PI / 2,
                 window.getAspectRatio(),
@@ -41,9 +45,8 @@ public class World {
         this.player = new Player(
                 new Transform(
                     new Vector3(
-                        Config.WORLD_WIDTH / 2.0f * Config.CHUNK_SIZE - Config.CHUNK_SIZE - 10,
+                        Config.WORLD_WIDTH / 2.0f * Config.CHUNK_SIZE,
                         Config.WORLD_HEIGHT * Config.CHUNK_SIZE,
-//                            50,
                         Config.WORLD_LENGTH / 2.0f * Config.CHUNK_SIZE
                     ),
                         new Vector3(0, 0, 0),
@@ -116,13 +119,14 @@ public class World {
             updates.addAll(player.update(dt));
         }
 
+        for (VoxelRenderable renderable : gameObjects) {
+            renderable.update(dt);
+        }
+
         updateDebug();
-        // ai.updates(dt) etc...
 
         for (Action action : updates) {
-            if (action instanceof BlockUpdateAction) {
-                action.execute();
-            }
+            action.execute();
         }
 
         chunkManager.update(getPerspective());
@@ -144,10 +148,17 @@ public class World {
 
     private void render() {
         prepareRender();
-        skyBox.render(getPerspective());
+        if (!Config.orthographic) {
+            skyBox.render(getPerspective());
+        }
         chunkManager.render(getPerspective());
         player.render();
+        for (VoxelRenderable renderable : gameObjects) {
+            renderable.render();
+        }
         window.render();
+
+
     }
 
     public boolean blockIsActive(int x, int y, int z) {

@@ -22,6 +22,10 @@ public class BoundingBox {
         this.dimensions = new Vector3(width, height, depth);
     }
 
+    public void setOrigin(Vector3 origin) {
+        this.origin = origin;
+    }
+
     public Vector3[] vertices() {
         Vector3[] vertices = new Vector3[6];
 

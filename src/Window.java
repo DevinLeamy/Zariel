@@ -60,16 +60,18 @@ public class Window {
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
-        // keyboard input initialization
-//        glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
-        glfwSetKeyCallback(window, GLFWKeyCallback.create(Controller::onKeyPressedCallback));
-
-        // mouse input initialization
+        /**
+         * Input settings
+         */
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        glfwSetCursorPosCallback(window, Controller::onMousePositionCallback);
 
-        // scroll
+        /**
+         * key press, scroll, cursor position, and mouse button callbacks
+         */
+        glfwSetKeyCallback(window, Controller::onKeyPressedCallback);
+        glfwSetCursorPosCallback(window, Controller::onMousePositionCallback);
         glfwSetScrollCallback(window, Controller::onScrollCallback);
+        glfwSetMouseButtonCallback(window, Controller::onMouseButtonCallback);
 
         // Get the thread stack and push a new frame
         try ( MemoryStack stack = stackPush() ) {

@@ -28,8 +28,6 @@ public class Player extends VoxelRenderable {
 
     private Controller controller;
     private Camera camera;
-    private Vector3 velocity;
-    private Vector3 acceleration;
     private int[] mousePos;
     private boolean wireframe;
 
@@ -38,8 +36,6 @@ public class Player extends VoxelRenderable {
         super(transform, shape, new Renderer(shader));
 
         this.camera = camera;
-        this.velocity = Vector3.zeros();
-        this.acceleration = Vector3.zeros();
         controller = Controller.getInstance();
         mousePos = new int[] { 0, 0 };
         wireframe = false;
@@ -51,21 +47,6 @@ public class Player extends VoxelRenderable {
         return camera;
     }
 
-//    @Override
-//    public void render() {
-//        Vector3 cameraPos = camera.transform.position;
-//        Vector3 playerPos = World.getInstance().player.transform.position;
-//
-//        Matrix4 viewMatrix = Camera.lookAt(cameraPos, playerPos, new Vector3(0, 1, 0));
-//        Matrix4 projectionMatrix = camera.projectionMatrix();
-//
-//        renderer.shader.setUniform("viewM", viewMatrix);
-//        renderer.shader.setUniform("modelM", transform.modelMatrix());
-//        renderer.shader.setUniform("projectionM", projectionMatrix);
-//
-//        renderer.renderMesh(mesh);
-//    }
-
     private void handleMouseUpdate(float dt, int[] newMousePos) {
         if (mousePos[0] == 0 && newMousePos[0] != 0) {
             // initialize mouse position
@@ -75,10 +56,9 @@ public class Player extends VoxelRenderable {
         int dx = newMousePos[0] - mousePos[0];
         int dy = newMousePos[1] - mousePos[1];
 
-        transform.updateYaw(dx * mouseSensitivity);
+        transform.rotate(new Vector3(0, dx * mouseSensitivity, 0));
         CAMERA_OFFSET_UP += dy * mouseSensitivity * 3;
         CAMERA_OFFSET_UP = Utils.clamp(0, 25, CAMERA_OFFSET_UP);
-//        transform.updatePitch(-dy * mouseSensitivity);
 
         mousePos = newMousePos;
     }
@@ -90,7 +70,7 @@ public class Player extends VoxelRenderable {
         float MAX_SELECT_DISTANCE = 15.0f;
         World world = World.getInstance();
         Vector3 source = transform.position;
-        Vector3 direction = transform.getForwardAxis();
+        Vector3 direction = transform.direction();
 
         float dist = 0.0f;
 
@@ -112,13 +92,25 @@ public class Player extends VoxelRenderable {
         ArrayList<Action> updates = new ArrayList<>();
 
         // forwards and backwards
-        if (controller.keyPressed(GLFW_KEY_W)) { transform.moveForward(dt * cameraMovementSpeed); }
-        if (controller.keyPressed(GLFW_KEY_S)) { transform.moveForward(dt * -cameraMovementSpeed); }
+        if (controller.keyPressed(GLFW_KEY_W)) { transform.translate(Vector3.scale(transform.direction(), dt * cameraMovementSpeed)); }
+        if (controller.keyPressed(GLFW_KEY_S)) { transform.translate(Vector3.scale(transform.direction(), -dt * cameraMovementSpeed)); }
         // left and right
-        if (controller.keyPressed(GLFW_KEY_A)) { transform.moveRight(-dt * cameraMovementSpeed); }
-        if (controller.keyPressed(GLFW_KEY_D)) { transform.moveRight(dt * cameraMovementSpeed); }
+        if (controller.keyPressed(GLFW_KEY_A)) { transform.translate(Vector3.scale(transform.right(), -dt * cameraMovementSpeed)); }
+        if (controller.keyPressed(GLFW_KEY_D)) { transform.translate(Vector3.scale(transform.right(), dt * cameraMovementSpeed)); }
 
-        if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.moveUp(1.0f); }
+        if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.translate(Vector3.scale(Transform.up, 1.0f)); }
+
+        if (controller.mouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+            Vector3 bulletPosition = Vector3.add(transform.direction(), transform.position).add(Transform.up).add(Transform.up);
+            Transform bulletTransform = new Transform(
+                    bulletPosition,
+                    new Vector3(0, transform.rotation.y, 0),
+                    new Vector3(1/8f, 1/8f, 1/8f)
+            );
+            VoxelRenderable bullet = new Bullet(bulletTransform);
+            SpawnGameObjectAction spawnBullet = new SpawnGameObjectAction(bullet);
+            updates.add(spawnBullet);
+        }
 
         if (controller.keyDown(GLFW_KEY_M)) {
             Optional<Vector3i> selected = getSelectedBlock();
@@ -157,7 +149,7 @@ public class Player extends VoxelRenderable {
         updates.addAll(handleKeyPresses(dt));
 
         if (!onGround()) {
-            transform.position.sub(Vector3.scale(transform.up, 0.25f));
+            transform.position.sub(Vector3.scale(Transform.up, 0.25f));
         }
 
         if (colliding()) {
@@ -166,9 +158,9 @@ public class Player extends VoxelRenderable {
 
         // update camera position
         camera.transform.position = transform.position.clone();
-        Vector3 offsetBack = Vector3.scale(transform.getForwardAxis(), -CAMERA_OFFSET_BACK);
+        Vector3 offsetBack = Vector3.scale(transform.direction(), -CAMERA_OFFSET_BACK);
         offsetBack.y = 0;
-        Vector3 offsetUp = Vector3.scale(transform.up, CAMERA_OFFSET_UP);
+        Vector3 offsetUp = Vector3.scale(Transform.up, CAMERA_OFFSET_UP);
 
         camera.transform.translate(offsetUp);
         camera.transform.translate(offsetBack);

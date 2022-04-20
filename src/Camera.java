@@ -56,7 +56,7 @@ public class Camera {
     }
 
     public Frustum getViewFrustum() {
-        return new Frustum(fov, aspect, transform.position, transform.computeTarget(), new Vector3(0, 1, 0), ncp, fcp);
+        return new Frustum(fov, aspect, transform.position, Vector3.add(transform.position, transform.direction()), new Vector3(0, 1, 0), ncp, fcp);
     }
 
     public Matrix4 orthographicProjectionMatrix() {

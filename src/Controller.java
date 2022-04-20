@@ -9,6 +9,7 @@ import java.util.*;
 
 public class Controller {
     private Map<Integer, Integer> keyPressed;
+    private Map<Integer, Integer> mouseButtonState;
     private int mouseX;
     private int mouseY;
     private float scrollDelta;
@@ -16,6 +17,7 @@ public class Controller {
 
     private Controller() {
         keyPressed = new HashMap<>();
+        mouseButtonState = new HashMap<>();
         instance = this;
     }
 
@@ -25,9 +27,12 @@ public class Controller {
     // TODO: swap keyPressed and keyDown
 
     public boolean keyDown(int key) {
-        return keyPressed.getOrDefault(key, GLFW_RELEASE) == GLFW_PRESS;
+        return keyPressed.getOrDefault(key, -1) == GLFW_PRESS;
     }
 
+    public boolean mouseButtonPressed(int key) {
+        return mouseButtonState.getOrDefault(key, -1) == GLFW_PRESS;
+    }
 
     public float pollScrollDelta() {
         float scrollDelta = this.scrollDelta;
@@ -53,6 +58,10 @@ public class Controller {
         keyPressed.put(key, action);
     }
 
+    private void setMouseButtonState(int key, int action) {
+        mouseButtonState.put(key, action);
+    }
+
     public static void onKeyPressedCallback(long window, int key, int scancode, int action, int mods) {
         Controller controller = Controller.getInstance();
 
@@ -60,6 +69,15 @@ public class Controller {
             case GLFW_PRESS  -> controller.setKeyState(key, GLFW_PRESS);
             case GLFW_REPEAT -> controller.setKeyState(key, GLFW_REPEAT);
             case GLFW_RELEASE -> controller.setKeyState(key, GLFW_RELEASE);
+        }
+    }
+
+    public static void onMouseButtonCallback(long window, int button, int action, int mods) {
+        Controller controller = Controller.getInstance();
+
+        switch (action) {
+            case GLFW_PRESS   -> controller.setMouseButtonState(button, GLFW_PRESS);
+            case GLFW_RELEASE -> controller.setMouseButtonState(button, GLFW_RELEASE);
         }
     }
 

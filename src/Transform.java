@@ -1,43 +1,48 @@
+import math.Matrix3;
 import math.Vector3;
 import math.Matrix4;
 
 public class Transform {
-    final public Vector3 up = new Vector3(0, 1, 0);
+    final static public Vector3 up      = new Vector3(0, 1, 0);  // +y axis
+    final static public Vector3 forward = new Vector3(0, 0, -1); // -z axis
+    final static public Vector3 right   = new Vector3(1, 0, 0);  // +x axis
 
     public Vector3 position;
     public Vector3 scale;
-    private float pitch;
-    private float yaw;
+    public Vector3 rotation;
 
     public Transform(Vector3 position, Vector3 rotation, Vector3 scale) {
         this.position = position;
         this.scale    = scale;
-        this.pitch    = 0.0f; // centered
-        this.yaw      = (float) -Math.PI / 2 + 0.01f; // centered
+        this.rotation = rotation;
     }
 
     public Transform(Vector3 position) {
         this(position, Vector3.zeros(), new Vector3(1, 1, 1));
     }
 
-    public Vector3 computeTarget() {
-        Vector3 orientation = new Vector3(
-                (float) Math.cos(yaw) * (float) Math.cos(pitch),
-                (float) Math.sin(pitch),
-                (float) Math.sin(yaw) * (float) Math.cos(pitch)
-        ).normalize();
-        return Vector3.add(position, orientation);
+    public Vector3 direction() {
+        Matrix3 rotationMatrix = Matrix3.genRotationMatrix(rotation.x, rotation.y, rotation.z);
+        return Matrix3.mult(rotationMatrix, Transform.forward);
     }
 
-    public Vector3 getForwardAxis() {
-        Vector3 from = position;
-        Vector3 to = computeTarget();
-        return Vector3.sub(to, from).normalize();
+    /**
+     * This is the right vector relative to the player's direction()
+     */
+    public Vector3 right() {
+       return Vector3.cross(direction(), Transform.up);
+    }
+
+    /**
+     * This is the up vector relative to the player's direction()
+     */
+    public Vector3 up() {
+        return Vector3.cross(direction(), right());
     }
 
     public Matrix4 modelMatrix() {
         // TODO: add pitch and roll
-        Matrix4 rotationM    = Matrix4.genRotationMatrix(pitch, yaw, pitch); // (float) Math.PI * 0.5f);
+        Matrix4 rotationM    = Matrix4.genRotationMatrix(rotation.x, rotation.y, rotation.z); // (float) Math.PI * 0.5f);
         Matrix4 scalingM     = Matrix4.genScalingMatrix(scale.x, scale.y, scale.z);
         Matrix4 translationM = Matrix4.genTranslationMatrix(position.x, position.y, position.z);
 
@@ -52,29 +57,13 @@ public class Transform {
     public void translate(Vector3 translation) {
         position.add(translation);
     }
-
-    public void moveUp(float mag) {
-        position.add(Vector3.scale(up, mag));
+    public void rotate(Vector3 rotation) {
+        this.rotation.add(rotation);
     }
-
-    private Vector3 getRightAxis() {
-        return Vector3.cross(getForwardAxis(), up);
+    public void setRotation(Vector3 rotation) {
+        this.rotation = rotation;
     }
-
-    public void moveRight(float mag) {
-        position.add(Vector3.scale(getRightAxis(), mag));
-    }
-
-    public void moveForward(float mag) {
-        position.add(Vector3.scale(getForwardAxis(), mag));
-    }
-
-    public void updatePitch(float mag) {
-        float diff = 0.01f;
-        pitch = Utils.clamp((float) -Math.PI / 2 + diff, (float) Math.PI / 2 - diff, pitch + mag);
-    }
-
-    public void updateYaw(float mag) {
-        yaw += mag;
+    public void setPosition(Vector3 position) {
+        this.position = position;
     }
 }
