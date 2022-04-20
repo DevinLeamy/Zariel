@@ -168,16 +168,16 @@ public class Chunk {
      * know the actual coordinates until you render so the mesh generation and rendering
      * steps can be separated.
      */
-    public void render(Camera perspective) {
+    public void render(Camera prospective) {
         if (mesh.vertices() == 0) {
             return;
         }
 
-        Vector3 cameraPos = perspective.transform.position;
+        Vector3 cameraPos = prospective.transform.position;
         Vector3 playerPos = World.getInstance().player.transform.position;
 
         Matrix4 viewMatrix = Camera.lookAt(cameraPos, playerPos, new Vector3(0, 1, 0));
-        Matrix4 projectionMatrix = perspective.projectionMatrix();
+        Matrix4 projectionMatrix = prospective.projectionMatrix();
         Vector3i location = Vector3i.scale(this.location, CHUNK_SIZE);
 
         renderer.shader.setUniform("viewM", viewMatrix);

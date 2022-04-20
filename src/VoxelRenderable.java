@@ -24,13 +24,12 @@ abstract public class VoxelRenderable {
 
         Vector3 cameraPos = camera.transform.position;
         Vector3 playerPos = world.player.transform.position;
-
+//
         Matrix4 viewMatrix = Camera.lookAt(cameraPos, playerPos, new Vector3(0, 1, 0));
-        Matrix4 projectionMatrix = camera.projectionMatrix();
 
         renderer.shader.setUniform("viewM", viewMatrix);
         renderer.shader.setUniform("modelM", transform.modelMatrix());
-        renderer.shader.setUniform("projectionM", projectionMatrix);
+        renderer.shader.setUniform("projectionM", camera.projectionMatrix());
 
         renderer.renderMesh(mesh);
     }

@@ -36,11 +36,6 @@ public class World {
 
     private void init() {
         atlas = new TextureAtlas("res/images/minecraft_atlas.png", 16, 16);
-        Camera playerPerspective = new Camera(
-                (float) Math.PI - (float) Math.PI / 2,
-                window.getAspectRatio(),
-                new Vector3(0, Config.CHUNK_SIZE * 4, 0)
-        );
         this.debugCamera = new DebugCamera();
         this.player = new Player(
                 new Transform(
@@ -61,7 +56,11 @@ public class World {
                         }
                     }
                 ),
-                playerPerspective
+                new Camera(
+                        (float) Math.PI - (float) Math.PI / 2,
+                        window.getAspectRatio(),
+                        new Vector3(0, Config.CHUNK_SIZE * 4, 0)
+                )
         );
     }
 
@@ -148,7 +147,7 @@ public class World {
 
     private void render() {
         prepareRender();
-        if (!Config.orthographic) {
+        if (!Config.orthographic && !Debug.DEBUG) {
             skyBox.render(getPerspective());
         }
         chunkManager.render(getPerspective());

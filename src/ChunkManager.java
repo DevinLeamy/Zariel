@@ -129,7 +129,7 @@ public class ChunkManager {
 
     public ArrayList<Chunk> getVisibleChunks(Camera perspective) {
         ArrayList<Chunk> visibleChunks = new ArrayList<>();
-        Frustum viewFrustum = perspective.getViewFrustum();
+//        Frustum viewFrustum = perspective.getViewFrustum();
 
         for (Vector3i location : getLoadedChunks()) {
             Chunk chunk = getChunk(location).get();

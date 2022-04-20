@@ -15,6 +15,18 @@ public class Utils {
         );
     }
 
+    public static float radiansToDegrees(float radians) {
+        return radians * (float) (180.0f / Math.PI);
+    }
+
+    public static Vector3 radiansToDegrees(Vector3 radians) {
+        return new Vector3(
+                radiansToDegrees(radians.x),
+                radiansToDegrees(radians.y),
+                radiansToDegrees(radians.z)
+        );
+    }
+
     public static float clamp(float low, float high, float v) {
         return Math.max(Math.min(high, v), low);
     }

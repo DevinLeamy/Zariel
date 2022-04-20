@@ -47,38 +47,38 @@ public class DebugCamera {
     }
 
     private void handleMouseUpdate(float dt, int[] newMousePos) {
-//        if (mousePos[0] == 0 && newMousePos[0] != 0) {
-//            // initialize mouse position
-//            mousePos = newMousePos;
-//        }
-//
-//        int dx = newMousePos[0] - mousePos[0];
-//        int dy = newMousePos[1] - mousePos[1];
-//
-//        camera.transform.updateYaw(dx * mouseSensitivity);
-//        camera.transform.updatePitch(-dy * mouseSensitivity);
-//
-//        mousePos = newMousePos;
+        if (mousePos[0] == 0 && newMousePos[0] != 0) {
+            // initialize mouse position
+            mousePos = newMousePos;
+        }
+
+        int dx = newMousePos[0] - mousePos[0];
+        int dy = newMousePos[1] - mousePos[1];
+
+        camera.transform.rotate(new Vector3(0, dx * mouseSensitivity, 0));
+//        camera.transform.rotate(new Vector3(-dy * mouseSensitivity);
+
+        mousePos = newMousePos;
     }
 
     private ArrayList<Action> handleKeyPresses(float dt) {
         ArrayList<Action> updates = new ArrayList<>();
-//
-//        // forwards and backwards
-//        if (controller.keyPressed(GLFW_KEY_W)) { camera.transform.moveForward(dt * cameraMovementSpeed); }
-//        if (controller.keyPressed(GLFW_KEY_S)) { camera.transform.moveForward(dt * -cameraMovementSpeed); }
-//        // left and right
-//        if (controller.keyPressed(GLFW_KEY_A)) { camera.transform.moveRight(-dt * cameraMovementSpeed); }
-//        if (controller.keyPressed(GLFW_KEY_D)) { camera.transform.moveRight(dt * cameraMovementSpeed); }
-//        // up and down
-//        if (controller.keyPressed(GLFW_KEY_SPACE)) { camera.transform.moveUp(dt * cameraMovementSpeed); }
-//        if (controller.keyPressed(GLFW_KEY_LEFT_SHIFT)) { camera.transform.moveUp(dt * -cameraMovementSpeed); }
-//
-//        // TODO: move this elsewhere
-//        // wireframe
-//        if (controller.keyPressed(GLFW_KEY_P)) { wireframe = false; }
-//        if (controller.keyPressed(GLFW_KEY_O)) { wireframe = true; }
-//        glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
+        Transform transform = camera.transform;
+
+        if (controller.keyPressed(GLFW_KEY_W)) { transform.translate(Vector3.scale(transform.direction(), dt * cameraMovementSpeed)); }
+        if (controller.keyPressed(GLFW_KEY_S)) { transform.translate(Vector3.scale(transform.direction(), -dt * cameraMovementSpeed)); }
+        // left and right
+        if (controller.keyPressed(GLFW_KEY_A)) { transform.translate(Vector3.scale(transform.right(), -dt * cameraMovementSpeed)); }
+        if (controller.keyPressed(GLFW_KEY_D)) { transform.translate(Vector3.scale(transform.right(), dt * cameraMovementSpeed)); }
+        // up and down
+        if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.translate(Vector3.scale(Transform.up, dt * cameraMovementSpeed)); }
+        if (controller.keyPressed(GLFW_KEY_LEFT_SHIFT)) { transform.translate(Vector3.scale(Transform.up, -dt * cameraMovementSpeed)); }
+
+        // TODO: move this elsewhere
+        // wireframe
+        if (controller.keyPressed(GLFW_KEY_P)) { wireframe = false; }
+        if (controller.keyPressed(GLFW_KEY_O)) { wireframe = true; }
+        glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
 
         return updates;
     }

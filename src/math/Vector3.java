@@ -144,4 +144,21 @@ public class Vector3 {
     public static float dot(Vector3 u, Vector3 v) {
         return u.x * v.x + u.y * v.y + u.z * v.z;
     }
+
+    public static float angleBetween(Vector3 u, Vector3 v) {
+        if (u.len() == 0 || v.len() == 0) {
+            System.err.println("Error: cannot calculate angle between zero vector");
+            return 0;
+        }
+
+        return (float) Math.acos(Vector3.dot(u, v) / (u.len() * v.len()));
+    }
+
+    public static Vector3 anglesBetween(Vector3 u, Vector3 v) {
+        return new Vector3(
+            angleBetween(new Vector3(0, u.y, u.z), new Vector3(0, v.y, v.z)),
+            angleBetween(new Vector3(u.x, 0, u.z), new Vector3(v.x, 0, v.z)),
+            angleBetween(new Vector3(u.x, u.y, 0), new Vector3(v.x, v.y, 0))
+        );
+    }
 }
