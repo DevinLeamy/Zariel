@@ -12,11 +12,14 @@ class Renderer {
      * via renderer.shader.setUniform(...) BEFORE this function is executed.
      */
     public void renderMesh(VoxelMesh mesh) {
+        if (mesh.vertices() == 0) {
+            return;
+        }
         World.atlas.link();
         shader.link();
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-        glFrontFace(GL_CCW);
+//        glEnable(GL_CULL_FACE);
+//        glCullFace(GL_BACK);
+//        glFrontFace(GL_CCW);
 
         mesh.link();
 

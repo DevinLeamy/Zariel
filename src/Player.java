@@ -9,14 +9,6 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL41.*;
 
 public class Player extends VoxelRenderable {
-    private static VertexShader vs = new VertexShader("res/shaders/voxel_renderable.vert", new Uniform[] {
-            new Uniform("viewM", Uniform.UniformT.MATRIX_4F),
-            new Uniform("projectionM", Uniform.UniformT.MATRIX_4F),
-            new Uniform("modelM", Uniform.UniformT.MATRIX_4F)
-    });
-    private static FragmentShader fs = new FragmentShader("res/shaders/voxel_renderable.frag", new Uniform[] {});
-    private static ShaderProgram shader = new ShaderProgram(vs, fs);
-
     final private float CAMERA_OFFSET_BACK = 10;
     private float CAMERA_OFFSET_UP = 5;
 
@@ -31,11 +23,13 @@ public class Player extends VoxelRenderable {
     private int[] mousePos;
     private boolean wireframe;
 
+    private RigidBody rigidBody;
 
     public Player(Transform transform, VoxelGeometry shape, Camera camera) {
-        super(transform, shape, new Renderer(shader));
+        super(transform, shape);
 
         this.camera = camera;
+        this.rigidBody = new RigidBody(Vector3.zeros(), Vector3.zeros(), new BoundingBox(transform.position, 1, 3, 1));
         controller = Controller.getInstance();
         mousePos = new int[] { 0, 0 };
         wireframe = false;
@@ -142,19 +136,12 @@ public class Player extends VoxelRenderable {
     public ArrayList<Action> update(float dt) {
         ArrayList<Action> updates = new ArrayList<>();
 
-        Vector3 position = transform.position.clone();
-
         handleMouseUpdate(dt, controller.mousePosition());
         handleScrollUpdate(controller.pollScrollDelta());
         updates.addAll(handleKeyPresses(dt));
 
-        if (!onGround()) {
-            transform.position.sub(Vector3.scale(Transform.up, 0.25f));
-        }
+        transform.position = rigidBody.update(dt, transform.position);
 
-        if (colliding()) {
-            transform.position = position;
-        }
 
         // update camera position
         camera.transform.position = transform.position.clone();

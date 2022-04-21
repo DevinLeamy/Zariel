@@ -4,16 +4,30 @@ import math.Vector3;
 import java.util.ArrayList;
 
 abstract public class VoxelRenderable {
+    private static VertexShader vs = new VertexShader("res/shaders/voxel_renderable.vert", new Uniform[] {
+            new Uniform("viewM", Uniform.UniformT.MATRIX_4F),
+            new Uniform("projectionM", Uniform.UniformT.MATRIX_4F),
+            new Uniform("modelM", Uniform.UniformT.MATRIX_4F)
+    });
+    private static FragmentShader fs = new FragmentShader("res/shaders/voxel_renderable.frag", new Uniform[] {});
+    private static ShaderProgram shader = new ShaderProgram(vs, fs);
+
     Transform transform;
     VoxelGeometry shape;
     VoxelMesh mesh;
     Renderer renderer;
+    final public long id;
 
-    public VoxelRenderable(Transform transform, VoxelGeometry shape, Renderer renderer) {
+    private static long NEXT_ID = 0;
+
+    public VoxelRenderable(Transform transform, VoxelGeometry shape) {
         this.transform = transform;
         this.shape = shape;
         this.mesh = MeshGenerator.generateVoxelMesh(shape, transform.position.toVector3i());
-        this.renderer = renderer;
+        this.renderer = new Renderer(shader);
+        this.id = NEXT_ID;
+
+        NEXT_ID += 1;
     }
 
     abstract public ArrayList<Action> update(float dt);

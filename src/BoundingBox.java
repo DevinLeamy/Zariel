@@ -1,7 +1,5 @@
 import math.Vector3;
 
-import java.util.ArrayList;
-
 public class BoundingBox {
     final private static Vector3[] VERTEX_OFFSETS = new Vector3[] {
             new Vector3(0, 0, 0),
@@ -26,6 +24,10 @@ public class BoundingBox {
         this.origin = origin;
     }
 
+    public Vector3 getOrigin() {
+        return origin;
+    }
+
     public Vector3[] vertices() {
         Vector3[] vertices = new Vector3[6];
 
@@ -35,5 +37,13 @@ public class BoundingBox {
         }
 
         return vertices;
+    }
+
+    public int getWidth() {
+        return (int) dimensions.x;
+    }
+
+    public int getDepth() {
+        return (int) dimensions.z;
     }
 }

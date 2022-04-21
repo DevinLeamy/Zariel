@@ -1,9 +1,5 @@
-public class Action {
-    public Action() {
+abstract public class Action {
+    public Action() {}
 
-    }
-
-    public void execute() {
-
-    }
+    abstract public void execute();
 }

@@ -37,6 +37,10 @@ public class Block {
         invokeUpdateCallback();
     }
 
+    public static Block inActive() {
+        return new Block(false, BlockType.EMPTY);
+    }
+
     public BlockType getBlockType() {
         return blockType;
     }

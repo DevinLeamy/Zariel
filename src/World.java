@@ -119,7 +119,7 @@ public class World {
         }
 
         for (VoxelRenderable renderable : gameObjects) {
-            renderable.update(dt);
+            updates.addAll(renderable.update(dt));
         }
 
         updateDebug();
