@@ -69,13 +69,13 @@ public class Chunk {
             for (int z = 0; z < CHUNK_SIZE; ++z) {
                 int nx = location.x * CHUNK_SIZE + x;
                 int ny = location.z * CHUNK_SIZE + z;
-//                float noise = noiseMap.noise(1 * nx, 1 * ny);
-////                                +  Config.debug2 * noiseMap.noise(2 * nx + 65, 2 * ny + 97)
+                float noise = noiseMap.noise(1 * nx, 1 * ny)
+                                +  Config.debug2 * noiseMap.noise(2 * nx + 65, 2 * ny + 97);
 //                            +  0.72f * noiseMap.noise(2 * nx + 65, 2 * ny + 97)
 //                        + 0.25f * noiseMap.noise(4 * nx + 30, 4 * ny + 20);
-//                noise /= 1.07f;
+                noise /= 1.07f;
 //                noise = (float) Math.pow(noise, 1.2f);
-                int height = (int) Math.floor(0.5 * Config.MAX_LEVEL);
+                int height = (int) Math.floor(noise * Config.MAX_LEVEL);
                 height -= height % 2;
                 int chunkBase = this.location.y * CHUNK_SIZE;
 

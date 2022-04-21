@@ -60,7 +60,7 @@ public class Camera {
     }
 
     public Matrix4 orthographicProjectionMatrix() {
-        int width = 20;
+        int width = (int) (aspect * 20);
         int height = 20;
         int depth = 1000;
 

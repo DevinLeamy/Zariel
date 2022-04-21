@@ -34,6 +34,10 @@ public class World {
         gameObjects.add(gameObject);
     }
 
+    public void despawnGameObject(long objectId) {
+        gameObjects.removeIf(gameObject -> gameObject.id == objectId);
+    }
+
     private void init() {
         atlas = new TextureAtlas("res/images/minecraft_atlas.png", 16, 16);
         this.debugCamera = new DebugCamera();

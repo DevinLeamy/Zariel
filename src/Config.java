@@ -1,8 +1,8 @@
 public class Config {
     final public static int CHUNK_SIZE = 32;
     // CHUNK_DISTANCES
-    final public static int WORLD_LENGTH = 1; // z axis
-    final public static int WORLD_WIDTH = 1;  // x axis
+    final public static int WORLD_LENGTH = 4; // z axis
+    final public static int WORLD_WIDTH = 4;  // x axis
 //    final public static int WORLD_LENGTH = 2; // z axis
 //    final public static int WORLD_WIDTH = 2;  // x axis
     final public static int WORLD_HEIGHT = 1;  // y axis
@@ -21,5 +21,5 @@ public class Config {
     public static float debug2 = 0;
     public static float debug3 = 1;
 
-    public static boolean orthographic = true;
+    public static boolean orthographic = false;
 }

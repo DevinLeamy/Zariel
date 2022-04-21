@@ -21,7 +21,13 @@ public class ExplodeBlockAction extends Action {
             return;
         }
 
-        actions.add(new BlockUpdateAction(blockPosition, Block.inActive()));
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                for (int k = 0; k < 4; ++k) {
+                    actions.add(new BlockUpdateAction(Vector3i.add(blockPosition, new Vector3i(i - 2, j - 2, k - 2)), Block.inActive()));
+                }
+            }
+        }
 
         BlockType explodedBlockType = maybeBlock.get().getBlockType();
 

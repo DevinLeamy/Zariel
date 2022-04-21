@@ -26,7 +26,10 @@ public class Bullet extends VoxelRenderable {
         transform.position = rigidBody.update(dt, transform.position);
         Optional<RigidBody.Collision> maybeCollision = rigidBody.collide();
 
-        maybeCollision.ifPresent(collision -> actions.addAll(collision.collide()));
+        maybeCollision.ifPresent(collision -> {
+            actions.addAll(collision.collide());
+            actions.add(new DespawnGameObjectAction(id));
+        });
 
         return actions;
     }

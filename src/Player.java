@@ -94,7 +94,7 @@ public class Player extends VoxelRenderable {
 
         if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.translate(Vector3.scale(Transform.up, 1.0f)); }
 
-        if (controller.mouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+        if (controller.takeMouseButtonState(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
             Vector3 bulletPosition = Vector3.add(transform.direction(), transform.position).add(Transform.up).add(Transform.up);
             Transform bulletTransform = new Transform(
                     bulletPosition,
