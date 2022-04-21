@@ -21,16 +21,8 @@ void main()
         diffuse_factor = 0;
     }
     vec2 uv = texture_coord;
-//    uv *= 256; // texture_coord * (1.0f / 16.0 / 16);
-//    uv.x = floor(uv.x);
-//    uv.y = floor(uv.y);
-//
-//    uv.x *= 1 / 600.0f;
-//    uv.y *= 1 / 600.0f;
 
-//    uv /= ;
-
-
-    vec4 texture_color = texture(texture_sample, uv);
-    fragColor = ((ambient_intensity + diffuse_factor) * ao) * texture_color;
+//    vec4 texture_color = texture(texture_sample, uv);
+//    fragColor = ((ambient_intensity + diffuse_factor) * ao) * texture_color;
+    fragColor = ((ambient_intensity + diffuse_factor) * ao) * vec4(color, 1.0f);
 }

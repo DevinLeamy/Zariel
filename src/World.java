@@ -49,17 +49,10 @@ public class World {
                         Config.WORLD_LENGTH / 2.0f * Config.CHUNK_SIZE
                     ),
                         new Vector3(0, 0, 0),
-                        new Vector3(0.5f, 0.5f, 0.5f)
+                        new Vector3(0.1f, 0.1f, 0.1f)
+//                        new Vector3(0.3f, 0.3f, 0.3f)
                 ),
-                new VoxelGeometry(
-                    new Block[][][] {
-                        {
-                            { new Block(true, BlockType.SNOW ) },
-                            { new Block(true, BlockType.RED ) },
-                            { new Block(true, BlockType.RED ) }
-                        }
-                    }
-                ),
+                VoxelGeometry.loadFromFile("res/voxels/sword_man.vox"),
                 new Camera(
                         (float) Math.PI - (float) Math.PI / 2,
                         window.getAspectRatio(),

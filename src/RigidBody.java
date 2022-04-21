@@ -26,7 +26,6 @@ public class RigidBody {
         }
     }
     final private static float GRAVITY = 9.81f;
-//    final private static float GRAVITY = 4.81f;
 //    private float mass;
     public Vector3 velocity;
     private Vector3 acceleration;

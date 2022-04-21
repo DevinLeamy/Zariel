@@ -174,7 +174,8 @@ public class MeshGenerator {
                 Vector3 pos = vertices.get(vertex[0]);
                 Vector3 normal = normals.get(vertex[1]);
                 Vector2 uv = uvs[vertex[2]];
-                Vector3 color = Vector3.zeros(); // blockType.color;
+
+                Vector3 color = blockType.colored ? blockType.getGLColor() : Vector3.zeros();
                 int ambientOcclusion = calculateAmbientOcclusion(
                         (int) pos.x + location.x,
                         (int) pos.y + location.y,

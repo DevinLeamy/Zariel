@@ -9,7 +9,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL41.*;
 
 public class Player extends VoxelRenderable {
-    final private float CAMERA_OFFSET_BACK = 10;
+    final private float CAMERA_OFFSET_BACK = 5;
     private float CAMERA_OFFSET_UP = 5;
 
     final private float cameraMovementSpeed = 20; // 1u / second
@@ -99,7 +99,7 @@ public class Player extends VoxelRenderable {
             Transform bulletTransform = new Transform(
                     bulletPosition,
                     new Vector3(0, transform.rotation.y, 0),
-                    new Vector3(1/8f, 1/8f, 1/8f)
+                    new Vector3(1/12f, 1/12f, 1/12f)
             );
             VoxelRenderable bullet = new Bullet(bulletTransform);
             SpawnGameObjectAction spawnBullet = new SpawnGameObjectAction(bullet);
@@ -142,7 +142,6 @@ public class Player extends VoxelRenderable {
 
         transform.position = rigidBody.update(dt, transform.position);
 
-
         // update camera position
         camera.transform.position = transform.position.clone();
         Vector3 offsetBack = Vector3.scale(transform.direction(), -CAMERA_OFFSET_BACK);
@@ -152,44 +151,6 @@ public class Player extends VoxelRenderable {
         camera.transform.translate(offsetUp);
         camera.transform.translate(offsetBack);
 
-
-        getSelectedBlock().ifPresent(selection -> {
-//            if (!selection.equals(previousSelection)) {
-//                updates.add(new BlockUpdateAction(selection, new Block(true, BlockType.SAND)));
-//                updates.add(new BlockUpdateAction(previousSelection, new Block(true, BlockType.GRASS)));
-//            }
-            previousSelection = selection;
-        });
-
-
-
         return updates;
-    }
-
-    public boolean colliding() {
-        World world = World.getInstance();
-        Vector3 position = transform.position;
-
-//        for (Vector3i offset: this.shape.activeOffsets()) {
-//            Vector3 scaled = Vector3.mult(offset.toVector3(), transform.scale);
-//
-//            if (world.blockIsActive(Vector3.add(position, scaled).toVector3i())) {
-//                return true;
-//            }
-//        }
-
-        if (world.blockIsActive(position.toVector3i())) {
-            return true;
-            }
-        return false;
-    }
-
-    public boolean onGround() {
-        World world = World.getInstance();
-        Vector3i position = transform.position.toVector3i();
-        if (world.blockIsActive(position) || world.blockIsActive(Vector3i.sub(position, new Vector3i(0, 1, 0)))) {
-            return true;
-        }
-        return false;
     }
 }

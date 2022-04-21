@@ -21,6 +21,6 @@ void main()
         diffuse_factor = 0;
     }
 
-//    fragColor = vec4((ambient_intensity + diffuse_factor) * color * ao, 1.0);
-    fragColor = ((ambient_intensity + diffuse_factor) * ao) * texture(texture_sample, texture_coord);
+//    fragColor = ((ambient_intensity + diffuse_factor) * ao) * texture(texture_sample, texture_coord);
+    fragColor = ((ambient_intensity + diffuse_factor) * ao) * vec4(color, 1.0);
 }

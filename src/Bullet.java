@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public class Bullet extends VoxelRenderable {
-    final private static VoxelGeometry BULLET_GEOMETRY = new VoxelGeometry(new Block[][][] {
-            {{new Block(true, BlockType.STONE), new Block(true, BlockType.STONE)}},
-    });
+    final private static VoxelGeometry BULLET_GEOMETRY = VoxelGeometry.loadFromFile("res/voxels/bomb.vox");
     final private static float BULLET_SPEED = 10.0f;
 
     private RigidBody rigidBody;

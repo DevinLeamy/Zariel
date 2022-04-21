@@ -136,7 +136,7 @@ public class ChunkManager {
             BoundingBox chunkBBox = chunk.getBoundingBox();
 
             // check if a chunk has a neighbor on all sides
-//            if (getNeighboringChunks(chunk.location).size() == 6) { continue; }
+            if (getNeighboringChunks(chunk.location).size() == 6) { continue; }
             // TODO: fix
 //            if (!viewFrustum.boxInOrIntersectsFrustum(chunkBBox)) { continue; }
             if (!chunk.isActive()) { continue; }
@@ -193,9 +193,9 @@ public class ChunkManager {
                 loadQueue.add(location);
 
                 // TODO: reload neighboring chunks
-//                for (Chunk chunk : getNeighboringChunks(location)) {
-//                    loadQueue.add(chunk.location);
-//                }
+                for (Chunk chunk : getNeighboringChunks(location)) {
+                    loadQueue.add(chunk.location);
+                }
             }
         }
     }
