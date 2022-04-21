@@ -43,7 +43,7 @@ public class RigidBody {
     public Vector3 update(float dt, Vector3 position) {
         boundingBox.setOrigin(position.clone());
 
-        if (!onGround(boundingBox)) {
+        if (!onGround()) {
             velocity.y -= GRAVITY * dt;
         } else {
             velocity.y = 0;
@@ -57,7 +57,7 @@ public class RigidBody {
         return Vector3.add(position, deltaPosition);
     }
 
-    public boolean onGround(BoundingBox boundingBox) {
+    public boolean onGround() {
         World world = World.getInstance();
         Vector3 origin = boundingBox.getOrigin();
 

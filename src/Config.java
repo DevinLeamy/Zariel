@@ -22,4 +22,6 @@ public class Config {
     public static float debug3 = 1;
 
     public static boolean orthographic = false;
+
+    public static int MAX_ENTITY_COUNT = 10000;
 }

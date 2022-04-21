@@ -15,7 +15,7 @@ public class BlockType {
 //    public final Vector3 color;
 //    public final Vector3 textureOffset;
     public static BlockType EMPTY = new BlockType(7, 7);
-    public static BlockType BEDROCK = new BlockType(1, 1);
+    public static BlockType BEDROCK = new BlockType(new Vector3i(40, 40, 230), 1, 1);
     public static BlockType LEAF = new BlockType(new Vector3i(140, 245, 140), 3, 4);
     public static BlockType WOOD = new BlockType(new Vector3i(117, 74, 21), 1, 4);
     public static BlockType STONE = new BlockType(new Vector3i(140, 140, 140), 0, 1);

@@ -1,4 +1,5 @@
 import math.Vector3;
+import math.Vector3i;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -28,6 +29,11 @@ public class Bullet extends VoxelRenderable {
             actions.addAll(collision.collide());
             actions.add(new DespawnGameObjectAction(id));
         });
+
+        if (rigidBody.onGround()) {
+            actions.add(new ExplodeBlockAction(transform.position.toVector3i().add(new Vector3i(0, -1, 0))));
+            actions.add(new DespawnGameObjectAction(id));
+        }
 
         return actions;
     }

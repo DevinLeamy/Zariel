@@ -50,7 +50,6 @@ public class World {
                     ),
                         new Vector3(0, 0, 0),
                         new Vector3(0.1f, 0.1f, 0.1f)
-//                        new Vector3(0.3f, 0.3f, 0.3f)
                 ),
                 VoxelGeometry.loadFromFile("res/voxels/sword_man.vox"),
                 new Camera(
