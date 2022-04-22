@@ -1,5 +1,8 @@
 package ecs;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class EntityManager {
     public static EntityManager instance = new EntityManager();
 
@@ -12,6 +15,15 @@ public class EntityManager {
     public Entity addEntity(Entity entity) {
         entities[entity.id] = entity;
         return entity;
+    }
+
+    public ArrayList<Entity> queryEntities(long signature) {
+        return new ArrayList<>(
+            Arrays
+                .stream(entities)
+                .filter(entity -> (entity.signature & signature) == signature)
+                .toList()
+        );
     }
 
     public void removeEntity(Entity entity) {

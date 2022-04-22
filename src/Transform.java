@@ -1,8 +1,9 @@
+import ecs.Component;
 import math.Matrix3;
 import math.Vector3;
 import math.Matrix4;
 
-public class Transform {
+public class Transform implements Component {
     final static public Vector3 up      = new Vector3(0, 1, 0);  // +y axis
     final static public Vector3 forward = new Vector3(0, 0, -1); // -z axis
     final static public Vector3 right   = new Vector3(1, 0, 0);  // +x axis

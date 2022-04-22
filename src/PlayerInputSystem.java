@@ -1,4 +1,7 @@
-import math.Matrix4;
+import ecs.Component;
+import ecs.ComponentStore;
+import ecs.Entity;
+import ecs.System;
 import math.Vector3;
 import math.Vector3i;
 
@@ -6,39 +9,50 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL41.*;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_O;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_FILL;
 
-public class Player extends VoxelRenderable {
+public class PlayerInputSystem extends InstanceSystem {
+    private static World world = World.getInstance();
+    private static Controller controller = Controller.getInstance();
+    ComponentStore<Transform> transformStore = ComponentStore.of(Transform.class);
+
+//    private class PlayerInputSystemConfig {
+//        final public static float CAMERA_OFFSET_BACK = 5;
+//        final public static float CAMERA_OFFSET_UP = 5;
+//    }
+
+
     final private float CAMERA_OFFSET_BACK = 5;
     private float CAMERA_OFFSET_UP = 5;
 
     final private float cameraMovementSpeed = 20; // 1u / second
     final private float cameraRotationSpeed = (float) Math.PI / 4; // 1u / second
     final private float mouseSensitivity = 0.002f;
-    final private float scrollSensitivity = 0.03f;
 
-    private Controller controller;
-    private Camera camera;
     private int[] mousePos;
     private boolean wireframe;
 
-    private RigidBody rigidBody;
+    public PlayerInputSystem() {
+        super(Component.TRANSFORM | Component.PLAYER_TAG, 0);
 
-    public Player(Transform transform, VoxelGeometry shape, Camera camera) {
-        super(transform, shape);
-
-        this.camera = camera;
-        this.rigidBody = new RigidBody(Vector3.zeros(), Vector3.zeros(), new BoundingBox(transform.position, 1, 3, 1));
         controller = Controller.getInstance();
         mousePos = new int[] { 0, 0 };
         wireframe = false;
     }
 
-    public Camera getPerspective() {
-        return camera;
+
+    @Override
+    protected void update(float dt, Entity entity) {
+        Transform playerTransform = transformStore.getComponent(entity).get();
+
+        handleMouseUpdate(playerTransform, dt, controller.mousePosition());
+        handleKeyPresses(dt, playerTransform);
     }
 
-    private void handleMouseUpdate(float dt, int[] newMousePos) {
+
+    private void handleMouseUpdate(Transform transform, float dt, int[] newMousePos) {
         if (mousePos[0] == 0 && newMousePos[0] != 0) {
             // initialize mouse position
             mousePos = newMousePos;
@@ -57,7 +71,7 @@ public class Player extends VoxelRenderable {
     /**
      * Highlight the block under your cursor.
      */
-    private Optional<Vector3i> getSelectedBlock() {
+    private Optional<Vector3i> getSelectedBlock(Transform transform) {
         float MAX_SELECT_DISTANCE = 15.0f;
         World world = World.getInstance();
         Vector3 source = transform.position;
@@ -79,7 +93,7 @@ public class Player extends VoxelRenderable {
         return Optional.empty();
     }
 
-    private ArrayList<Action> handleKeyPresses(float dt) {
+    private ArrayList<Action> handleKeyPresses(float dt, Transform transform) {
         ArrayList<Action> updates = new ArrayList<>();
 
         // forwards and backwards
@@ -104,7 +118,7 @@ public class Player extends VoxelRenderable {
         }
 
         if (controller.keyDown(GLFW_KEY_M)) {
-            Optional<Vector3i> selected = getSelectedBlock();
+            Optional<Vector3i> selected = getSelectedBlock(transform);
             Block newBlock = new Block(false, BlockType.RED);
             selected.ifPresent((Vector3i location) -> {
                 updates.add(new BlockUpdateAction(location, newBlock));
@@ -116,35 +130,6 @@ public class Player extends VoxelRenderable {
         if (controller.keyPressed(GLFW_KEY_P)) { wireframe = false; }
         if (controller.keyPressed(GLFW_KEY_O)) { wireframe = true; }
         glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
-
-        return updates;
-    }
-
-    // TODO: move this into the camera class
-    private void handleScrollUpdate(float scrollDelta) {
-        camera.fov += scrollDelta * scrollSensitivity;
-        camera.fov = Utils.clamp(0.1f * (float) Math.PI, 0.7f * (float) Math.PI, camera.fov);
-    }
-
-    @Override
-    public ArrayList<Action> update(float dt) {
-        ArrayList<Action> updates = new ArrayList<>();
-
-        handleMouseUpdate(dt, controller.mousePosition());
-        handleScrollUpdate(controller.pollScrollDelta());
-        updates.addAll(handleKeyPresses(dt));
-
-        transform.position = rigidBody.update(dt, transform.position);
-
-        // update camera position
-        camera.transform.position = transform.position.clone();
-        Vector3 offsetBack = Vector3.scale(transform.direction(), -CAMERA_OFFSET_BACK);
-        offsetBack.y = 0;
-        Vector3 offsetUp = Vector3.scale(Transform.up, CAMERA_OFFSET_UP);
-
-        camera.transform.translate(Vector3.scale(transform.right(), 1.2f));
-        camera.transform.translate(offsetUp);
-        camera.transform.translate(offsetBack);
 
         return updates;
     }

@@ -1,17 +1,13 @@
 import ecs.Entity;
-import ecs.System;
 
 import java.util.ArrayList;
 
-abstract public class InstanceSystem extends System {
-    ArrayList<Entity> entities;
-
+abstract public class InstanceSystem extends EntitySystem {
     public InstanceSystem(long signature, int priority) {
         super(signature, priority);
     }
 
-    @Override
-    final public void update(float dt) {
+    final public void update(float dt, ArrayList<Entity> entities) {
         for (Entity entity : entities) {
             update(dt, entity);
         }

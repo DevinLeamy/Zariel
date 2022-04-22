@@ -59,6 +59,10 @@ public class Camera {
         return new Frustum(fov, aspect, transform.position, Vector3.add(transform.position, transform.direction()), new Vector3(0, 1, 0), ncp, fcp);
     }
 
+    public Matrix4 viewMatrix() {
+        return Matrix4.identity();
+    }
+
     public Matrix4 orthographicProjectionMatrix() {
         int width = (int) (aspect * 20);
         int height = 20;

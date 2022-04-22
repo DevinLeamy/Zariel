@@ -1,3 +1,4 @@
+import ecs.EntityManager;
 import math.Vector3;
 import math.Vector3i;
 
@@ -8,11 +9,12 @@ import java.util.Optional;
 public class World {
     public static TextureAtlas atlas;
 
-    private ChunkManager chunkManager;
+    public ChunkManager chunkManager;
     public Window window;
     public Player player;
     public DebugCamera debugCamera;
     public SkyBox skyBox;
+    public EntityManager entityManager;
     public ArrayList<VoxelRenderable> gameObjects;
     private static World world;
 
