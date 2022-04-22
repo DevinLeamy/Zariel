@@ -1,10 +1,8 @@
-import ecs.Component;
-import ecs.ComponentStore;
-import ecs.Entity;
-import ecs.System;
+import ecs.*;
 import math.Vector3;
 import math.Vector3i;
 
+import java.lang.System;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -14,7 +12,6 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_FILL;
 
 public class PlayerInputSystem extends InstanceSystem {
-    private static World world = World.getInstance();
     private static Controller controller = Controller.getInstance();
     ComponentStore<Transform> transformStore = ComponentStore.of(Transform.class);
 
@@ -22,10 +19,6 @@ public class PlayerInputSystem extends InstanceSystem {
 //        final public static float CAMERA_OFFSET_BACK = 5;
 //        final public static float CAMERA_OFFSET_UP = 5;
 //    }
-
-
-    final private float CAMERA_OFFSET_BACK = 5;
-    private float CAMERA_OFFSET_UP = 5;
 
     final private float cameraMovementSpeed = 20; // 1u / second
     final private float cameraRotationSpeed = (float) Math.PI / 4; // 1u / second
@@ -35,7 +28,7 @@ public class PlayerInputSystem extends InstanceSystem {
     private boolean wireframe;
 
     public PlayerInputSystem() {
-        super(Component.TRANSFORM | Component.PLAYER_TAG, 0);
+        super(ComponentRegistry.getSignature(Transform.class, PlayerTag.class, CameraTarget.class), 0);
 
         controller = Controller.getInstance();
         mousePos = new int[] { 0, 0 };
@@ -46,13 +39,14 @@ public class PlayerInputSystem extends InstanceSystem {
     @Override
     protected void update(float dt, Entity entity) {
         Transform playerTransform = transformStore.getComponent(entity).get();
+        CameraTarget target = entity.getComponent(CameraTarget.class).get();
 
-        handleMouseUpdate(playerTransform, dt, controller.mousePosition());
+        handleMouseUpdate(playerTransform, target, dt, controller.mousePosition());
         handleKeyPresses(dt, playerTransform);
     }
 
 
-    private void handleMouseUpdate(Transform transform, float dt, int[] newMousePos) {
+    private void handleMouseUpdate(Transform transform, CameraTarget target, float dt, int[] newMousePos) {
         if (mousePos[0] == 0 && newMousePos[0] != 0) {
             // initialize mouse position
             mousePos = newMousePos;
@@ -62,8 +56,8 @@ public class PlayerInputSystem extends InstanceSystem {
         int dy = newMousePos[1] - mousePos[1];
 
         transform.rotate(new Vector3(0, dx * mouseSensitivity, 0));
-        CAMERA_OFFSET_UP += dy * mouseSensitivity * 3;
-        CAMERA_OFFSET_UP = Utils.clamp(0, 25, CAMERA_OFFSET_UP);
+        target.targetOffset.y += dy * mouseSensitivity * 3;
+        target.targetOffset.y = Utils.clamp(0, 25, target.targetOffset.y);
 
         mousePos = newMousePos;
     }
@@ -104,6 +98,7 @@ public class PlayerInputSystem extends InstanceSystem {
         if (controller.keyPressed(GLFW_KEY_D)) { transform.translate(Vector3.scale(transform.right(), dt * cameraMovementSpeed)); }
 
         if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.translate(Vector3.scale(Transform.up, 1.0f)); }
+        if (controller.keyPressed(GLFW_KEY_LEFT_SHIFT)) { transform.translate(Vector3.scale(Transform.up, -1.0f)); }
 
         if (controller.takeMouseButtonState(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
             Vector3 bulletPosition = Vector3.add(transform.direction(), transform.position).add(Transform.up).add(Transform.up);

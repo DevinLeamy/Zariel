@@ -38,7 +38,7 @@ public class Transform implements Component {
      * This is the up vector relative to the player's direction()
      */
     public Vector3 up() {
-        return Vector3.cross(direction(), right());
+        return Vector3.cross(right(), direction());
     }
 
     public Matrix4 modelMatrix() {

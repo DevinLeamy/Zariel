@@ -8,7 +8,7 @@ public class Entity {
     private static int NEXT_ID = 0;
 
     final public int id;
-    final public long signature;
+    public long signature;
 
     public Entity() {
         this.id = NEXT_ID++;
@@ -18,10 +18,14 @@ public class Entity {
     public <T extends Component> void addComponent(T component) {
         ComponentStore<T> store = (ComponentStore<T>) ComponentStore.of(component.getClass());
         store.setComponent(this, component);
+
+        signature |= ComponentRegistry.getComponentId(component.getClass());
     }
 
     public <T extends Component> void removeComponent(Class<T> componentClass) {
         ComponentStore.of(componentClass).removeComponent(this);
+
+        signature &= (~ComponentRegistry.getComponentId(componentClass));
     }
 
     public <T extends Component> Optional<T> getComponent(Class<T> componentClass) {

@@ -21,7 +21,7 @@ public class EntityManager {
         return new ArrayList<>(
             Arrays
                 .stream(entities)
-                .filter(entity -> (entity.signature & signature) == signature)
+                .filter(entity -> entity != null && (entity.signature & signature) == signature)
                 .toList()
         );
     }

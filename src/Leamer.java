@@ -50,8 +50,9 @@ final public class Leamer {
                 world.window.setTitle(String.format(
                         "FPS: %d POS: %s",
 //                        "CHUNK: %s",
-                        frames.size(),
-                        world.player.getPerspective().transform.position.toString()
+                        frames.size()
+                        ,
+                        world.getPerspective().transform.position.toString()
 //                        ChunkManager.getChunkCoords(world.camera.position).toString()
                 ));
             }

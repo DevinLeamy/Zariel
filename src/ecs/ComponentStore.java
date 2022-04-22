@@ -1,5 +1,6 @@
 package ecs;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -7,10 +8,13 @@ import java.util.Optional;
 public class ComponentStore<T extends Component> {
     private static Map<String, ComponentStore<? extends Component>> stores = new HashMap<>();
 
-    final private T[] components;
+    final private ArrayList<T> components;
 
     private ComponentStore() {
-        this.components = (T[]) new Object[ECSConfig.MAX_ENTITY_COUNT];
+        this.components = new ArrayList<>(ECSConfig.MAX_ENTITY_COUNT);
+        for (int i = 0; i < ECSConfig.MAX_ENTITY_COUNT; ++i) {
+            this.components.add(null);
+        }
     }
 
     public static <C extends Component> ComponentStore<C> of(Class<C> componentClass) {
@@ -23,22 +27,22 @@ public class ComponentStore<T extends Component> {
     }
 
     public Optional<T> getComponent(Entity entity) {
-        if (components[entity.id] == null) {
+        if (components.get(entity.id) == null) {
             return Optional.empty();
         }
-        return Optional.of(components[entity.id]);
+        return Optional.of(components.get(entity.id));
     }
 
     // returns the removed component
     public Optional<T> removeComponent(Entity entity) {
         Optional<T> removedComponent = getComponent(entity);
-        components[entity.id] = null;
+        components.set(entity.id, null);
 
         return removedComponent;
     }
 
     public void setComponent(Entity entity, T component) {
-        components[entity.id] = component;
+        components.set(entity.id, component);
     }
 
     public static void removeAllComponents(Entity entity) {

@@ -3,6 +3,7 @@ import math.Vector3;
 
 public class Camera {
     public Transform transform;
+    public Vector3 targetPosition;
     float fov;
     float aspect;
     float ncp;
@@ -59,8 +60,12 @@ public class Camera {
         return new Frustum(fov, aspect, transform.position, Vector3.add(transform.position, transform.direction()), new Vector3(0, 1, 0), ncp, fcp);
     }
 
+    public void lookAt(Vector3 position) {
+        targetPosition = position;
+    }
+
     public Matrix4 viewMatrix() {
-        return Matrix4.identity();
+        return Camera.lookAt(transform.position, targetPosition, Transform.up);
     }
 
     public Matrix4 orthographicProjectionMatrix() {

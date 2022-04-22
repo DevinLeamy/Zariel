@@ -1,4 +1,5 @@
 import ecs.Component;
+import ecs.ComponentRegistry;
 import ecs.ComponentStore;
 import ecs.Entity;
 import math.Vector3;
@@ -8,7 +9,7 @@ public class MovementSystem extends InstanceSystem {
     ComponentStore<Position> positionStore = ComponentStore.of(Position.class);
 
     public MovementSystem() {
-        super(Component.VELOCITY | Component.POSITION, 0);
+        super(ComponentRegistry.getSignature(Velocity.class, Position.class), 0);
     }
 
     /**

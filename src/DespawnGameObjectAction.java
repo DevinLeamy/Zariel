@@ -9,6 +9,6 @@ public class DespawnGameObjectAction extends Action {
     public void execute() {
         World world = World.getInstance();
 
-        world.despawnGameObject(objectId);
+//        world.despawnGameObject(objectId);
     }
 }

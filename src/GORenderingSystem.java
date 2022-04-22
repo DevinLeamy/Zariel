@@ -16,7 +16,7 @@ public class GORenderingSystem extends InstanceSystem {
     ComponentStore<Transform> transformStore = ComponentStore.of(Transform.class);
 
     public GORenderingSystem() {
-        super(Component.VOXEL_MODEL | Component.TRANSFORM, 0);
+        super(ComponentRegistry.getSignature(VoxelModel.class, Transform.class), 0);
     }
 
     @Override

@@ -20,7 +20,9 @@ public class VoxelGeometry {
         for (int i = 0; i < dimensions.x; ++i) {
             for (int j = 0; j < dimensions.y; ++j) {
                 for (int k = 0; k < dimensions.z; ++k) {
-                    activeBlocks += voxels[i][j][k].isActive() ? 1 : 0;
+                    if (voxels[i][j][k] != null && voxels[i][j][k].isActive()) {
+                        ++activeBlocks;
+                    }
                 }
             }
         }
@@ -104,6 +106,7 @@ public class VoxelGeometry {
 
     public static int[] readRGBA(int raw) {
         return new int[] {
+                // TODO: this should be leftward bit shifts
                 ((raw >> 16) & 0xFF),
                 ((raw >> 8) & 0xFF),
                 ((raw >> 0) & 0xFF),

@@ -9,6 +9,6 @@ public class SpawnGameObjectAction extends Action {
     public void execute() {
         World world = World.getInstance();
 
-        world.addGameObject(gameObject);
+//        world.addGameObject(gameObject);
     }
 }

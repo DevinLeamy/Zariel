@@ -32,19 +32,19 @@ abstract public class VoxelRenderable {
 
     abstract public ArrayList<Action> update(float dt);
 
-    public void render() {
-        World world = World.getInstance();
-        Camera camera = world.getPerspective();
-
-        Vector3 cameraPos = camera.transform.position;
-        Vector3 playerPos = world.player.transform.position;
+//    public void render() {
+//        World world = World.getInstance();
+//        Camera camera = world.getPerspective();
 //
-        Matrix4 viewMatrix = Camera.lookAt(cameraPos, playerPos, new Vector3(0, 1, 0));
-
-        renderer.shader.setUniform("viewM", viewMatrix);
-        renderer.shader.setUniform("modelM", transform.modelMatrix());
-        renderer.shader.setUniform("projectionM", camera.projectionMatrix());
-
-        renderer.renderMesh(mesh);
-    }
+//        Vector3 cameraPos = camera.transform.position;
+//        Vector3 playerPos = world.player.transform.position;
+////
+//        Matrix4 viewMatrix = Camera.lookAt(cameraPos, playerPos, new Vector3(0, 1, 0));
+//
+//        renderer.shader.setUniform("viewM", viewMatrix);
+//        renderer.shader.setUniform("modelM", transform.modelMatrix());
+//        renderer.shader.setUniform("projectionM", camera.projectionMatrix());
+//
+//        renderer.renderMesh(mesh);
+//    }
 }

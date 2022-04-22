@@ -1,66 +1,29 @@
+import ecs.Entity;
 import ecs.EntityManager;
 import math.Vector3;
 import math.Vector3i;
 
 import java.util.ArrayList;
-import static org.lwjgl.glfw.GLFW.*;
 import java.util.Optional;
 
 public class World {
+    public static World world;
     public static TextureAtlas atlas;
 
     public ChunkManager chunkManager;
     public Window window;
-    public Player player;
-    public DebugCamera debugCamera;
-    public SkyBox skyBox;
+//    public SkyBox skyBox;
     public EntityManager entityManager;
-    public ArrayList<VoxelRenderable> gameObjects;
-    private static World world;
+    public Camera camera;
 
-    private World() {
-        this.gameObjects = new ArrayList<>();
-        this.window = new Window();
-        this.chunkManager = new ChunkManager();
-        this.skyBox = new SkyBox(new String[] {
-                "res/images/skybox/right.png",
-                "res/images/skybox/left.png",
-                "res/images/skybox/top.png",
-                "res/images/skybox/bottom.png",
-                "res/images/skybox/front.png",
-                "res/images/skybox/back.png",
-        });
-    }
-
-    public void addGameObject(VoxelRenderable gameObject) {
-        gameObjects.add(gameObject);
-    }
-
-    public void despawnGameObject(long objectId) {
-        gameObjects.removeIf(gameObject -> gameObject.id == objectId);
-    }
-
-    private void init() {
-        atlas = new TextureAtlas("res/images/minecraft_atlas.png", 16, 16);
-        this.debugCamera = new DebugCamera();
-        this.player = new Player(
-                new Transform(
-                    new Vector3(
-                        Config.WORLD_WIDTH / 2.0f * Config.CHUNK_SIZE,
-                        Config.WORLD_HEIGHT * Config.CHUNK_SIZE,
-                        Config.WORLD_LENGTH / 2.0f * Config.CHUNK_SIZE
-                    ),
-                        new Vector3(0, 0, 0),
-                        new Vector3(0.1f, 0.1f, 0.1f)
-                ),
-                VoxelGeometry.loadFromFile("res/voxels/sword_man.vox"),
-                new Camera(
-                        (float) Math.PI - (float) Math.PI / 2,
-                        window.getAspectRatio(),
-                        new Vector3(0, Config.CHUNK_SIZE * 4, 0)
-                )
-        );
-    }
+    // Systems
+    private MovementSystem movementSystem;
+    private TerrainSystem terrainSystem;
+    private CameraInputSystem cameraInputSystem;
+    private PlayerInputSystem playerInputSystem;
+    private GORenderingSystem goRenderingSystem;
+    private CameraTrackingSystem cameraTrackingSystem;
+    private TerrainRenderingSystem terrainRenderingSystem;
 
     public static World getInstance() {
         if (World.world == null) {
@@ -71,63 +34,73 @@ public class World {
         return World.world;
     }
 
-    public static void updateDebug() {
-        Controller controller = Controller.getInstance();
-        if (controller.keyPressed(GLFW_KEY_1)) {
-            Config.debug1 += 0.01;
-            World.getInstance().chunkManager.clearAll();
-        }
-        if (controller.keyPressed(GLFW_KEY_2)) {
-            Config.debug1 -= 0.01;
-            World.getInstance().chunkManager.clearAll();
-        }
-        if (controller.keyPressed(GLFW_KEY_3)) {
-            Config.debug2 += 0.01;
-            World.getInstance().chunkManager.clearAll();
-        }
-        if (controller.keyPressed(GLFW_KEY_4)) {
-            Config.debug2 -= 0.01;
-            World.getInstance().chunkManager.clearAll();
-        }
-        if (controller.keyPressed(GLFW_KEY_5)) {
-            Config.debug3 += 0.01;
-            World.getInstance().chunkManager.clearAll();
-        }
-        if (controller.keyPressed(GLFW_KEY_6)) {
-            Config.debug3 -= 0.01;
-            World.getInstance().chunkManager.clearAll();
-        }
-        if (controller.keyDown(GLFW_KEY_8)) {
-            Config.orthographic = true;
-        }
-        if (controller.keyDown(GLFW_KEY_7)) {
-            Config.orthographic = false;
-        }
 
-//        System.out.printf("Debug 1: %f Debug 2: %f Debug 3: %f\n", Config.debug1, Config.debug2, Config.debug3);
+    private World() {
+        this.entityManager = EntityManager.instance;
+        this.window = new Window();
+        this.chunkManager = new ChunkManager();
+        this.camera = new Camera(
+                (float) Math.PI - (float) Math.PI / 2,
+                window.getAspectRatio(),
+                Vector3.zeros()
+        );
+
+
+//        this.skyBox = new SkyBox(new String[] {
+//                "res/images/skybox/right.png",
+//                "res/images/skybox/left.png",
+//                "res/images/skybox/top.png",
+//                "res/images/skybox/bottom.png",
+//                "res/images/skybox/front.png",
+//                "res/images/skybox/back.png",
+//        });
+    }
+
+    private void init() {
+        atlas = new TextureAtlas("res/images/minecraft_atlas.png", 16, 16);
+
+        this.movementSystem = new MovementSystem();
+        this.terrainSystem = new TerrainSystem();
+        this.playerInputSystem = new PlayerInputSystem();
+        this.goRenderingSystem = new GORenderingSystem();
+        this.cameraInputSystem = new CameraInputSystem();
+        this.cameraTrackingSystem = new CameraTrackingSystem();
+        this.terrainRenderingSystem = new TerrainRenderingSystem();
+
+        Entity player = new Entity();
+        player.addComponent(new Transform(
+                new Vector3(Config.WORLD_WIDTH / 2.0f * Config.CHUNK_SIZE, Config.WORLD_HEIGHT * Config.CHUNK_SIZE, Config.WORLD_LENGTH / 2.0f * Config.CHUNK_SIZE),
+                new Vector3(0, 0, 0),
+                new Vector3(0.1f, 0.1f, 0.1f)
+        ));
+        player.addComponent(new VoxelModel(VoxelGeometry.loadFromFile("res/voxels/sword_man.vox").voxels));
+        player.addComponent(new PlayerTag());
+        player.addComponent(new Prospective(
+                (float) Math.PI - (float) Math.PI / 2,
+                window.getAspectRatio(),
+                0.01f,
+                500f
+        ));
+        player.addComponent(new CameraTarget(new Vector3(0, 5, -5)));
+
+        entityManager.addEntity(player);
     }
 
     public void update(float dt) {
-        ArrayList<Action> updates = new ArrayList<>();
-        // Game Logic Updates
-        if (Debug.DEBUG) {
-            debugCamera.update(dt);
-        } else {
-            updates.addAll(player.update(dt));
+        int NO_DELTA = 0;
+        {
+            movementSystem.update(dt);
+            terrainSystem.update(dt);
+            cameraInputSystem.update(dt);
+            playerInputSystem.update(dt);
+            cameraTrackingSystem.update(dt);
         }
-
-        for (VoxelRenderable renderable : gameObjects) {
-            updates.addAll(renderable.update(dt));
+        prepareRender();
+        {
+            terrainRenderingSystem.update(NO_DELTA);
+            goRenderingSystem.update(NO_DELTA);
         }
-
-        updateDebug();
-
-        for (Action action : updates) {
-            action.execute();
-        }
-
-        chunkManager.update(getPerspective());
-        render();
+        window.render();
     }
 
     private void prepareRender() {
@@ -135,27 +108,7 @@ public class World {
     }
 
     public Camera getPerspective() {
-        if (Debug.DEBUG) {
-            return debugCamera.getPerspective();
-        } else {
-            return player.getPerspective();
-        }
-    }
-
-
-    private void render() {
-        prepareRender();
-        if (!Config.orthographic && !Debug.DEBUG) {
-            skyBox.render(getPerspective());
-        }
-        chunkManager.render(getPerspective());
-        player.render();
-        for (VoxelRenderable renderable : gameObjects) {
-            renderable.render();
-        }
-        window.render();
-
-
+        return camera;
     }
 
     public boolean blockIsActive(int x, int y, int z) {

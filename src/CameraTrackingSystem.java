@@ -1,8 +1,11 @@
 import ecs.*;
+import math.Vector3;
+
+import java.lang.System;
 
 public class CameraTrackingSystem extends InstanceSystem {
     public CameraTrackingSystem() {
-        super(Component.CAMERA_TARGET | Component.TRANSFORM, 0);
+        super(ComponentRegistry.getSignature(CameraTarget.class, Transform.class), 0);
     }
 
     @Override
@@ -11,6 +14,17 @@ public class CameraTrackingSystem extends InstanceSystem {
 
         // the entity "is" the target
         Transform targetTransform = entity.getComponent(Transform.class).get();
-//        camera.lookAt(targetTransform.position);
+        Vector3 targetOffset = entity.getComponent(CameraTarget.class).get().targetOffset;
+
+        Vector3 offsetBack = Vector3.scale(targetTransform.direction(), targetOffset.z);
+        Vector3 offsetUp   = Vector3.scale(targetTransform.up(), targetOffset.y);
+        Vector3 offsetRight = Vector3.scale(targetTransform.right(), targetOffset.x);
+
+        Vector3 newPosition = targetTransform.position.clone();
+        newPosition.add(offsetBack);
+                newPosition.add(offsetUp).add(offsetRight);
+
+        camera.transform.position = newPosition;
+        camera.lookAt(targetTransform.position);
     }
 }
