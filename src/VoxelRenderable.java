@@ -23,7 +23,7 @@ abstract public class VoxelRenderable {
     public VoxelRenderable(Transform transform, VoxelGeometry shape) {
         this.transform = transform;
         this.shape = shape;
-        this.mesh = MeshGenerator.generateVoxelMesh(shape, transform.position.toVector3i());
+        this.mesh = MeshGenerator.generateLocalVoxelMesh(shape);
         this.renderer = new Renderer(shader);
         this.id = NEXT_ID;
 

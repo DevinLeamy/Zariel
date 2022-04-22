@@ -148,6 +148,7 @@ public class Player extends VoxelRenderable {
         offsetBack.y = 0;
         Vector3 offsetUp = Vector3.scale(Transform.up, CAMERA_OFFSET_UP);
 
+        camera.transform.translate(Vector3.scale(transform.right(), 1.2f));
         camera.transform.translate(offsetUp);
         camera.transform.translate(offsetBack);
 

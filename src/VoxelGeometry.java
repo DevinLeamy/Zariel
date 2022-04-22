@@ -1,4 +1,5 @@
 import com.scs.voxlib.*;
+import math.Vector3;
 import math.Vector3i;
 
 import java.io.FileInputStream;
@@ -40,7 +41,7 @@ public class VoxelGeometry {
         for (int i = 0; i < dimensions.x; ++i) {
             for (int j = 0; j < dimensions.y; ++j) {
                 for (int k = 0; k < dimensions.z; ++k) {
-                    if (voxels[i][j][k].isActive()) {
+                    if (voxels[i][j][k] != null && voxels[i][j][k].isActive()) {
                         offsets.add(new Vector3i(i, j, k));
                     }
                 }
@@ -56,6 +57,16 @@ public class VoxelGeometry {
 
     public Optional<Block> getBlock(Vector3i index) {
         return getBlock(index.x, index.y, index.z);
+    }
+
+    public boolean blockIsActive(int x, int y, int z) {
+        Vector3i index = new Vector3i(x, y, z);
+        Optional<Block> block = getBlock(index);
+        if (block.isPresent() && block.get().isActive()) {
+            return true;
+        }
+
+        return false;
     }
 
     private boolean validIndex(int x, int y, int z) {

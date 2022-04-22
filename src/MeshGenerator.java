@@ -7,28 +7,27 @@ import rendering.Vertex;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.lwjgl.opengl.GL41.*;
 
 public class MeshGenerator {
 
-    public static VoxelMesh generateVoxelMesh(VoxelGeometry voxels, Vector3i location) {
+    private static VoxelMesh generateVoxelMesh(VoxelGeometry voxels, Optional<Vector3i> location) {
         int vao = glGenVertexArrays();
         int vbo = glGenBuffers();
 
         ArrayList<Vertex> vertices = new ArrayList<>();
-        Vector3i dimensions = voxels.dimensions();
-        for (int i = 0; i < dimensions.x; ++i) {
-            for (int j = 0; j < dimensions.y; ++j) {
-                for (int k = 0; k < dimensions.z; ++k) {
-                    Block block = voxels.getBlock(i, j, k).get();
-                    if (!block.isActive()) {
-                        continue;
-                    }
-                    ArrayList<Vertex> blockVertices = createBlockVertices(block.getBlockType(), i, j, k,
-                        location);
-                    vertices.addAll(blockVertices);
-                }
+        ArrayList<Vector3i> activeOffsets = voxels.activeOffsets();
+
+        for (Vector3i offset : activeOffsets) {
+            Block block = voxels.getBlock(offset.x, offset.y, offset.z).get();
+            if (location.isPresent()) {
+                ArrayList<Vertex> blockVertices = createWorldBlockVertices(block.getBlockType(), offset.toVector3(), location.get());
+                vertices.addAll(blockVertices);
+            } else {
+                ArrayList<Vertex> blockVertices = createLocalBlockVertices(block.getBlockType(), offset.toVector3(), voxels);
+                vertices.addAll(blockVertices);
             }
         }
 
@@ -68,8 +67,15 @@ public class MeshGenerator {
         return new VoxelMesh(vertices.size(), vao, vbo);
     }
 
-    private static ArrayList<Vertex> createBlockVertices(BlockType blockType, int x, int y, int z,
-                                                         Vector3i location) {
+    public static VoxelMesh generateVoxelMesh(VoxelGeometry voxels, Vector3i location) {
+        return generateVoxelMesh(voxels, Optional.of(location));
+    }
+
+    public static VoxelMesh generateLocalVoxelMesh(VoxelGeometry voxels) {
+        return generateVoxelMesh(voxels, Optional.empty());
+    }
+
+    private static ArrayList<Vertex> createLocalBlockVertices(BlockType blockType, Vector3 localOffset, VoxelGeometry voxels) {
         Vector3 v1 = new Vector3 (1.0f,  0.0f, 0.0f);
         Vector3 v2 = new Vector3 (1.0f,  0.0f, 1.0f);
         Vector3 v3 = new Vector3 (0.0f, 0.0f, 1.0f);
@@ -91,7 +97,7 @@ public class MeshGenerator {
                 Direction.FRONT.normal
         ));
         // translate vertices
-        Vector3 translation = new Vector3(x, y, z);
+        Vector3 translation = localOffset.clone();
         ArrayList<Vector3> vertices = new ArrayList<>(List.of(
                 Vector3.zeros(), v1, v2, v3, v4, v5, v6, v7, v8
         ));
@@ -101,9 +107,153 @@ public class MeshGenerator {
         // { { vertex, normal } }
         ArrayList<int[][]> triangles = new ArrayList<>();
 
-        int worldX = (int) translation.x + location.x;
-        int worldY = (int) translation.y + location.y;
-        int worldZ = (int) translation.z + location.z;
+        int worldX = (int) translation.x;
+        int worldY = (int) translation.y;
+        int worldZ = (int) translation.z;
+
+        // left-face
+        if (!voxels.blockIsActive(worldX - 1, worldY, worldZ)) {
+            triangles.add(new int[][] {
+                    {3, 5, 3}, {7, 5, 0}, {8, 5, 1}
+            });
+            triangles.add(new int[][]{
+                    {4, 5, 2}, {3, 5, 3}, {8, 5, 1}
+            });
+        }
+
+        // bottom-face
+        if (!voxels.blockIsActive(worldX, worldY - 1, worldZ)) {
+            triangles.add(new int[][]{
+                    {2, 1, 3}, {3, 1, 0}, {4, 1, 1}
+            });
+            triangles.add(new int[][]{
+                    {1, 1, 2}, {2, 1, 3}, {4, 1, 1}
+            });
+        }
+
+        // front-face
+        if (!voxels.blockIsActive(worldX, worldY, worldZ - 1)) {
+            triangles.add(new int[][]{
+                    {1, 6, 3}, {4, 6, 0}, {8, 6, 1}
+            });
+            triangles.add(new int[][]{
+                    {5, 6, 2}, {1, 6, 3}, {8, 6, 1}
+            });
+        }
+
+        // right-face
+        if (!voxels.blockIsActive(worldX + 1, worldY, worldZ)) {
+            triangles.add(new int[][]{
+                    {5, 3, 3}, {6, 3, 0}, {2, 3, 1}
+            });
+            triangles.add(new int[][]{
+                    {1, 3, 2}, {5, 3, 3}, {2, 3, 1}
+            });
+        }
+
+        // top-face
+        if (!voxels.blockIsActive(worldX, worldY + 1, worldZ)) {
+            triangles.add(new int[][]{
+                    {8, 2, 3}, {7, 2, 0}, {6, 2, 1}
+            });
+            triangles.add(new int[][]{
+                    {5, 2, 2}, {8, 2, 3}, {6, 2, 1}
+            });
+        }
+
+        // back-face
+        if (!voxels.blockIsActive(worldX, worldY, worldZ + 1)) {
+            triangles.add(new int[][]{
+                    {6, 4, 3}, {7, 4, 0}, {3, 4, 1}
+            });
+            triangles.add(new int[][]{
+                    {2, 4, 2}, {6, 4, 3}, {3, 4, 1}
+            });
+        }
+
+        ArrayList<Vertex> blockVertices = new ArrayList<>();
+
+        for (int[][] triangle : triangles) {
+            for (int[] vertex : triangle) {
+                Vector3 pos = vertices.get(vertex[0]);
+                Vector3 normal = normals.get(vertex[1]);
+                Vector2 uv = uvs[vertex[2]];
+
+                Vector3 color = blockType.colored ? blockType.getGLColor() : Vector3.zeros();
+                int ambientOcclusion = calculateLocalAmbientOcclusion(pos.toVector3i(), voxels);
+
+                Vertex v = new Vertex(pos, uv, normal, color);
+                v.setAmbientOcclusion(ambientOcclusion);
+
+                blockVertices.add(v);
+            }
+        }
+
+        return blockVertices;
+    }
+
+    private static int calculateLocalAmbientOcclusion(Vector3i localOffset, VoxelGeometry voxels) {
+        int x = localOffset.x, y = localOffset.y, z = localOffset.z;
+
+        boolean topLeft     = voxels.blockIsActive(x - 1, y, z);
+        boolean topRight    = voxels.blockIsActive(x, y, z);
+        boolean bottomLeft  = voxels.blockIsActive(x - 1, y, z - 1);
+        boolean bottomRight = voxels.blockIsActive(x, y, z - 1);
+
+        int topLeftI = topLeft ? 1 : 0;
+        int topRightI = topRight ? 1 : 0;
+        int bottomLeftI = bottomLeft ? 1 : 0;
+        int bottomRightI = bottomRight ? 1 : 0;
+
+        if (!topLeft) {
+            return calculateAO(bottomLeftI, topRightI, bottomRightI);
+        } else if (!topRight) {
+            return calculateAO(bottomRightI, topLeftI, bottomLeftI);
+        } else if (!bottomLeft) {
+            return calculateAO(topLeftI, bottomRightI, topRightI);
+        } else if (!bottomRight) {
+            return calculateAO(topRightI, bottomLeftI, topLeftI);
+        } else {
+            // Vertex is completely occluded
+            return 0;
+        }
+    }
+
+    private static ArrayList<Vertex> createWorldBlockVertices(BlockType blockType, Vector3 localOffset, Vector3i worldLocation) {
+        Vector3 v1 = new Vector3 (1.0f,  0.0f, 0.0f);
+        Vector3 v2 = new Vector3 (1.0f,  0.0f, 1.0f);
+        Vector3 v3 = new Vector3 (0.0f, 0.0f, 1.0f);
+        Vector3 v4 = new Vector3 (0.0f, 0.0f, 0.0f);
+        Vector3 v5 = new Vector3 (1.0f,  1.0f, 0.0f );
+        Vector3 v6 = new Vector3 (1.0f,  1.0f, 1.0f);
+        Vector3 v7 = new Vector3 (0.0f, 1.0f, 1.0f);
+        Vector3 v8 = new Vector3 (0.0f, 1.0f, 0.0f);
+
+        Vector2[] uvs = World.atlas.getUVs(blockType.textureRow, blockType.textureCol);
+
+        ArrayList<Vector3> normals = new ArrayList<>(List.of(
+                Vector3.zeros(),
+                Direction.DOWN.normal,
+                Direction.UP.normal,
+                Direction.RIGHT.normal,
+                Direction.BACK.normal,
+                Direction.LEFT.normal,
+                Direction.FRONT.normal
+        ));
+        // translate vertices
+        Vector3 translation = localOffset.clone();
+        ArrayList<Vector3> vertices = new ArrayList<>(List.of(
+                Vector3.zeros(), v1, v2, v3, v4, v5, v6, v7, v8
+        ));
+        vertices.forEach(vertex -> vertex.add(translation));
+
+        // faces - note: indices start at 1, not zero
+        // { { vertex, normal } }
+        ArrayList<int[][]> triangles = new ArrayList<>();
+
+        int worldX = (int) (translation.x + worldLocation.x);
+        int worldY = (int) (translation.y + worldLocation.y);
+        int worldZ = (int) (translation.z + worldLocation.z);
 
         World world = World.getInstance();
 
@@ -177,9 +327,9 @@ public class MeshGenerator {
 
                 Vector3 color = blockType.colored ? blockType.getGLColor() : Vector3.zeros();
                 int ambientOcclusion = calculateAmbientOcclusion(
-                        (int) pos.x + location.x,
-                        (int) pos.y + location.y,
-                        (int) pos.z + location.z
+                        (int) (pos.x + worldLocation.x),
+                        (int) (pos.y + worldLocation.y),
+                        (int) (pos.z + worldLocation.z)
                 );
 
                 Vertex v = new Vertex(pos, uv, normal, color);

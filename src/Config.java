@@ -1,8 +1,8 @@
 public class Config {
     final public static int CHUNK_SIZE = 32;
     // CHUNK_DISTANCES
-    final public static int WORLD_LENGTH = 4; // z axis
-    final public static int WORLD_WIDTH = 4;  // x axis
+    final public static int WORLD_LENGTH = 8; // z axis
+    final public static int WORLD_WIDTH = 8;  // x axis
 //    final public static int WORLD_LENGTH = 2; // z axis
 //    final public static int WORLD_WIDTH = 2;  // x axis
     final public static int WORLD_HEIGHT = 1;  // y axis
