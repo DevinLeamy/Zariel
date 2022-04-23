@@ -42,7 +42,7 @@ public class TerrainCollisionResolutionSystem extends InstanceSystem {
                 }
             }
 
-            for (int i = 0; i < 10; ++i) {
+            for (int i = 0; i < 30; ++i) {
                 entityManager.addEntity(generateParticle(explodedBlockType, collision.location));
             }
         }
@@ -53,7 +53,7 @@ public class TerrainCollisionResolutionSystem extends InstanceSystem {
         particle.addComponent(new Transform(
             blockPosition.toVector3(),
             Utils.randVector3(),
-            new Vector3(0.5f, 0.5f, 0.5f)
+            new Vector3(0.2f, 0.2f, 0.2f)
         ));
         particle.addComponent(new Dynamics(
             Utils.randVector3().scale(3.0f).add(new Vector3(0, 10, 0)),

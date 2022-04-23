@@ -120,7 +120,7 @@ public class PlayerInputSystem extends InstanceSystem {
             Optional<Vector3i> selected = getSelectedBlock(transform);
             Block newBlock = new Block(false, BlockType.RED);
             selected.ifPresent((Vector3i location) -> {
-                updates.add(new BlockUpdateAction(location, newBlock));
+//                updates.add(new BlockUpdateAction(location, newBlock));
             });
         }
 
