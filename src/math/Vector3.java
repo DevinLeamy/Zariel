@@ -129,6 +129,13 @@ public class Vector3 {
         return new Vector3i((int) x, (int) y, (int) z);
     }
 
+    public Vector3i toVector3i(boolean floored) {
+        if (floored) {
+            return new Vector3i((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z));
+        }
+        return toVector3i();
+    }
+
     public Vector3 clone() {
         return new Vector3(x, y, z);
     }

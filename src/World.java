@@ -24,6 +24,11 @@ public class World {
     private GORenderingSystem goRenderingSystem;
     private CameraTrackingSystem cameraTrackingSystem;
     private TerrainRenderingSystem terrainRenderingSystem;
+    private FallingSystem fallingSystem;
+    private TerrainCollisionDetectionSystem terrainCollisionDetectionSystem;
+    private TerrainCollisionResolutionSystem terrainCollisionResolutionSystem;
+    private DespawnSystem despawnSystem;
+    private LifeTimeSystem lifeTimeSystem;
 
     public static World getInstance() {
         if (World.world == null) {
@@ -66,6 +71,11 @@ public class World {
         this.cameraInputSystem = new CameraInputSystem();
         this.cameraTrackingSystem = new CameraTrackingSystem();
         this.terrainRenderingSystem = new TerrainRenderingSystem();
+        this.fallingSystem = new FallingSystem();
+        this.terrainCollisionResolutionSystem = new TerrainCollisionResolutionSystem();
+        this.terrainCollisionDetectionSystem = new TerrainCollisionDetectionSystem();
+        this.despawnSystem = new DespawnSystem();
+        this.lifeTimeSystem = new LifeTimeSystem();
 
         Entity player = new Entity();
         player.addComponent(new Transform(
@@ -82,6 +92,15 @@ public class World {
                 500f
         ));
         player.addComponent(new CameraTarget(new Vector3(0, 5, -5)));
+        player.addComponent(new Dynamics(
+                Vector3.zeros(),
+                Vector3.zeros()
+        ));
+        player.addComponent(new GravityTag());
+        player.addComponent(new RigidBody(
+                new BoundingBox(1, 2, 1),
+                "PLAYER"
+        ));
 
         entityManager.addEntity(player);
     }
@@ -89,10 +108,20 @@ public class World {
     public void update(float dt) {
         int NO_DELTA = 0;
         {
-            movementSystem.update(dt);
             terrainSystem.update(dt);
+
             cameraInputSystem.update(dt);
             playerInputSystem.update(dt);
+
+            movementSystem.update(dt);
+            fallingSystem.update(dt);
+
+            terrainCollisionDetectionSystem.update(dt);
+            terrainCollisionResolutionSystem.update(dt);
+
+            lifeTimeSystem.update(dt);
+            despawnSystem.update(dt);
+
             cameraTrackingSystem.update(dt);
         }
         prepareRender();

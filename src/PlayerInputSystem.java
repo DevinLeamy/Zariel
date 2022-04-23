@@ -15,11 +15,6 @@ public class PlayerInputSystem extends InstanceSystem {
     private static Controller controller = Controller.getInstance();
     ComponentStore<Transform> transformStore = ComponentStore.of(Transform.class);
 
-//    private class PlayerInputSystemConfig {
-//        final public static float CAMERA_OFFSET_BACK = 5;
-//        final public static float CAMERA_OFFSET_UP = 5;
-//    }
-
     final private float cameraMovementSpeed = 20; // 1u / second
     final private float cameraRotationSpeed = (float) Math.PI / 4; // 1u / second
     final private float mouseSensitivity = 0.002f;
@@ -101,15 +96,24 @@ public class PlayerInputSystem extends InstanceSystem {
         if (controller.keyPressed(GLFW_KEY_LEFT_SHIFT)) { transform.translate(Vector3.scale(Transform.up, -1.0f)); }
 
         if (controller.takeMouseButtonState(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-            Vector3 bulletPosition = Vector3.add(transform.direction(), transform.position).add(Transform.up).add(Transform.up);
-            Transform bulletTransform = new Transform(
-                    bulletPosition,
-                    new Vector3(0, transform.rotation.y, 0),
-                    new Vector3(1/12f, 1/12f, 1/12f)
-            );
-            VoxelRenderable bullet = new Bullet(bulletTransform);
-            SpawnGameObjectAction spawnBullet = new SpawnGameObjectAction(bullet);
-            updates.add(spawnBullet);
+            Entity bomb = new Entity();
+            bomb.addComponent(new Transform(
+                Vector3.add(transform.direction(), transform.position).add(Transform.up).add(Transform.up),
+                new Vector3(0, transform.rotation.y, 0),
+                new Vector3(1/12f, 1/12f, 1/12f)
+            ));
+            bomb.addComponent(new GravityTag());
+            bomb.addComponent(new VoxelModel(VoxelGeometry.loadFromFile("res/voxels/bomb.vox").voxels));
+            bomb.addComponent(new Dynamics(
+                    transform.direction().normalize().scale(10),
+                    Vector3.zeros()
+            ));
+            bomb.addComponent(new RigidBody(
+                    new BoundingBox(1, -1, 1),
+                    "BOMB"
+            ));
+
+            world.entityManager.addEntity(bomb);
         }
 
         if (controller.keyDown(GLFW_KEY_M)) {

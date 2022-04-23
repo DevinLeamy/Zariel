@@ -175,18 +175,10 @@ public class Chunk {
             return;
         }
 
-//        Vector3 cameraPos = prospective.transform.position;
-        // TODO: fix
-//        Vector3 playerPos = World.getInstance().entityManager.queryEntities(ComponentRegistry.getSignature(PlayerTag.class, Transform.class)).get(0).getComponent(Transform.class).get().position;
-
-
-//        Matrix4 viewMatrix = Camera.lookAt(cameraPos, playerPos, new Vector3(0, 1, 0));
-        Matrix4 projectionMatrix = prospective.projectionMatrix();
         Vector3i location = Vector3i.scale(this.location, CHUNK_SIZE);
 
-//        renderer.shader.setUniform("viewM", viewMatrix);
         renderer.shader.setUniform("viewM", prospective.viewMatrix());
-        renderer.shader.setUniform("projectionM", projectionMatrix);
+        renderer.shader.setUniform("projectionM", prospective.projectionMatrix());
         renderer.shader.setUniform("location", location);
 
         renderer.renderMesh(mesh);
@@ -212,6 +204,6 @@ public class Chunk {
     }
 
     public BoundingBox getBoundingBox() {
-        return new BoundingBox(Vector3.scale(location.toVector3(), CHUNK_SIZE), CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
+        return new BoundingBox(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
     }
 }

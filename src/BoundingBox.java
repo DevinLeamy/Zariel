@@ -12,28 +12,17 @@ public class BoundingBox {
             new Vector3(1, 0, 1)
     };
 
-    private Vector3 origin;
     private Vector3 dimensions;
 
-    public BoundingBox(Vector3 origin, float width, float height, float depth) {
-        this.origin = origin;
+    public BoundingBox(float width, float height, float depth) {
         this.dimensions = new Vector3(width, height, depth);
-    }
-
-    public void setOrigin(Vector3 origin) {
-        this.origin = origin;
-    }
-
-    public Vector3 getOrigin() {
-        return origin;
     }
 
     public Vector3[] vertices() {
         Vector3[] vertices = new Vector3[6];
 
         for (int i = 0; i < 6; ++i) {
-            Vector3 originOffset = Vector3.mult(dimensions, VERTEX_OFFSETS[i]);
-            vertices[i] = origin.clone().add(originOffset);
+            vertices[i] = Vector3.mult(dimensions, VERTEX_OFFSETS[i]);;
         }
 
         return vertices;

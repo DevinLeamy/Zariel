@@ -1,32 +1,26 @@
-import ecs.Component;
 import ecs.ComponentRegistry;
 import ecs.ComponentStore;
 import ecs.Entity;
 import math.Vector3;
 
 public class MovementSystem extends InstanceSystem {
-    ComponentStore<Velocity> velocityStore = ComponentStore.of(Velocity.class);
-    ComponentStore<Position> positionStore = ComponentStore.of(Position.class);
+    ComponentStore<Dynamics>  dynamicsStore = ComponentStore.of(Dynamics.class);
+    ComponentStore<Transform> transformStore = ComponentStore.of(Transform.class);
 
     public MovementSystem() {
-        super(ComponentRegistry.getSignature(Velocity.class, Position.class), 0);
-    }
-
-    /**
-     * Updates the list of matching entities.
-     * Must be called before update()
-     */
-    public void updateEntities() {
-
+        super(ComponentRegistry.getSignature(Transform.class, Dynamics.class), 0);
     }
 
     @Override
     protected void update(float dt, Entity entity) {
-        Velocity velocity = velocityStore.getComponent(entity).get();
-        Position position = positionStore.getComponent(entity).get();
+        Dynamics dynamics = dynamicsStore.getComponent(entity).get();
+        Transform transform = transformStore.getComponent(entity).get();
 
-        Vector3 deltaPosition = Vector3.scale(velocity, dt);
+        Vector3 velocity = dynamics.velocity;
+        Vector3 acceleration = dynamics.acceleration;
+        Vector3 position = transform.position;
 
-        position.add(deltaPosition);
+        velocity.add(Vector3.scale(acceleration, dt));
+        position.add(Vector3.scale(velocity, dt));
     }
 }
