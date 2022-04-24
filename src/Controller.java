@@ -42,6 +42,13 @@ public class Controller {
         return scrollDelta;
     }
 
+    public int takeKeyPressState(int key) {
+        int state = keyPressed.getOrDefault(key, -1);
+        keyPressed.remove(key);
+
+        return state;
+    }
+
     public int takeMouseButtonState(int key) {
         int state = mouseButtonState.getOrDefault(key, -1);
         mouseButtonState.remove(key);

@@ -1,9 +1,8 @@
 import ecs.System;
 
 public class CameraInputSystem extends System {
+    World world = World.getInstance();
     final private float scrollSensitivity = 0.03f;
-
-    Camera camera = World.getInstance().getPerspective();
     Controller controller = Controller.getInstance();
 
     public CameraInputSystem() {
@@ -12,10 +11,11 @@ public class CameraInputSystem extends System {
 
     @Override
     public void update(float dt) {
-        handleScrollUpdate(controller.pollScrollDelta());
+        Camera camera = world.getPerspective();
+        handleScrollUpdate(controller.pollScrollDelta(), camera);
     }
 
-    private void handleScrollUpdate(float scrollDelta) {
+    private void handleScrollUpdate(float scrollDelta, Camera camera) {
         camera.fov += scrollDelta * scrollSensitivity;
         camera.fov = Utils.clamp(0.1f * (float) Math.PI, 0.7f * (float) Math.PI, camera.fov);
     }

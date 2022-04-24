@@ -3,6 +3,8 @@ import ecs.EntityManager;
 import math.Vector3;
 import math.Vector3i;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -14,7 +16,8 @@ public class World {
     public Window window;
     public SkyBox skyBox;
     public EntityManager entityManager;
-    public Camera camera;
+    private Camera camera;
+    private Camera debugCamera;
 
     // Systems
     private MovementSystem movementSystem;
@@ -30,6 +33,7 @@ public class World {
     private DespawnSystem despawnSystem;
     private LifeTimeSystem lifeTimeSystem;
     private SkyBoxRenderingSystem skyBoxRenderingSystem;
+    private DebugCameraInputSystem debugCameraInputSystem;
 
     public static World getInstance() {
         if (World.world == null) {
@@ -49,6 +53,11 @@ public class World {
                 (float) Math.PI - (float) Math.PI / 2,
                 window.getAspectRatio(),
                 Vector3.zeros()
+        );
+        this.debugCamera = new Camera(
+                (float) Math.PI - (float) Math.PI / 2,
+                window.getAspectRatio(),
+                new Vector3(Config.WORLD_WIDTH / 2.0f * Config.CHUNK_SIZE, Config.WORLD_HEIGHT * Config.CHUNK_SIZE, Config.WORLD_LENGTH / 2.0f * Config.CHUNK_SIZE)
         );
 
         this.skyBox = new SkyBox(new String[] {
@@ -77,6 +86,7 @@ public class World {
         this.despawnSystem = new DespawnSystem();
         this.lifeTimeSystem = new LifeTimeSystem();
         this.skyBoxRenderingSystem = new SkyBoxRenderingSystem();
+        this.debugCameraInputSystem = new DebugCameraInputSystem();
 
         Entity player = new Entity();
         player.addComponent(new Transform(
@@ -104,15 +114,38 @@ public class World {
         ));
 
         entityManager.addEntity(player);
+
+        Entity metaViewer = new Entity();
+        metaViewer.addComponent(new DebugCameraConfig());
+
+        entityManager.addEntity(metaViewer);
+    }
+
+    private void debugInputHandler() {
+        Controller controller = Controller.getInstance();
+
+        if (controller.takeKeyPressState(GLFW_KEY_0) == GLFW_PRESS) {
+            Debug.DEBUG = true;
+        } else if (controller.takeKeyPressState(GLFW_KEY_9) == GLFW_PRESS) {
+            Debug.DEBUG = false;
+        }
     }
 
     public void update(float dt) {
         int NO_DELTA = 0;
         {
+            debugInputHandler();
             terrainSystem.update(dt);
 
             cameraInputSystem.update(dt);
-            playerInputSystem.update(dt);
+
+            if (Debug.DEBUG) {
+                // control the camera
+                debugCameraInputSystem.update(dt);
+            } else {
+                // control the player
+                playerInputSystem.update(dt);
+            }
 
             movementSystem.update(dt);
             fallingSystem.update(dt);
@@ -123,7 +156,9 @@ public class World {
             lifeTimeSystem.update(dt);
             despawnSystem.update(dt);
 
-            cameraTrackingSystem.update(dt);
+            if (!Debug.DEBUG) {
+                cameraTrackingSystem.update(dt);
+            }
         }
         prepareRender();
         {
@@ -139,6 +174,9 @@ public class World {
     }
 
     public Camera getPerspective() {
+        if (Debug.DEBUG) {
+            return debugCamera;
+        }
         return camera;
     }
 

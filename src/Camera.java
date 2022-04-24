@@ -16,6 +16,7 @@ public class Camera {
      */
     public Camera(float fov, float aspect, Vector3 position) {
         this.transform = new Transform(position);
+        this.targetPosition = Vector3.zeros();
         this.fov    = fov;
         this.aspect = aspect; // aspect;
         this.ncp    = 0.01f;  // near clip plane (NCP)

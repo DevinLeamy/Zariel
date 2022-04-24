@@ -10,6 +10,6 @@ public class SkyBoxRenderingSystem extends System {
     @Override
     public void update(float dt) {
         SkyBox skyBox = world.skyBox;
-        skyBox.render(world.camera);
+        skyBox.render(world.getPerspective());
     }
 }
