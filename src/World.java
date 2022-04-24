@@ -12,7 +12,7 @@ public class World {
 
     public ChunkManager chunkManager;
     public Window window;
-//    public SkyBox skyBox;
+    public SkyBox skyBox;
     public EntityManager entityManager;
     public Camera camera;
 
@@ -29,6 +29,7 @@ public class World {
     private TerrainCollisionResolutionSystem terrainCollisionResolutionSystem;
     private DespawnSystem despawnSystem;
     private LifeTimeSystem lifeTimeSystem;
+    private SkyBoxRenderingSystem skyBoxRenderingSystem;
 
     public static World getInstance() {
         if (World.world == null) {
@@ -50,15 +51,14 @@ public class World {
                 Vector3.zeros()
         );
 
-
-//        this.skyBox = new SkyBox(new String[] {
-//                "res/images/skybox/right.png",
-//                "res/images/skybox/left.png",
-//                "res/images/skybox/top.png",
-//                "res/images/skybox/bottom.png",
-//                "res/images/skybox/front.png",
-//                "res/images/skybox/back.png",
-//        });
+        this.skyBox = new SkyBox(new String[] {
+                "res/images/skybox/right.png",
+                "res/images/skybox/left.png",
+                "res/images/skybox/top.png",
+                "res/images/skybox/bottom.png",
+                "res/images/skybox/front.png",
+                "res/images/skybox/back.png",
+        });
     }
 
     private void init() {
@@ -76,6 +76,7 @@ public class World {
         this.terrainCollisionDetectionSystem = new TerrainCollisionDetectionSystem();
         this.despawnSystem = new DespawnSystem();
         this.lifeTimeSystem = new LifeTimeSystem();
+        this.skyBoxRenderingSystem = new SkyBoxRenderingSystem();
 
         Entity player = new Entity();
         player.addComponent(new Transform(
@@ -126,6 +127,7 @@ public class World {
         }
         prepareRender();
         {
+            skyBoxRenderingSystem.update(NO_DELTA);
             terrainRenderingSystem.update(NO_DELTA);
             goRenderingSystem.update(NO_DELTA);
         }

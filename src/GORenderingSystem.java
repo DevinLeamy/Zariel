@@ -25,7 +25,7 @@ public class GORenderingSystem extends InstanceSystem {
         Transform transform = transformStore.getComponent(entity).get();
 
         Camera camera = world.getPerspective();
-        VoxelMesh mesh = MeshGenerator.generateLocalVoxelMesh(new VoxelGeometry(model.voxels));
+        VoxelMesh mesh = model.mesh();
 
         renderer.shader.setUniform("viewM", camera.viewMatrix());
         renderer.shader.setUniform("modelM", transform.modelMatrix());

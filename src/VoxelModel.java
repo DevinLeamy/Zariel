@@ -1,11 +1,22 @@
 import ecs.Component;
-import math.Vector3i;
 
-public class VoxelModel extends VoxelGeometry implements Component {
+public class VoxelModel implements Component {
+    private boolean updated;
+    public Block[][][] voxels;
+    private VoxelMesh mesh;
+
     public VoxelModel(Block[][][] voxels) {
-        super(voxels);
+        this.voxels = voxels;
+        updated = true;
     }
-    public VoxelModel(Vector3i dimensions) {
-        super(dimensions);
+
+    public VoxelMesh mesh() {
+        if (updated) {
+            if (mesh != null) {
+                mesh.dispose();
+            }
+            mesh = MeshGenerator.generateLocalVoxelMesh(new VoxelGeometry(voxels));
+        }
+        return mesh;
     }
 }
