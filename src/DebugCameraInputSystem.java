@@ -2,11 +2,18 @@ import ecs.ComponentRegistry;
 import ecs.ComponentStore;
 import ecs.Entity;
 import math.Vector3;
+import math.Vector3i;
+
+import java.util.Optional;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+/**
+ * TODO: Remove the "state" from this system.
+ * Systems should be loosely "stateless".
+ */
 public class DebugCameraInputSystem extends InstanceSystem {
-    final private float cameraMovementSpeed = 30; // 1u / second
+    final private float cameraMovementSpeed = 15; // 1u / second
     final private float mouseSensitivity = 0.002f;
 
     World world = World.getInstance();
@@ -14,11 +21,14 @@ public class DebugCameraInputSystem extends InstanceSystem {
     ComponentStore<DebugCameraConfig> debugCameraConfigStore = ComponentStore.of(DebugCameraConfig.class);
 
     private int[] mousePos;
+    private Block previouslySelectedBlock;
+    private Runnable undoPreviousSelection;
 
     public DebugCameraInputSystem() {
         super(ComponentRegistry.getSignature(DebugCameraConfig.class), 0);
 
         this.mousePos = new int[] { 0, 0 };
+        this.undoPreviousSelection = () -> {};
     }
 
     @Override
@@ -28,17 +38,47 @@ public class DebugCameraInputSystem extends InstanceSystem {
         Camera camera = world.getPerspective();
         Vector3 cameraPosition = camera.transform.position;
 
-        handleMouseUpdate(dt, controller.mousePosition(), config);
-
         Vector3 forward = Vector3.sub(camera.targetPosition, cameraPosition).normalize();
         Vector3 right = Vector3.cross(forward, Transform.up).normalize();
 
         handleKeyPresses(dt, camera.transform, forward, right);
+        handleMouseUpdate(dt, controller.mousePosition(), config);
 
-        float pitch = config.pitch;
-        float yaw = config.yaw;
-        Vector3 target = calculateDirection(cameraPosition, yaw, pitch);
-        camera.lookAt(target);
+        Vector3 newTarget = calculateDirection(cameraPosition, config.yaw, config.pitch);
+        camera.lookAt(newTarget);
+
+
+        // -z axis
+        forward = Vector3.sub(newTarget, cameraPosition).normalize();
+        Optional<Block> maybeBlock = getSelectedBlock(cameraPosition, forward);
+
+        maybeBlock.ifPresent(selectedBlock -> {
+            if (previouslySelectedBlock != selectedBlock) {
+                this.undoPreviousSelection.run();
+                this.undoPreviousSelection = new Runnable() {
+                    // undo selectedBlock selection, because it will become the previous selection
+                    private Block previouslySelectedBlock = selectedBlock;
+                    private BlockType oldBlockType = selectedBlock.getBlockType();
+
+                    @Override
+                    public void run() {
+                        previouslySelectedBlock.setBlockType(oldBlockType);
+                    }
+                };
+            }
+
+            selectedBlock.setBlockType(BlockType.SNOW);
+            handleMouseButtons(selectedBlock);
+
+            previouslySelectedBlock = selectedBlock;
+        });
+
+    }
+
+    private void handleMouseButtons(Block selectedBlock) {
+        if (controller.takeMouseButtonState(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+            selectedBlock.setActive(false);
+        }
     }
 
 
@@ -51,6 +91,27 @@ public class DebugCameraInputSystem extends InstanceSystem {
         return Vector3.add(position, orientation);
     }
 
+    /**
+     * Highlight the block under your cursor.
+     */
+    private Optional<Block> getSelectedBlock(Vector3 source, Vector3 forward) {
+        float MAX_SELECT_DISTANCE = 15.0f;
+
+        float dist = 0.0f;
+
+        while (dist < MAX_SELECT_DISTANCE) {
+            Vector3i pos = Vector3.add(source, Vector3.scale(forward, dist)).toVector3i();
+
+            if (world.blockIsActive(pos)) {
+                return world.getBlock(pos);
+            }
+
+            // increment by half of a block width
+            dist += 0.5f;
+        }
+
+        return Optional.empty();
+    }
 
     private void handleMouseUpdate(float dt, int[] newMousePos, DebugCameraConfig config) {
         if (mousePos[0] == 0 && newMousePos[0] != 0) {

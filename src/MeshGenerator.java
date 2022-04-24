@@ -193,30 +193,31 @@ public class MeshGenerator {
     }
 
     private static int calculateLocalAmbientOcclusion(Vector3i localOffset, VoxelGeometry voxels) {
-        int x = localOffset.x, y = localOffset.y, z = localOffset.z;
-
-        boolean topLeft     = voxels.blockIsActive(x - 1, y, z);
-        boolean topRight    = voxels.blockIsActive(x, y, z);
-        boolean bottomLeft  = voxels.blockIsActive(x - 1, y, z - 1);
-        boolean bottomRight = voxels.blockIsActive(x, y, z - 1);
-
-        int topLeftI = topLeft ? 1 : 0;
-        int topRightI = topRight ? 1 : 0;
-        int bottomLeftI = bottomLeft ? 1 : 0;
-        int bottomRightI = bottomRight ? 1 : 0;
-
-        if (!topLeft) {
-            return calculateAO(bottomLeftI, topRightI, bottomRightI);
-        } else if (!topRight) {
-            return calculateAO(bottomRightI, topLeftI, bottomLeftI);
-        } else if (!bottomLeft) {
-            return calculateAO(topLeftI, bottomRightI, topRightI);
-        } else if (!bottomRight) {
-            return calculateAO(topRightI, bottomLeftI, topLeftI);
-        } else {
-            // Vertex is completely occluded
-            return 0;
-        }
+        return 3;
+//        int x = localOffset.x, y = localOffset.y, z = localOffset.z;
+//
+//        boolean topLeft     = voxels.blockIsActive(x - 1, y, z);
+//        boolean topRight    = voxels.blockIsActive(x, y, z);
+//        boolean bottomLeft  = voxels.blockIsActive(x - 1, y, z - 1);
+//        boolean bottomRight = voxels.blockIsActive(x, y, z - 1);
+//
+//        int topLeftI = topLeft ? 1 : 0;
+//        int topRightI = topRight ? 1 : 0;
+//        int bottomLeftI = bottomLeft ? 1 : 0;
+//        int bottomRightI = bottomRight ? 1 : 0;
+//
+//        if (!topLeft) {
+//            return calculateAO(bottomLeftI, topRightI, bottomRightI);
+//        } else if (!topRight) {
+//            return calculateAO(bottomRightI, topLeftI, bottomLeftI);
+//        } else if (!bottomLeft) {
+//            return calculateAO(topLeftI, bottomRightI, topRightI);
+//        } else if (!bottomRight) {
+//            return calculateAO(topRightI, bottomLeftI, topLeftI);
+//        } else {
+//            // Vertex is completely occluded
+//            return 0;
+//        }
     }
 
     private static ArrayList<Vertex> createWorldBlockVertices(BlockType blockType, Vector3 localOffset, Vector3i worldLocation) {
