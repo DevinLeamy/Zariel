@@ -2,7 +2,6 @@ import ecs.*;
 import math.Vector3;
 import math.Vector3i;
 
-import java.lang.System;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -15,7 +14,7 @@ public class PlayerInputSystem extends InstanceSystem {
     private static Controller controller = Controller.getInstance();
     ComponentStore<Transform> transformStore = ComponentStore.of(Transform.class);
 
-    final private float cameraMovementSpeed = 20; // 1u / second
+    final private float cameraMovementSpeed = 10; // 1u / second
     final private float cameraRotationSpeed = (float) Math.PI / 4; // 1u / second
     final private float mouseSensitivity = 0.002f;
 
@@ -23,7 +22,7 @@ public class PlayerInputSystem extends InstanceSystem {
     private boolean wireframe;
 
     public PlayerInputSystem() {
-        super(ComponentRegistry.getSignature(Transform.class, PlayerTag.class, CameraTarget.class), 0);
+        super(ComponentRegistry.getSignature(Transform.class, PlayerTag.class, GravityTag.class, CameraTarget.class), 0);
 
         controller = Controller.getInstance();
         mousePos = new int[] { 0, 0 };
@@ -33,11 +32,19 @@ public class PlayerInputSystem extends InstanceSystem {
 
     @Override
     protected void update(float dt, Entity entity) {
+        PlayerTag playerTag = entity.getComponent(PlayerTag.class).get();
         Transform playerTransform = transformStore.getComponent(entity).get();
         CameraTarget target = entity.getComponent(CameraTarget.class).get();
+        GravityTag gravityTag = entity.getComponent(GravityTag.class).get();
+
+        playerTag.previousTransform = new Transform(
+                playerTransform.position.clone(),
+                playerTransform.rotation.clone(),
+                playerTransform.scale.clone()
+        );
 
         handleMouseUpdate(playerTransform, target, dt, controller.mousePosition());
-        handleKeyPresses(dt, playerTransform);
+        handleKeyPresses(dt, playerTransform, gravityTag.falling);
     }
 
 
@@ -82,7 +89,7 @@ public class PlayerInputSystem extends InstanceSystem {
         return Optional.empty();
     }
 
-    private ArrayList<Action> handleKeyPresses(float dt, Transform transform) {
+    private ArrayList<Action> handleKeyPresses(float dt, Transform transform, boolean falling) {
         ArrayList<Action> updates = new ArrayList<>();
 
         // forwards and backwards
@@ -92,8 +99,9 @@ public class PlayerInputSystem extends InstanceSystem {
         if (controller.keyPressed(GLFW_KEY_A)) { transform.translate(Vector3.scale(transform.right(), -dt * cameraMovementSpeed)); }
         if (controller.keyPressed(GLFW_KEY_D)) { transform.translate(Vector3.scale(transform.right(), dt * cameraMovementSpeed)); }
 
-        if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.translate(Vector3.scale(Transform.up, 1.0f)); }
-        if (controller.keyPressed(GLFW_KEY_LEFT_SHIFT)) { transform.translate(Vector3.scale(Transform.up, -1.0f)); }
+        if (!falling) {
+            if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.translate(Vector3.scale(Transform.up, 1.0f)); }
+        }
 
         if (controller.takeMouseButtonState(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
             Entity bomb = new Entity();
@@ -109,7 +117,7 @@ public class PlayerInputSystem extends InstanceSystem {
                     Vector3.zeros()
             ));
             bomb.addComponent(new RigidBody(
-                    new BoundingBox(1, -1, 1),
+                    new BoundingBox(1, 1, 1),
                     "BOMB"
             ));
 

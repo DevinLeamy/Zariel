@@ -35,6 +35,14 @@ public class Vector3 {
         return this;
     }
 
+    public Vector3 ceil() {
+        x = (float) Math.ceil(x);
+        y = (float) Math.ceil(y);
+        z = (float) Math.ceil(z);
+
+        return this;
+    }
+
     public Vector3 scale(float mag) {
         x *= mag;
         y *= mag;

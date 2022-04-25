@@ -28,8 +28,7 @@ public class TerrainCollisionDetectionSystem extends InstanceSystem {
         World world = World.getInstance();
 
         for (Vector3 vertex : boundingBox.vertices()) {
-            Vector3i blockPosition = vertex.add(worldOffset).toVector3i(true);
-
+            Vector3i blockPosition = vertex.add(worldOffset).toVector3i();
             if (world.blockIsActive(blockPosition)) {
                 return Optional.of(new TerrainCollision(blockPosition));
             }

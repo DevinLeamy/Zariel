@@ -94,4 +94,21 @@ public class Camera {
                 {0,                  0,                  0,                 1                                 }
         });
     }
+
+    public static Matrix4 orthographicProjectionM(int width, int height, int depth) {
+        Vector3 pos = Vector3.zeros();
+        float left = pos.x - width/2.0f;
+        float right = left + width;
+        float bottom = pos.y - height/2.0f;
+        float top = bottom + height;
+        float near = pos.z + depth/2.0f;
+        float far = near - depth;
+
+        return new Matrix4(new float[][] {
+                {2 / (right - left), 0,                  0,                 -((left + right) / (right - left))},
+                {0,                  2 / (top - bottom), 0,                 -((top + bottom) / (top - bottom))},
+                {0,                  0,                  -2 / (far - near), -((far + near) / (far - near))    },
+                {0,                  0,                  0,                 1                                 }
+        });
+    }
 }

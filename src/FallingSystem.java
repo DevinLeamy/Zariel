@@ -46,8 +46,8 @@ public class FallingSystem extends InstanceSystem {
     }
 
     private boolean onGround(Vector3 pos) {
-        Vector3i feet = pos.toVector3i(true);
-        Vector3i ground = Vector3i.sub(feet, new Vector3i(0, 1, 0));
+        Vector3i feet = pos.toVector3i();
+        Vector3i ground = Vector3i.sub(feet, new Vector3i(0, 0, 0));
 
         return world.blockIsActive(ground);
     }
