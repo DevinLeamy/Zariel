@@ -1,24 +1,29 @@
 import math.Vector3;
+import math.Vector3i;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Cube {
-    enum Vertex {
-        FRONT_TOP_LEFT(8),
-        FRONT_TOP_RIGHT(5),
-        FRONT_BOTTOM_LEFT(4),
-        FRONT_BOTTOM_RIGHT(1),
-        BACK_TOP_LEFT(7),
-        BACK_TOP_RIGHT(6),
-        BACK_BOTTOM_LEFT(3),
-        BACK_BOTTOM_RIGHT(2);
+    public enum Vertex {
+        NEAR_TOP_LEFT(8, new Vector3 (0.0f, 1.0f, 0.0f)),
+        NEAR_TOP_RIGHT(5, new Vector3 (1.0f,  1.0f, 0.0f )),
+        NEAR_BOTTOM_LEFT(4, new Vector3(0.0f, 0.0f, 0.0f)),
+        NEAR_BOTTOM_RIGHT(1, new Vector3 (1.0f,  0.0f, 0.0f)),
+        FAR_TOP_LEFT(7, new Vector3 (0.0f, 1.0f, 1.0f)),
+        FAR_TOP_RIGHT(6, new Vector3 (1.0f,  1.0f, 1.0f)),
+        FAR_BOTTOM_LEFT(3, new Vector3 (0.0f, 0.0f, 1.0f)),
+        FAR_BOTTOM_RIGHT(2, new Vector3 (1.0f,  0.0f, 1.0f));
 
-        private final int index;
-        Vertex(int index) {
+        public final int index;
+        public final Vector3 position;
+        Vertex(int index, Vector3 position) {
             this.index = index;
+            this.position = position;
         }
     }
+
+    final public static VoxelMesh mesh = MeshGenerator.generateCubeWireMesh();
 
 //    public enum Face {
 ////        FRONT,
@@ -36,17 +41,6 @@ public class Cube {
 //    public class Corner  {
 //
 //    }
-
-
-
-    Vector3 v1 = new Vector3 (1.0f,  0.0f, 0.0f);
-    Vector3 v2 = new Vector3 (1.0f,  0.0f, 1.0f);
-    Vector3 v3 = new Vector3 (0.0f, 0.0f, 1.0f);
-    Vector3 v4 = new Vector3 (0.0f, 0.0f, 0.0f);
-    Vector3 v5 = new Vector3 (1.0f,  1.0f, 0.0f);
-    Vector3 v6 = new Vector3 (1.0f,  1.0f, 1.0f);
-    Vector3 v7 = new Vector3 (0.0f, 1.0f, 1.0f);
-    Vector3 v8 = new Vector3 (0.0f, 1.0f, 0.0f);
 
     ArrayList<Vector3> normals = new ArrayList<>(List.of(
             Vector3.zeros(),

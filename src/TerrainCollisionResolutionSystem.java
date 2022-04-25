@@ -50,17 +50,19 @@ public class TerrainCollisionResolutionSystem extends InstanceSystem {
 
     private Entity generateParticle(BlockType explodedBlockType, Vector3i blockPosition) {
         Entity particle = new Entity();
+        float size = 0.2f;
         particle.addComponent(new Transform(
             blockPosition.toVector3(),
             Utils.randVector3(),
-            new Vector3(0.2f, 0.2f, 0.2f)
+            new Vector3(size, size, size)
         ));
         particle.addComponent(new Dynamics(
             Utils.randVector3().scale(3.0f).add(new Vector3(0, 10, 0)),
             Vector3.zeros()
         ));
         particle.addComponent(new RigidBody(
-            new BoundingBox(1, 1, 1),
+//            new BoundingBox(size * 2, size * 2, size * 2),
+                new BoundingBox(1, 1, 1),
                 "PARTICLE"
         ));
         particle.addComponent(new GravityTag());

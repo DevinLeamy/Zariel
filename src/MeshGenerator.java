@@ -75,15 +75,67 @@ public class MeshGenerator {
         return generateVoxelMesh(voxels, Optional.empty());
     }
 
+    public static VoxelMesh generateCubeWireMesh() {
+        int vao = glGenVertexArrays();
+        int vbo = glGenBuffers();
+
+        ArrayList<Vector3[]> lines = new ArrayList<>(List.of(
+                // far face
+                new Vector3[] {Cube.Vertex.FAR_TOP_LEFT.position, Cube.Vertex.FAR_TOP_RIGHT.position},
+                new Vector3[] {Cube.Vertex.FAR_TOP_LEFT.position, Cube.Vertex.FAR_BOTTOM_LEFT.position},
+                new Vector3[] {Cube.Vertex.FAR_TOP_RIGHT.position, Cube.Vertex.FAR_BOTTOM_RIGHT.position},
+                new Vector3[] {Cube.Vertex.FAR_BOTTOM_LEFT.position, Cube.Vertex.FAR_BOTTOM_RIGHT.position},
+
+                // close face
+                new Vector3[] {Cube.Vertex.NEAR_TOP_LEFT.position, Cube.Vertex.NEAR_TOP_RIGHT.position},
+                new Vector3[] {Cube.Vertex.NEAR_TOP_LEFT.position, Cube.Vertex.NEAR_BOTTOM_LEFT.position},
+                new Vector3[] {Cube.Vertex.NEAR_TOP_RIGHT.position, Cube.Vertex.NEAR_BOTTOM_RIGHT.position},
+                new Vector3[] {Cube.Vertex.NEAR_BOTTOM_LEFT.position, Cube.Vertex.NEAR_BOTTOM_RIGHT.position},
+
+                // attach faces
+                new Vector3[] {Cube.Vertex.NEAR_TOP_LEFT.position, Cube.Vertex.FAR_TOP_LEFT.position},
+                new Vector3[] {Cube.Vertex.NEAR_TOP_RIGHT.position, Cube.Vertex.FAR_TOP_RIGHT.position},
+                new Vector3[] {Cube.Vertex.NEAR_BOTTOM_RIGHT.position, Cube.Vertex.FAR_BOTTOM_RIGHT.position},
+                new Vector3[] {Cube.Vertex.NEAR_BOTTOM_LEFT.position, Cube.Vertex.FAR_BOTTOM_LEFT.position}
+        ));
+
+        // buffer to hold vertex data
+        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(lines.size() * 2 * 3);
+        for (Vector3[] line : lines) {
+            for (Vector3 vertex : line) {
+                vertexBuffer.put(vertex.toArray());
+            }
+        }
+        vertexBuffer.flip();
+
+
+        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+        // store vertex data in GL_ARRAY_BUFFER
+        glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
+
+        // enable attributes
+        glEnableVertexAttribArray(0); // position
+
+        int stride = 4 * 3; // 3 = 3 (position)
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0L);
+
+        // unbind vertex array
+        glBindVertexArray(0);
+
+        return new VoxelMesh(lines.size() * 2, vao, vbo);
+    }
+
     private static ArrayList<Vertex> createLocalBlockVertices(BlockType blockType, Vector3 localOffset, VoxelGeometry voxels) {
-        Vector3 v1 = new Vector3 (1.0f,  0.0f, 0.0f);
-        Vector3 v2 = new Vector3 (1.0f,  0.0f, 1.0f);
-        Vector3 v3 = new Vector3 (0.0f, 0.0f, 1.0f);
-        Vector3 v4 = new Vector3 (0.0f, 0.0f, 0.0f);
-        Vector3 v5 = new Vector3 (1.0f,  1.0f, 0.0f );
-        Vector3 v6 = new Vector3 (1.0f,  1.0f, 1.0f);
-        Vector3 v7 = new Vector3 (0.0f, 1.0f, 1.0f);
-        Vector3 v8 = new Vector3 (0.0f, 1.0f, 0.0f);
+        Vector3 v1 = new Vector3 (1.0f,  0.0f, 0.0f); // bottom near right
+        Vector3 v2 = new Vector3 (1.0f,  0.0f, 1.0f); // bottom far right
+        Vector3 v3 = new Vector3 (0.0f, 0.0f, 1.0f); // bottom far left
+        Vector3 v4 = new Vector3 (0.0f, 0.0f, 0.0f); // bottom near left
+        Vector3 v5 = new Vector3 (1.0f,  1.0f, 0.0f ); // top near right
+        Vector3 v6 = new Vector3 (1.0f,  1.0f, 1.0f);  // top far right
+        Vector3 v7 = new Vector3 (0.0f, 1.0f, 1.0f);   // top far left
+        Vector3 v8 = new Vector3 (0.0f, 1.0f, 0.0f);  // top near left
 
         Vector2[] uvs = World.atlas.getUVs(blockType.textureRow, blockType.textureCol);
 

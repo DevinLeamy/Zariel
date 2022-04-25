@@ -1,10 +1,9 @@
 import ecs.*;
 import math.Vector3;
-import math.Vector3i;
 
 import java.util.ArrayList;
-import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_O;
@@ -16,6 +15,7 @@ public class PlayerInputSystem extends InstanceSystem {
 
     final private float cameraMovementSpeed = 15; // 1u / second
     final private float mouseSensitivity = 0.002f;
+    final private float turnSpeed = 2.0f;
 
     private int[] mousePos;
     private boolean wireframe;
@@ -75,24 +75,35 @@ public class PlayerInputSystem extends InstanceSystem {
 //        acceleration.z = reduceMag(acceleration.z, delta);
     }
 
+    private void accelerate(float dt, Vector3 direction, Dynamics dynamics) {
+        dynamics.acceleration.add(Vector3.scale(direction, dt * cameraMovementSpeed * 0.05f));
+    }
+
+    private void turn(float mag, Transform transform) {
+        transform.rotate(new Vector3(0, mag, 0));
+    }
+
+    private void turnLeft(float dt, Transform transform) {
+        turn(-dt * turnSpeed, transform);
+    }
+
+    private void turnRight(float dt, Transform transform) {
+        turn(dt * turnSpeed, transform);
+    }
+
     private ArrayList<Action> handleKeyPresses(float dt, Dynamics dynamics, Transform transform, boolean falling) {
         ArrayList<Action> updates = new ArrayList<>();
 
-        // forwards and backwards
-        if (controller.keyPressed(GLFW_KEY_W)) { dynamics.acceleration.add(Vector3.scale(transform.direction(), dt * cameraMovementSpeed * 0.05f)); }
-        if (controller.keyPressed(GLFW_KEY_S)) { brake(dt, transform.direction(), dynamics); }
+        Map<Integer, Runnable> controls = new HashMap<>();
+        controls.put(GLFW_KEY_W, () -> accelerate(dt, transform.direction(), dynamics));
+        controls.put(GLFW_KEY_S, () -> brake(dt, transform.direction(), dynamics));
+        controls.put(GLFW_KEY_A, () -> turnLeft(dt, transform));
+        controls.put(GLFW_KEY_D, () -> turnRight(dt, transform));
 
-        // left and right
-        float turnSpeed = 2f;
-        if (controller.keyPressed(GLFW_KEY_A)) {
-            transform.rotate(new Vector3(0, -turnSpeed * dt, 0));
-        }
-        if (controller.keyPressed(GLFW_KEY_D)) {
-            transform.rotate(new Vector3(0, turnSpeed * dt, 0));
-        }
-
-        if (!falling) {
-            if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.translate(Vector3.scale(Transform.up, 1.0f)); }
+        for (int key : controls.keySet()) {
+            if (controller.keyPressed(key)) {
+                controls.get(key).run();
+            }
         }
 
         if (controller.takeMouseButtonState(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {

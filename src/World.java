@@ -34,6 +34,7 @@ public class World {
     private SkyBoxRenderingSystem skyBoxRenderingSystem;
     private DebugCameraInputSystem debugCameraInputSystem;
     private AnimationSystem animationSystem;
+    private BBoxRenderingSystem bboxRenderingSystem;
 
     public static World getInstance() {
         if (World.world == null) {
@@ -57,7 +58,7 @@ public class World {
         this.debugCamera = new Camera(
                 (float) Math.PI - (float) Math.PI / 2,
                 window.getAspectRatio(),
-                new Vector3(Config.WORLD_WIDTH / 2.0f * Config.CHUNK_SIZE, Config.WORLD_HEIGHT * Config.CHUNK_SIZE, Config.WORLD_LENGTH / 2.0f * Config.CHUNK_SIZE)
+                new Vector3(6, 5, 42)
         );
 
         this.skyBox = new SkyBox(new String[] {
@@ -88,6 +89,7 @@ public class World {
         this.skyBoxRenderingSystem = new SkyBoxRenderingSystem();
         this.debugCameraInputSystem = new DebugCameraInputSystem();
         this.animationSystem = new AnimationSystem();
+        this.bboxRenderingSystem = new BBoxRenderingSystem();
 
 //        ArrayList<String> playerFrames = new ArrayList<>(Arrays.asList(
 //                "res/voxels/player_animation/frame1.vox",
@@ -120,10 +122,11 @@ public class World {
 //        ));
 
         Entity player = new Entity();
+        float sizePerCube = 1 / 11.0f;
         player.addComponent(new Transform(
-                new Vector3(6, 5, 42),
+                new Vector3(19, 5, 78),
                 new Vector3(0, 0, 0),
-                new Vector3(0.05f, 0.05f, 0.05f)
+                new Vector3(sizePerCube, sizePerCube, sizePerCube)
         ));
         player.addComponent(new VoxelModel(VoxelGeometry.loadFromFile("res/voxels/car.vox").voxels));
         player.addComponent(new PlayerTag());
@@ -140,7 +143,7 @@ public class World {
         ));
         player.addComponent(new GravityTag());
         player.addComponent(new RigidBody(
-                new BoundingBox(1, 2, 1),
+                new BoundingBox(2, 2, 2),
                 "PLAYER"
         ));
 
@@ -198,6 +201,7 @@ public class World {
             skyBoxRenderingSystem.update(NO_DELTA);
             terrainRenderingSystem.update(NO_DELTA);
             goRenderingSystem.update(NO_DELTA);
+            bboxRenderingSystem.update(NO_DELTA);
         }
         window.render();
     }

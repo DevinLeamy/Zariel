@@ -27,4 +27,17 @@ class Renderer {
 
         mesh.unlink();
     }
+
+    public void renderWireMesh(VoxelMesh mesh) {
+        if (mesh.vertices() == 0) {
+            return;
+        }
+
+        shader.link();
+        mesh.link();
+
+        glDrawArrays(GL_LINES, 0, mesh.vertices());
+
+        mesh.unlink();
+    }
 }

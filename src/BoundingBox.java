@@ -31,7 +31,9 @@ public class BoundingBox {
     public int getWidth() {
         return (int) dimensions.x;
     }
-
+    public int getHeight() {
+        return (int) dimensions.y;
+    }
     public int getDepth() {
         return (int) dimensions.z;
     }
