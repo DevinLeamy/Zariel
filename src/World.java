@@ -35,6 +35,7 @@ public class World {
     private DebugCameraInputSystem debugCameraInputSystem;
     private AnimationSystem animationSystem;
     private BBoxRenderingSystem bboxRenderingSystem;
+    private CarPhysicsSystem carPhysicsSystem;
 
     public static World getInstance() {
         if (World.world == null) {
@@ -90,6 +91,7 @@ public class World {
         this.debugCameraInputSystem = new DebugCameraInputSystem();
         this.animationSystem = new AnimationSystem();
         this.bboxRenderingSystem = new BBoxRenderingSystem();
+        this.carPhysicsSystem = new CarPhysicsSystem();
 
 //        ArrayList<String> playerFrames = new ArrayList<>(Arrays.asList(
 //                "res/voxels/player_animation/frame1.vox",
@@ -141,6 +143,7 @@ public class World {
                 Vector3.zeros(),
                 Vector3.zeros()
         ));
+        player.addComponent(new CarDynamics());
         player.addComponent(new GravityTag());
         player.addComponent(new RigidBody(
                 new BoundingBox(2, 2, 2),
@@ -181,7 +184,13 @@ public class World {
                 playerInputSystem.update(dt);
             }
 
+            // update accelerations
+            // TODO: (make this update forces and then have the physics system update
+            //       based on the forces)
             fallingSystem.update(dt);
+            carPhysicsSystem.update(dt);
+
+            // update velocity and position based on acceleration
             movementSystem.update(dt);
 
             terrainCollisionDetectionSystem.update(dt);

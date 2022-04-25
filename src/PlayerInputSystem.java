@@ -21,7 +21,7 @@ public class PlayerInputSystem extends InstanceSystem {
     private boolean wireframe;
 
     public PlayerInputSystem() {
-        super(ComponentRegistry.getSignature(Dynamics.class, Transform.class, PlayerTag.class, GravityTag.class, CameraTarget.class), 0);
+        super(ComponentRegistry.getSignature(CarDynamics.class, Transform.class, PlayerTag.class, GravityTag.class, CameraTarget.class), 0);
 
         controller = Controller.getInstance();
         mousePos = new int[] { 0, 0 };
@@ -35,7 +35,7 @@ public class PlayerInputSystem extends InstanceSystem {
         Transform playerTransform = transformStore.getComponent(entity).get();
         CameraTarget target = entity.getComponent(CameraTarget.class).get();
         GravityTag gravityTag = entity.getComponent(GravityTag.class).get();
-        Dynamics dynamics = entity.getComponent(Dynamics.class).get();
+        CarDynamics carDynamics = entity.getComponent(CarDynamics.class).get();
 
         playerTag.previousTransform = new Transform(
                 playerTransform.position.clone(),
@@ -44,7 +44,7 @@ public class PlayerInputSystem extends InstanceSystem {
         );
 
         handleMouseUpdate(target, dt, controller.mousePosition());
-        handleKeyPresses(dt, dynamics, playerTransform, gravityTag.falling);
+        handleKeyPresses(dt, carDynamics, playerTransform, gravityTag.falling);
     }
 
 
@@ -62,21 +62,13 @@ public class PlayerInputSystem extends InstanceSystem {
         mousePos = newMousePos;
     }
 
-    public float reduceMag(float mag, float reduction) { return Math.copySign(Math.max(0, mag - reduction), mag); }
-
-    private void brake(float dt, Vector3 direction, Dynamics dynamics) {
-        float breakSpeed = 0.5f;
-        float delta =  breakSpeed * dt;
-
-        dynamics.acceleration = Vector3.scale(direction, -breakSpeed);
-
-//        acceleration.x = reduceMag(acceleration.x, delta);
-//        acceleration.y = reduceMag(acceleration.y, delta);
-//        acceleration.z = reduceMag(acceleration.z, delta);
+    // TODO: Don't allow braking if the car has a speed of 0
+    private void brake(float dt, CarDynamics carDynamics) {
+        carDynamics.engineForce = dt * -carDynamics.brakePower;
     }
 
-    private void accelerate(float dt, Vector3 direction, Dynamics dynamics) {
-        dynamics.acceleration.add(Vector3.scale(direction, dt * cameraMovementSpeed * 0.05f));
+    private void pushGas(float dt, CarDynamics carDynamics) {
+        carDynamics.engineForce = dt * carDynamics.speed;
     }
 
     private void turn(float mag, Transform transform) {
@@ -91,12 +83,10 @@ public class PlayerInputSystem extends InstanceSystem {
         turn(dt * turnSpeed, transform);
     }
 
-    private ArrayList<Action> handleKeyPresses(float dt, Dynamics dynamics, Transform transform, boolean falling) {
-        ArrayList<Action> updates = new ArrayList<>();
-
+    private void handleKeyPresses(float dt, CarDynamics carDynamics, Transform transform, boolean falling) {
         Map<Integer, Runnable> controls = new HashMap<>();
-        controls.put(GLFW_KEY_W, () -> accelerate(dt, transform.direction(), dynamics));
-        controls.put(GLFW_KEY_S, () -> brake(dt, transform.direction(), dynamics));
+        controls.put(GLFW_KEY_W, () -> pushGas(dt, carDynamics));
+        controls.put(GLFW_KEY_S, () -> brake(dt, carDynamics));
         controls.put(GLFW_KEY_A, () -> turnLeft(dt, transform));
         controls.put(GLFW_KEY_D, () -> turnRight(dt, transform));
 
@@ -114,8 +104,6 @@ public class PlayerInputSystem extends InstanceSystem {
         if (controller.keyPressed(GLFW_KEY_P)) { wireframe = false; }
         if (controller.keyPressed(GLFW_KEY_O)) { wireframe = true; }
         glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
-
-        return updates;
     }
 
     public void spawnBomb(Transform transform) {

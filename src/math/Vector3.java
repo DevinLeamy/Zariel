@@ -73,12 +73,13 @@ public class Vector3 {
         );
     }
 
-    public static Vector3 add(Vector3 u, Vector3 v) {
-        return new Vector3(
-                u.x + v.x,
-                u.y + v.y,
-                u.z + v.z
-        );
+    public static Vector3 add(Vector3... vs) {
+        Vector3 res = Vector3.zeros();
+        for (Vector3 v : vs) {
+            res.add(v);
+        }
+
+        return res;
     }
 
     public static Vector3 mult(Vector3 u, Vector3 v) {
