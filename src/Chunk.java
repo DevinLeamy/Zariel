@@ -61,84 +61,25 @@ public class Chunk {
     }
 
     public void initializeGeometry() {
-        ArrayList<Vector3i> trees = new ArrayList<>();
-
-        TerrainGenerator terrainGenerator = new TerrainGenerator();
-        NoiseMapGenerator noiseMap = NoiseMapGenerator.getInstance();
         voxels = new VoxelGeometry(new Vector3i(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
 
-        for (int x = 0; x < CHUNK_SIZE; ++x) {
-            for (int z = 0; z < CHUNK_SIZE; ++z) {
-//                int nx = location.x * CHUNK_SIZE + x;
-//                int ny = location.z * CHUNK_SIZE + z;
-//                float noise = noiseMap.noise(1 * nx, 1 * ny)
-//                                +  Config.debug2 * noiseMap.noise(2 * nx + 65, 2 * ny + 97);
-//                noise /= 1.07f;
-
-                float noise = 0.7f;
-                int height = (int) Math.floor(noise * Config.MAX_LEVEL);
-                height -= height % 2;
-                int chunkBase = this.location.y * CHUNK_SIZE;
-
-                for (int y = 0; y < CHUNK_SIZE; ++y) {
-                    int worldHeight = chunkBase + y;
-                    if (worldHeight > height) {
-                        break;
-                    }
-
-                    voxels.setBlock(x, y, z, terrainGenerator.getBlock(height));
-                }
-
-                if (0.001f > Math.random() && height >= chunkBase && height < chunkBase + CHUNK_SIZE) {
-                    trees.add(new Vector3i(x, height, z));
-                }
-            }
-        }
-
-        trees.forEach(this::spawnTree);
+        Block[][][] trackBlocks = VoxelGeometry.loadFromFile("res/voxels/track.vox").voxels;
 
         for (int i = 0; i < CHUNK_SIZE; ++i) {
             for (int j = 0; j < CHUNK_SIZE; ++j) {
                 for (int k = 0; k < CHUNK_SIZE; ++k) {
+                    try {
+                       voxels.setBlock(i, j, k, trackBlocks[i][j][k]);
+                    } catch (Exception e) {
+                        if (voxels.voxels[i][j][k] == null) {
+                            voxels.setBlock(i, j, k, new Block());
+                        }
+                    }
+
                     voxels.getBlock(i, j, k).get().setUpdateCallback(this::onBlockUpdate);
                 }
             }
         }
-    }
-
-    public void spawnTree(Vector3i chunkSpawnPoint) {
-        int lowerY = chunkSpawnPoint.y;
-        int upperY = lowerY + 5;
-
-        if (upperY >= CHUNK_SIZE) {
-            return;
-        }
-
-        int x = chunkSpawnPoint.x;
-        int y = chunkSpawnPoint.y;
-        int z = chunkSpawnPoint.z;
-
-        try {
-            BlockType truck = BlockType.WOOD;
-            BlockType leaf = BlockType.LEAF;
-            // truck
-            voxels.setBlock(x, y, z, new Block(true, truck));
-            voxels.setBlock(x, y + 1, z, new Block(true, truck));
-            voxels.setBlock(x, y + 2, z, new Block(true, truck));
-            voxels.setBlock(x, y + 3, z, new Block(true, truck));
-
-            // foliage
-            voxels.setBlock(x, y + 3, z + 1, new Block(true, leaf));
-            voxels.setBlock(x, y + 3,z - 1, new Block(true, leaf));
-            voxels.setBlock(x + 1,y + 3,z, new Block(true, leaf));
-            voxels.setBlock(x - 1,y + 3,z, new Block(true, leaf));
-            voxels.setBlock(x,y + 4,z, new Block(true, leaf));
-            voxels.setBlock(x + 1,y + 4,z + 1, new Block(true, leaf));
-            voxels.setBlock(x - 1,y + 4,z + 1, new Block(true, leaf));
-            voxels.setBlock(x - 1,y + 4,z - 1, new Block(true, leaf));
-            voxels.setBlock(x + 1,y + 4,z - 1, new Block(true, leaf));
-            voxels.setBlock(x, y + 5,z, new Block(true, leaf));
-        } catch (ArrayIndexOutOfBoundsException e) {}
     }
 
     public void onBlockUpdate() {

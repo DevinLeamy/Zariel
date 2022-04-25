@@ -5,8 +5,6 @@ import math.Vector3i;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
 
 public class World {
@@ -91,43 +89,43 @@ public class World {
         this.debugCameraInputSystem = new DebugCameraInputSystem();
         this.animationSystem = new AnimationSystem();
 
-        ArrayList<String> playerFrames = new ArrayList<>(Arrays.asList(
-                "res/voxels/player_animation/frame1.vox",
-                "res/voxels/player_animation/frame2.vox",
-                "res/voxels/player_animation/frame3.vox",
-                "res/voxels/player_animation/frame4.vox",
-                "res/voxels/player_animation/frame5.vox",
-                "res/voxels/player_animation/frame6.vox",
-                "res/voxels/player_animation/frame7.vox",
-                "res/voxels/player_animation/frame8.vox",
-                "res/voxels/player_animation/frame9.vox",
-                "res/voxels/player_animation/frame10.vox",
-                "res/voxels/player_animation/frame11.vox",
-                "res/voxels/player_animation/frame12.vox",
-                "res/voxels/player_animation/frame13.vox",
-                "res/voxels/player_animation/frame14.vox",
-                "res/voxels/player_animation/frame13.vox",
-                "res/voxels/player_animation/frame12.vox",
-                "res/voxels/player_animation/frame11.vox",
-                "res/voxels/player_animation/frame10.vox",
-                "res/voxels/player_animation/frame9.vox",
-                "res/voxels/player_animation/frame8.vox",
-                "res/voxels/player_animation/frame7.vox",
-                "res/voxels/player_animation/frame6.vox",
-                "res/voxels/player_animation/frame5.vox",
-                "res/voxels/player_animation/frame4.vox",
-                "res/voxels/player_animation/frame3.vox",
-                "res/voxels/player_animation/frame2.vox",
-                "res/voxels/player_animation/frame1.vox"
-        ));
+//        ArrayList<String> playerFrames = new ArrayList<>(Arrays.asList(
+//                "res/voxels/player_animation/frame1.vox",
+//                "res/voxels/player_animation/frame2.vox",
+//                "res/voxels/player_animation/frame3.vox",
+//                "res/voxels/player_animation/frame4.vox",
+//                "res/voxels/player_animation/frame5.vox",
+//                "res/voxels/player_animation/frame6.vox",
+//                "res/voxels/player_animation/frame7.vox",
+//                "res/voxels/player_animation/frame8.vox",
+//                "res/voxels/player_animation/frame9.vox",
+//                "res/voxels/player_animation/frame10.vox",
+//                "res/voxels/player_animation/frame11.vox",
+//                "res/voxels/player_animation/frame12.vox",
+//                "res/voxels/player_animation/frame13.vox",
+//                "res/voxels/player_animation/frame14.vox",
+//                "res/voxels/player_animation/frame13.vox",
+//                "res/voxels/player_animation/frame12.vox",
+//                "res/voxels/player_animation/frame11.vox",
+//                "res/voxels/player_animation/frame10.vox",
+//                "res/voxels/player_animation/frame9.vox",
+//                "res/voxels/player_animation/frame8.vox",
+//                "res/voxels/player_animation/frame7.vox",
+//                "res/voxels/player_animation/frame6.vox",
+//                "res/voxels/player_animation/frame5.vox",
+//                "res/voxels/player_animation/frame4.vox",
+//                "res/voxels/player_animation/frame3.vox",
+//                "res/voxels/player_animation/frame2.vox",
+//                "res/voxels/player_animation/frame1.vox"
+//        ));
 
         Entity player = new Entity();
         player.addComponent(new Transform(
-                new Vector3(Config.WORLD_WIDTH / 2.0f * Config.CHUNK_SIZE, Config.WORLD_HEIGHT * Config.CHUNK_SIZE, Config.WORLD_LENGTH / 2.0f * Config.CHUNK_SIZE),
+                new Vector3(6, 5, 42),
                 new Vector3(0, 0, 0),
-                new Vector3(0.1f, 0.1f, 0.1f)
+                new Vector3(0.05f, 0.05f, 0.05f)
         ));
-        player.addComponent(new Animation(playerFrames, 3));
+        player.addComponent(new VoxelModel(VoxelGeometry.loadFromFile("res/voxels/car.vox").voxels));
         player.addComponent(new PlayerTag());
         player.addComponent(new Prospective(
                 (float) Math.PI - (float) Math.PI / 2,
