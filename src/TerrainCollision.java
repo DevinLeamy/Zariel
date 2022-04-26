@@ -2,19 +2,12 @@ import ecs.Component;
 import math.Vector3i;
 
 public class TerrainCollision implements Component {
-    public enum Face {
-        FRONT,
-        BACK,
-        LEFT,
-        RIGHT,
-        TOP,
-        BOTTOM
-    };
     public Vector3i location;
-    public boolean ground;
+    // face of the object that collided with the terrain
+    public Face collisionFace;
 
-    public TerrainCollision(Vector3i location, boolean ground) {
+    public TerrainCollision(Vector3i location, Face collisionFace) {
         this.location = location;
-        this.ground = ground;
+        this.collisionFace = collisionFace;
     }
 }

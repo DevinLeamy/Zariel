@@ -1,54 +1,32 @@
 import math.Vector3;
-import math.Vector3i;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Cube {
-    public enum Vertex {
-        NEAR_TOP_LEFT(8, new Vector3 (0.0f, 1.0f, 0.0f)),
-        NEAR_TOP_RIGHT(5, new Vector3 (1.0f,  1.0f, 0.0f )),
-        NEAR_BOTTOM_LEFT(4, new Vector3(0.0f, 0.0f, 0.0f)),
-        NEAR_BOTTOM_RIGHT(1, new Vector3 (1.0f,  0.0f, 0.0f)),
-        FAR_TOP_LEFT(7, new Vector3 (0.0f, 1.0f, 1.0f)),
-        FAR_TOP_RIGHT(6, new Vector3 (1.0f,  1.0f, 1.0f)),
-        FAR_BOTTOM_LEFT(3, new Vector3 (0.0f, 0.0f, 1.0f)),
-        FAR_BOTTOM_RIGHT(2, new Vector3 (1.0f,  0.0f, 1.0f));
+    final public static Vector3 NEAR_TOP_LEFT = new Vector3 (0.0f, 1.0f, 0.0f);
+    final public static Vector3 NEAR_TOP_RIGHT = new Vector3 (1.0f,  1.0f, 0.0f );
+    final public static Vector3 NEAR_BOTTOM_LEFT = new Vector3(0.0f, 0.0f, 0.0f);
+    final public static Vector3 NEAR_BOTTOM_RIGHT = new Vector3 (1.0f,  0.0f, 0.0f);
+    final public static Vector3 FAR_TOP_LEFT = new Vector3 (0.0f, 1.0f, 1.0f);
+    final public static Vector3 FAR_TOP_RIGHT = new Vector3 (1.0f,  1.0f, 1.0f);
+    final public static Vector3 FAR_BOTTOM_LEFT = new Vector3 (0.0f, 0.0f, 1.0f);
+    final public static Vector3 FAR_BOTTOM_RIGHT = new Vector3 (1.0f,  0.0f, 1.0f);
 
-        public final int index;
-        public final Vector3 position;
-        Vertex(int index, Vector3 position) {
-            this.index = index;
-            this.position = position;
-        }
-    }
+    final public static Face FRONT = new Face(NEAR_TOP_LEFT, NEAR_TOP_RIGHT, NEAR_BOTTOM_LEFT, NEAR_BOTTOM_RIGHT, Direction.FRONT.normal, Face.FRONT);
+    final public static Face BACK = new Face(FAR_TOP_LEFT, FAR_TOP_RIGHT, FAR_BOTTOM_LEFT, FAR_BOTTOM_RIGHT, Direction.BACK.normal, Face.BACK);
+    final public static Face LEFT = new Face(FAR_TOP_LEFT, NEAR_TOP_LEFT, FAR_BOTTOM_LEFT, NEAR_BOTTOM_LEFT, Direction.LEFT.normal, Face.LEFT);
+    final public static Face RIGHT = new Face(NEAR_TOP_RIGHT, FAR_TOP_RIGHT, NEAR_BOTTOM_RIGHT, FAR_BOTTOM_RIGHT, Direction.RIGHT.normal, Face.RIGHT);
+    final public static Face TOP = new Face(FAR_TOP_LEFT, FAR_TOP_RIGHT, NEAR_TOP_LEFT, NEAR_TOP_RIGHT, Direction.UP.normal, Face.TOP);
+    final public static Face BOTTOM = new Face(NEAR_BOTTOM_LEFT, NEAR_BOTTOM_RIGHT, FAR_BOTTOM_LEFT, FAR_BOTTOM_RIGHT, Direction.DOWN.normal, Face.BOTTOM);
 
+    final public static Vector3[] vertices = new Vector3[] {
+            NEAR_TOP_LEFT,
+            NEAR_TOP_RIGHT,
+            NEAR_BOTTOM_LEFT,
+            NEAR_BOTTOM_RIGHT,
+            FAR_TOP_LEFT,
+            FAR_TOP_RIGHT,
+            FAR_BOTTOM_LEFT,
+            FAR_BOTTOM_RIGHT
+    };
+    final public static Face[] faces = new Face[] { FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM };
     final public static VoxelMesh mesh = MeshGenerator.generateCubeWireMesh();
-
-//    public enum Face {
-////        FRONT,
-////        BACK,
-////        LEFT,
-////        RIGHT,
-////        TOP,
-////        BOTTOM;
-//
-//        Face(Corner topLeft, Corner topRight, Corner bottomRight, Corner bottomLeft) {
-//
-//        }
-//    };
-//
-//    public class Corner  {
-//
-//    }
-
-    ArrayList<Vector3> normals = new ArrayList<>(List.of(
-            Vector3.zeros(),
-            Direction.DOWN.normal,
-            Direction.UP.normal,
-            Direction.RIGHT.normal,
-            Direction.BACK.normal,
-            Direction.LEFT.normal,
-            Direction.FRONT.normal
-    ));
 }

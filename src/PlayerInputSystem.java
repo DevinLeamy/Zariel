@@ -132,6 +132,7 @@ public class PlayerInputSystem extends InstanceSystem {
                 "PARTICLE"
         ));
         particle.addComponent(new GravityTag());
+        particle.addComponent(new LifeTime(2));
         particle.addComponent(new VoxelModel(new Block[][][] {{{new Block(true, new BlockType(new Vector3i(10, 10, 10)))}}}));
         return particle;
     }

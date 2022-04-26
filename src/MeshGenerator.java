@@ -81,22 +81,22 @@ public class MeshGenerator {
 
         ArrayList<Vector3[]> lines = new ArrayList<>(List.of(
                 // far face
-                new Vector3[] {Cube.Vertex.FAR_TOP_LEFT.position, Cube.Vertex.FAR_TOP_RIGHT.position},
-                new Vector3[] {Cube.Vertex.FAR_TOP_LEFT.position, Cube.Vertex.FAR_BOTTOM_LEFT.position},
-                new Vector3[] {Cube.Vertex.FAR_TOP_RIGHT.position, Cube.Vertex.FAR_BOTTOM_RIGHT.position},
-                new Vector3[] {Cube.Vertex.FAR_BOTTOM_LEFT.position, Cube.Vertex.FAR_BOTTOM_RIGHT.position},
+                new Vector3[] {Cube.FAR_TOP_LEFT, Cube.FAR_TOP_RIGHT},
+                new Vector3[] {Cube.FAR_TOP_LEFT, Cube.FAR_BOTTOM_LEFT},
+                new Vector3[] {Cube.FAR_TOP_RIGHT, Cube.FAR_BOTTOM_RIGHT},
+                new Vector3[] {Cube.FAR_BOTTOM_LEFT, Cube.FAR_BOTTOM_RIGHT},
 
                 // close face
-                new Vector3[] {Cube.Vertex.NEAR_TOP_LEFT.position, Cube.Vertex.NEAR_TOP_RIGHT.position},
-                new Vector3[] {Cube.Vertex.NEAR_TOP_LEFT.position, Cube.Vertex.NEAR_BOTTOM_LEFT.position},
-                new Vector3[] {Cube.Vertex.NEAR_TOP_RIGHT.position, Cube.Vertex.NEAR_BOTTOM_RIGHT.position},
-                new Vector3[] {Cube.Vertex.NEAR_BOTTOM_LEFT.position, Cube.Vertex.NEAR_BOTTOM_RIGHT.position},
+                new Vector3[] {Cube.NEAR_TOP_LEFT, Cube.NEAR_TOP_RIGHT},
+                new Vector3[] {Cube.NEAR_TOP_LEFT, Cube.NEAR_BOTTOM_LEFT},
+                new Vector3[] {Cube.NEAR_TOP_RIGHT, Cube.NEAR_BOTTOM_RIGHT},
+                new Vector3[] {Cube.NEAR_BOTTOM_LEFT, Cube.NEAR_BOTTOM_RIGHT},
 
                 // attach faces
-                new Vector3[] {Cube.Vertex.NEAR_TOP_LEFT.position, Cube.Vertex.FAR_TOP_LEFT.position},
-                new Vector3[] {Cube.Vertex.NEAR_TOP_RIGHT.position, Cube.Vertex.FAR_TOP_RIGHT.position},
-                new Vector3[] {Cube.Vertex.NEAR_BOTTOM_RIGHT.position, Cube.Vertex.FAR_BOTTOM_RIGHT.position},
-                new Vector3[] {Cube.Vertex.NEAR_BOTTOM_LEFT.position, Cube.Vertex.FAR_BOTTOM_LEFT.position}
+                new Vector3[] {Cube.NEAR_TOP_LEFT, Cube.FAR_TOP_LEFT},
+                new Vector3[] {Cube.NEAR_TOP_RIGHT, Cube.FAR_TOP_RIGHT},
+                new Vector3[] {Cube.NEAR_BOTTOM_RIGHT, Cube.FAR_BOTTOM_RIGHT},
+                new Vector3[] {Cube.NEAR_BOTTOM_LEFT, Cube.FAR_BOTTOM_LEFT}
         ));
 
         // buffer to hold vertex data

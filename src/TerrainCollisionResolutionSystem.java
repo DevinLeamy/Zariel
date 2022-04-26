@@ -23,15 +23,41 @@ public class TerrainCollisionResolutionSystem extends InstanceSystem {
         Dynamics dynamics = entity.getComponent(Dynamics.class).get();
 
         if (rigidBody.objectType.equals("PLAYER")) {
-            if (!collision.ground) {
+            String face = collision.collisionFace.name;
+
+            if (face.equals(Face.BOTTOM)) {
+                transform.position.y = (float) Math.ceil(transform.position.y);
+            } else {
+                System.out.println(face);
                 Transform prev = entity.getComponent(PlayerTag.class).get().previousTransform;
-                dynamics.velocity.scale(-1);
-                dynamics.acceleration.scale(-1);
+                Vector3 direction = transform.direction();
+                Vector3 right = transform.right();
+                Vector3 velocity = dynamics.velocity;
+
+                float sideSlipAngle = Vector3.angleBetween(velocity, direction);
+                float speed = velocity.len();
+
+                // local to the car
+                float vForward = (float) (Math.cos(sideSlipAngle) * speed);
+                float vRight = (float) (Math.sin(sideSlipAngle) * speed);
+
+                Vector3 vLocal = new Vector3(vRight, 0, vForward);
+                Vector3 trans = new Vector3(1, 1, 1);
+
+                switch (face) {
+                    case Face.FRONT, Face.BACK -> trans = new Vector3(1, 1, -1);
+                    case Face.LEFT, Face.RIGHT -> trans = new Vector3(-1, 1, 1);
+                    case Face.TOP, Face.BOTTOM -> trans = new Vector3(1, -1, 1);
+                }
+                vLocal.scale(trans);
+
+                dynamics.velocity = new Vector3(0, velocity.y, 0)
+                                .add(Vector3.scale(right, vLocal.x)
+                                .add(Vector3.scale(direction, vLocal.z)));
+
                 transform.setPosition(prev.position.clone());
                 transform.setRotation(prev.rotation.clone());
                 transform.position.add(Vector3.scale(dynamics.velocity.clone().normalize(), 2f));
-            } else {
-                transform.position.y = (float) Math.ceil(transform.position.y);
             }
         } else if (rigidBody.objectType.equals("BOMB")) {
             entity.addComponent(new DespawnTag());

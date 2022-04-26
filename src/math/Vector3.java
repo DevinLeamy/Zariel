@@ -43,6 +43,14 @@ public class Vector3 {
         return this;
     }
 
+    public Vector3 scale(Vector3 dim) {
+        x *= dim.x;
+        y *= dim.y;
+        z *= dim.z;
+
+        return this;
+    }
+
     public Vector3 scale(float mag) {
         x *= mag;
         y *= mag;
