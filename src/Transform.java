@@ -24,21 +24,21 @@ public class Transform implements Component {
 
     public Vector3 direction() {
         Matrix3 rotationMatrix = Matrix3.genRotationMatrix(rotation.x, rotation.y, rotation.z);
-        return Matrix3.mult(rotationMatrix, Transform.forward);
+        return Matrix3.mult(rotationMatrix, Transform.forward).normalize();
     }
 
     /**
      * This is the right vector relative to the player's direction()
      */
     public Vector3 right() {
-       return Vector3.cross(direction(), Transform.up);
+       return Vector3.cross(direction(), Transform.up).normalize();
     }
 
     /**
      * This is the up vector relative to the player's direction()
      */
     public Vector3 up() {
-        return Vector3.cross(right(), direction());
+        return Vector3.cross(right(), direction()).normalize();
     }
 
     public Matrix4 modelMatrix() {

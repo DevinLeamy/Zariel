@@ -2,6 +2,14 @@ import ecs.Component;
 import math.Vector3i;
 
 public class TerrainCollision implements Component {
+    public enum Face {
+        FRONT,
+        BACK,
+        LEFT,
+        RIGHT,
+        TOP,
+        BOTTOM
+    };
     public Vector3i location;
     public boolean ground;
 

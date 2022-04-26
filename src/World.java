@@ -36,6 +36,7 @@ public class World {
     private AnimationSystem animationSystem;
     private BBoxRenderingSystem bboxRenderingSystem;
     private CarPhysicsSystem carPhysicsSystem;
+    private DebugInputSystem debugInputSystem;
 
     public static World getInstance() {
         if (World.world == null) {
@@ -52,7 +53,7 @@ public class World {
         this.window = new Window();
         this.chunkManager = new ChunkManager();
         this.camera = new Camera(
-                (float) Math.PI - (float) Math.PI / 2,
+                (float) Math.PI - (float) Math.PI / 3,
                 window.getAspectRatio(),
                 Vector3.zeros()
         );
@@ -92,6 +93,7 @@ public class World {
         this.animationSystem = new AnimationSystem();
         this.bboxRenderingSystem = new BBoxRenderingSystem();
         this.carPhysicsSystem = new CarPhysicsSystem();
+        this.debugInputSystem = new DebugInputSystem();
 
 //        ArrayList<String> playerFrames = new ArrayList<>(Arrays.asList(
 //                "res/voxels/player_animation/frame1.vox",
@@ -132,12 +134,6 @@ public class World {
         ));
         player.addComponent(new VoxelModel(VoxelGeometry.loadFromFile("res/voxels/car.vox").voxels));
         player.addComponent(new PlayerTag());
-        player.addComponent(new Prospective(
-                (float) Math.PI - (float) Math.PI / 2,
-                window.getAspectRatio(),
-                0.01f,
-                500f
-        ));
         player.addComponent(new CameraTarget(new Vector3(0f, 5, -5)));
         player.addComponent(new Dynamics(
                 Vector3.zeros(),
@@ -158,20 +154,10 @@ public class World {
         entityManager.addEntity(metaViewer);
     }
 
-    private void debugInputHandler() {
-        Controller controller = Controller.getInstance();
-
-        if (controller.takeKeyPressState(GLFW_KEY_0) == GLFW_PRESS) {
-            Debug.DEBUG = true;
-        } else if (controller.takeKeyPressState(GLFW_KEY_9) == GLFW_PRESS) {
-            Debug.DEBUG = false;
-        }
-    }
-
     public void update(float dt) {
         int NO_DELTA = 0;
         {
-            debugInputHandler();
+            debugInputSystem.update(dt);
             terrainSystem.update(dt);
 
             cameraInputSystem.update(dt);
@@ -237,5 +223,43 @@ public class World {
 
     public Optional<Block> getBlock(Vector3i loc) {
         return chunkManager.getBlock(loc);
+    }
+
+    public void reset() {
+        entityManager.removeAllEntities();
+
+        Entity player = new Entity();
+        float sizePerCube = 1 / 11.0f;
+        player.addComponent(new Transform(
+                new Vector3(19, 5, 78),
+                new Vector3(0, 0, 0),
+                new Vector3(sizePerCube, sizePerCube, sizePerCube)
+        ));
+        player.addComponent(new VoxelModel(VoxelGeometry.loadFromFile("res/voxels/car.vox").voxels));
+        player.addComponent(new PlayerTag());
+        player.addComponent(new Prospective(
+                (float) Math.PI - (float) Math.PI / 2,
+                window.getAspectRatio(),
+                0.01f,
+                500f
+        ));
+        player.addComponent(new CameraTarget(new Vector3(0f, 5, -5)));
+        player.addComponent(new Dynamics(
+                Vector3.zeros(),
+                Vector3.zeros()
+        ));
+        player.addComponent(new CarDynamics());
+        player.addComponent(new GravityTag());
+        player.addComponent(new RigidBody(
+                new BoundingBox(2, 2, 2),
+                "PLAYER"
+        ));
+
+        entityManager.addEntity(player);
+
+        Entity metaViewer = new Entity();
+        metaViewer.addComponent(new DebugCameraConfig());
+
+        entityManager.addEntity(metaViewer);
     }
 }

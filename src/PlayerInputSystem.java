@@ -1,5 +1,6 @@
 import ecs.*;
 import math.Vector3;
+import math.Vector3i;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,19 +33,26 @@ public class PlayerInputSystem extends InstanceSystem {
     @Override
     protected void update(float dt, Entity entity) {
         PlayerTag playerTag = entity.getComponent(PlayerTag.class).get();
-        Transform playerTransform = transformStore.getComponent(entity).get();
+        Transform transform = transformStore.getComponent(entity).get();
         CameraTarget target = entity.getComponent(CameraTarget.class).get();
         GravityTag gravityTag = entity.getComponent(GravityTag.class).get();
         CarDynamics carDynamics = entity.getComponent(CarDynamics.class).get();
 
         playerTag.previousTransform = new Transform(
-                playerTransform.position.clone(),
-                playerTransform.rotation.clone(),
-                playerTransform.scale.clone()
+                transform.position.clone(),
+                transform.rotation.clone(),
+                transform.scale.clone()
         );
 
+        Vector3 rightParticlePos = transform.position.clone().sub(Vector3.scale(transform.direction(), 2))
+                .add(Vector3.scale(transform.right(), 2));
+        Vector3 leftParticlePos = transform.position.clone().sub(Vector3.scale(transform.direction(), 2));
+
+        entityManager.addEntity(generateParticle(leftParticlePos, transform));
+        entityManager.addEntity(generateParticle(rightParticlePos, transform));
+
         handleMouseUpdate(target, dt, controller.mousePosition());
-        handleKeyPresses(dt, carDynamics, playerTransform, gravityTag.falling);
+        handleKeyPresses(dt, carDynamics, transform, gravityTag.falling);
     }
 
 
@@ -64,33 +72,31 @@ public class PlayerInputSystem extends InstanceSystem {
 
     // TODO: Don't allow braking if the car has a speed of 0
     private void brake(float dt, CarDynamics carDynamics) {
-//        carDynamics.engineForce = dt * -carDynamics.brakePower;
-        carDynamics.engineForce = -carDynamics.brakePower / 10;
+        carDynamics.brake = 0.5f;
     }
 
     private void pushGas(float dt, CarDynamics carDynamics) {
-//        carDynamics.engineForce = dt * carDynamics.speed;
-        carDynamics.engineForce = carDynamics.speed / 10;
+        carDynamics.throttle = 0.5f;
     }
 
-    private void turn(float mag, Transform transform) {
-        transform.rotate(new Vector3(0, mag, 0));
+    private void turn(float mag, CarDynamics carDynamics) {
+        carDynamics.steerAngle = Utils.clamp(-(float) Math.PI / 4, (float) Math.PI / 4, carDynamics.steerAngle + mag * 0.3f);
     }
 
-    private void turnLeft(float dt, Transform transform) {
-        turn(-dt * turnSpeed, transform);
+    private void turnLeft(float dt, CarDynamics carDynamics) {
+        turn(-dt * turnSpeed, carDynamics);
     }
 
-    private void turnRight(float dt, Transform transform) {
-        turn(dt * turnSpeed, transform);
+    private void turnRight(float dt, CarDynamics carDynamics) {
+        turn(dt * turnSpeed, carDynamics);
     }
 
     private void handleKeyPresses(float dt, CarDynamics carDynamics, Transform transform, boolean falling) {
         Map<Integer, Runnable> controls = new HashMap<>();
         controls.put(GLFW_KEY_W, () -> pushGas(dt, carDynamics));
         controls.put(GLFW_KEY_S, () -> brake(dt, carDynamics));
-        controls.put(GLFW_KEY_A, () -> turnLeft(dt, transform));
-        controls.put(GLFW_KEY_D, () -> turnRight(dt, transform));
+        controls.put(GLFW_KEY_A, () -> turnLeft(dt, carDynamics));
+        controls.put(GLFW_KEY_D, () -> turnRight(dt, carDynamics));
 
         for (int key : controls.keySet()) {
             if (controller.keyPressed(key)) {
@@ -106,6 +112,28 @@ public class PlayerInputSystem extends InstanceSystem {
         if (controller.keyPressed(GLFW_KEY_P)) { wireframe = false; }
         if (controller.keyPressed(GLFW_KEY_O)) { wireframe = true; }
         glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
+    }
+
+    private Entity generateParticle(Vector3 position, Transform transform) {
+        Entity particle = new Entity();
+        float size = 0.2f;
+        particle.addComponent(new Transform(
+                position,
+
+                transform.direction(),
+                new Vector3(size, size, size)
+        ));
+        particle.addComponent(new Dynamics(
+                transform.direction().clone().scale(-0.3f),
+                Vector3.zeros()
+        ));
+        particle.addComponent(new RigidBody(
+                new BoundingBox(0.2f, 0.2f, 0.2f),
+                "PARTICLE"
+        ));
+        particle.addComponent(new GravityTag());
+        particle.addComponent(new VoxelModel(new Block[][][] {{{new Block(true, new BlockType(new Vector3i(10, 10, 10)))}}}));
+        return particle;
     }
 
     public void spawnBomb(Transform transform) {

@@ -12,7 +12,7 @@ public class TerrainCollisionResolutionSystem extends InstanceSystem {
     ComponentStore<TerrainCollision> terrainCollisionStore = ComponentStore.of(TerrainCollision.class);
 
     public TerrainCollisionResolutionSystem() {
-        super(ComponentRegistry.getSignature(RigidBody.class, Transform.class, TerrainCollision.class), 0);
+        super(ComponentRegistry.getSignature(RigidBody.class, Dynamics.class, Transform.class, TerrainCollision.class), 0);
     }
 
     @Override
@@ -20,12 +20,16 @@ public class TerrainCollisionResolutionSystem extends InstanceSystem {
         RigidBody rigidBody = rigidBodyStore.getComponent(entity).get();
         Transform transform = transformStore.getComponent(entity).get();
         TerrainCollision collision = terrainCollisionStore.getComponent(entity).get();
+        Dynamics dynamics = entity.getComponent(Dynamics.class).get();
 
         if (rigidBody.objectType.equals("PLAYER")) {
             if (!collision.ground) {
                 Transform prev = entity.getComponent(PlayerTag.class).get().previousTransform;
+                dynamics.velocity.scale(-1);
+                dynamics.acceleration.scale(-1);
                 transform.setPosition(prev.position.clone());
                 transform.setRotation(prev.rotation.clone());
+                transform.position.add(Vector3.scale(dynamics.velocity.clone().normalize(), 2f));
             } else {
                 transform.position.y = (float) Math.ceil(transform.position.y);
             }
@@ -52,6 +56,8 @@ public class TerrainCollisionResolutionSystem extends InstanceSystem {
                 entityManager.addEntity(generateParticle(explodedBlockType, collision.location));
             }
         }
+
+        entity.removeComponent(TerrainCollision.class);
     }
 
     private Entity generateParticle(BlockType explodedBlockType, Vector3i blockPosition) {

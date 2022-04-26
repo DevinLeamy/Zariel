@@ -29,12 +29,9 @@ public class TerrainCollisionDetectionSystem extends InstanceSystem {
 
     public Optional<TerrainCollision> terrainCollision(Transform transform, BoundingBox boundingBox) {
         World world = World.getInstance();
-        ArrayList<TerrainCollision> collisions = new ArrayList<>();
-        ArrayList<Vector3i> collided = new ArrayList<>();
 
         for (Vector3 vertex : boundingBox.vertices()) {
             Vector3 blockPosition = Matrix3.mult(Matrix3.genRotationMatrix(transform.rotation), vertex).add(transform.position);
-//            Vector3 blockPosition = vertex.add(transform.position);
             float x = blockPosition.x;
             float y = blockPosition.y;
             float z = blockPosition.z;
@@ -44,24 +41,14 @@ public class TerrainCollisionDetectionSystem extends InstanceSystem {
                     (int) Math.floor(y),
                     (int) Math.floor(z)
             );
-            if (world.blockIsActive(worldBlock) && !collided.contains(worldBlock)) {
+            if (world.blockIsActive(worldBlock)) {
                 Vector3i blockAbove = Vector3i.add(worldBlock, new Vector3i(0, 1, 0));
                 /**
                  * If the block above the collision is active then you must have collided
                  * from the side. i.e. the collision is not a ground collision.
                  */
-                boolean groundCollision = !world.blockIsActive(blockAbove);
-                collisions.add(new TerrainCollision(worldBlock, groundCollision));
-                collided.add(worldBlock);
-
-                if (!groundCollision) {
-                    return Optional.of(new TerrainCollision(worldBlock, groundCollision));
-                }
+                return Optional.of(new TerrainCollision(worldBlock, !world.blockIsActive(blockAbove)));
             }
-        }
-        if (collisions.size() > 0) {
-            System.out.println(collisions.get(collisions.size() - 1).ground);
-            return Optional.of(collisions.get(collisions.size() - 1));
         }
         return Optional.empty();
     }
