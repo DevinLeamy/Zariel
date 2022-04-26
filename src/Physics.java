@@ -13,17 +13,21 @@ public class Physics {
     public static Vector3 computeRR(float cRR, Vector3 velocity) {
         return Vector3.scale(velocity, -cRR);
     }
+    public static Vector3 computeRR(float cRR, Vector3 direction, float fGravity) {
+        Vector3 normalized = direction.clone().normalize();
+        return Vector3.scale(direction, -cRR * fGravity);
+    }
+
+    public static float computeGravity(float mass) {
+        return mass * PhysicsConfig.GRAVITY;
+    }
+
 
     // traction
     public static Vector3 computeTraction(Vector3 direction, float engineForce) {
         Vector3 normalized = direction.clone().normalize();
         return Vector3.scale(normalized, engineForce);
     }
-    public static Vector3 computeTraction(Vector3 direction, Vector3 engineForce) {
-        Vector3 normalized = direction.clone().normalize();
-        return Vector3.mult(normalized, engineForce);
-    }
-
     // braking
     public static Vector3 computeBraking(Vector3 direction, float cBraking) {
         assert(direction.len() == 1);

@@ -103,6 +103,7 @@ public class DebugCameraInputSystem extends InstanceSystem {
             Vector3i pos = Vector3.add(source, Vector3.scale(forward, dist)).toVector3i();
 
             if (world.blockIsActive(pos)) {
+                System.out.println("Selected block: " + pos);
                 return world.getBlock(pos);
             }
 

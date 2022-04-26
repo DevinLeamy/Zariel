@@ -145,6 +145,7 @@ public class Vector3 {
         return toVector3i();
     }
 
+    @Override
     public Vector3 clone() {
         return new Vector3(x, y, z);
     }

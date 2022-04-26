@@ -138,7 +138,7 @@ public class World {
                 0.01f,
                 500f
         ));
-        player.addComponent(new CameraTarget(new Vector3(0, 5, -5)));
+        player.addComponent(new CameraTarget(new Vector3(0f, 5, -5)));
         player.addComponent(new Dynamics(
                 Vector3.zeros(),
                 Vector3.zeros()

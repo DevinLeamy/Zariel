@@ -64,11 +64,13 @@ public class PlayerInputSystem extends InstanceSystem {
 
     // TODO: Don't allow braking if the car has a speed of 0
     private void brake(float dt, CarDynamics carDynamics) {
-        carDynamics.engineForce = dt * -carDynamics.brakePower;
+//        carDynamics.engineForce = dt * -carDynamics.brakePower;
+        carDynamics.engineForce = -carDynamics.brakePower / 10;
     }
 
     private void pushGas(float dt, CarDynamics carDynamics) {
-        carDynamics.engineForce = dt * carDynamics.speed;
+//        carDynamics.engineForce = dt * carDynamics.speed;
+        carDynamics.engineForce = carDynamics.speed / 10;
     }
 
     private void turn(float mag, Transform transform) {

@@ -1,3 +1,4 @@
+import ecs.ComponentRegistry;
 import math.Vector3;
 import org.lwjgl.Version;
 
@@ -52,9 +53,9 @@ final public class Leamer {
 //                        "CHUNK: %s",
                         frames.size()
                         ,
-                        world.getPerspective().transform.position.toString()
+                        world.entityManager.queryEntities(ComponentRegistry.getSignature(Transform.class, PlayerTag.class)).get(0).getComponent(Transform.class).get().position)
 //                        ChunkManager.getChunkCoords(world.camera.position).toString()
-                ));
+                );
             }
 
             while (framesDuration >= 1000) {

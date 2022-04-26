@@ -14,17 +14,30 @@ public class CarPhysicsSystem extends InstanceSystem {
         CarDynamics carDynamics = entity.getComponent(CarDynamics.class).get();
 
         Vector3 velocity = dynamics.velocity;
+        float fGravity = Physics.computeGravity(carDynamics.mass);
 
         Vector3 fTraction = Physics.computeTraction(transform.direction(), carDynamics.engineForce);
-        Vector3 fDrag = Physics.computeDrag(PhysicsConfig.C_DRAG, velocity);
-        Vector3 fRR = Physics.computeRR(PhysicsConfig.C_RR, velocity);
-        Vector3 fLongitudinal = Physics.computeLongitudinal(fTraction, fDrag, fRR);
+//        Vector3 fDrag = Physics.computeDrag(PhysicsConfig.C_DRAG, velocity);
+        float fDrag = PhysicsConfig.C_DRAG * velocity.len() * velocity.len();
+        float fRR = PhysicsConfig.C_RR * fGravity; // Physics.computeRR(PhysicsConfig.C_RR, fGravity);
+
+
+        float resistance = Math.min(dynamics.acceleration.len() * carDynamics.mass, fDrag + fRR);
+        System.out.println(resistance);
+
+        if (velocity.len() != 0) {
+            fTraction.add(Vector3.scale(velocity.clone().normalize(), -resistance));
+        }
+
+        Vector3 fLongitudinal = fTraction.clone();
+
+//        Vector3 fLongitudinal = Physics.computeLongitudinal(fTraction, fDrag, fRR);
+
+//        System.out.println(dynamics.acceleration.z + " vel: " + dynamics.velocity.z + " long: " + fLongitudinal.z);
 
         Vector3 acceleration = Physics.computeAcceleration(fLongitudinal, carDynamics.mass);
-
-//        System.out.println(acceleration + " " + carDynamics.engineForce);
-
         dynamics.acceleration.add(Vector3.scale(acceleration, dt));
+//        System.out.println(acceleration + " " + carDynamics.engineForce);
 
         // reset
         carDynamics.engineForce = 0;

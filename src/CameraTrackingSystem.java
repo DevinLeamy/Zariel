@@ -1,8 +1,6 @@
 import ecs.*;
 import math.Vector3;
 
-import java.lang.System;
-
 public class CameraTrackingSystem extends InstanceSystem {
     public CameraTrackingSystem() {
         super(ComponentRegistry.getSignature(CameraTarget.class, Transform.class), 0);

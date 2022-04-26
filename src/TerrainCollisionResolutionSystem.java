@@ -22,7 +22,13 @@ public class TerrainCollisionResolutionSystem extends InstanceSystem {
         TerrainCollision collision = terrainCollisionStore.getComponent(entity).get();
 
         if (rigidBody.objectType.equals("PLAYER")) {
-           // move the player up until they no longer collide
+            if (!collision.ground) {
+                Transform prev = entity.getComponent(PlayerTag.class).get().previousTransform;
+                transform.setPosition(prev.position.clone());
+                transform.setRotation(prev.rotation.clone());
+            } else {
+                transform.position.y = (float) Math.ceil(transform.position.y);
+            }
         } else if (rigidBody.objectType.equals("BOMB")) {
             entity.addComponent(new DespawnTag());
 

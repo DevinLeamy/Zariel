@@ -71,6 +71,10 @@ public class Matrix3 {
         return this;
     }
 
+    public static Matrix3 genRotationMatrix(Vector3 angles) {
+        return genRotationMatrix(angles.x, angles.y, angles.z);
+    }
+
     public static Matrix3 genRotationMatrix(float x, float y, float z) {
         Matrix3 rotationX = new Matrix3(new float[][]{
                 {1.0f, 0.0f,                0.0f                },
