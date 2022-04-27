@@ -3,58 +3,42 @@ package engine.graphics;
 import math.Matrix4;
 import math.Vector3;
 import math.Vector3i;
-import org.lwjgl.BufferUtils;
-
-import java.nio.FloatBuffer;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.lwjgl.opengl.GL41.*;
+import static engine.util.Utils.*;
 
 public class ShaderProgram {
     private int programHandle;
-    private Map<String, Uniform> uniforms;
 
-    public ShaderProgram(Shader... shaders) {
+    public ShaderProgram(String vertexShaderFile, String fragmentShaderFile) {
         this.programHandle = glCreateProgram();
-        this.uniforms = new HashMap<>();
-
-        // attach shaders and collect uniforms
-        for (Shader shader : shaders) {
-            glAttachShader(programHandle, shader.getShaderHandle());
-            for (Uniform uniform : shader.getUniforms()) {
-                uniforms.put(uniform.getName(), uniform);
-            }
-        }
-
+        VertexShader vs = new VertexShader(vertexShaderFile);
+        FragmentShader fs = new FragmentShader(fragmentShaderFile);
+        glAttachShader(programHandle, vs.handle());
+        glAttachShader(programHandle, fs.handle());
         glLinkProgram(programHandle);
     }
 
-    public void setUniform(String name, float value) {
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(1);
-        buffer.put(value);
-        buffer.flip();
+    public int getUniformLocation(String uniform) {
+        return Uniform.getUniformLocation(programHandle, uniform);
+    }
 
-        uniforms.get(name).setUniform(programHandle, buffer, Uniform.UniformT.FLOAT);
+    public void setUniform(String name, float value) {
+        Uniform.setUniform(getUniformLocation(name), createFloatBuffer(value), Uniform.UniformT.FLOAT);
     }
 
     public void setUniform(String name, Matrix4 value) {
-        uniforms.get(name).setUniform(programHandle, value.toFloatBuffer(), Uniform.UniformT.MATRIX_4F);
+        Uniform.setUniform(getUniformLocation(name), createFloatBuffer(value), Uniform.UniformT.MATRIX_4F);
     }
 
     public void setUniform(String name, Vector3i value) {
-        setUniform(name, value.toVector3());
+        Uniform.setUniform(getUniformLocation(name), createFloatBuffer(value), Uniform.UniformT.VECTOR_3F);
     }
 
     public void setUniform(String name, Vector3 value) {
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(3);
-        buffer.put(value.toArray());
-        buffer.flip();
-
-        uniforms.get(name).setUniform(programHandle, buffer, Uniform.UniformT.VECTOR_3F);
+        Uniform.setUniform(getUniformLocation(name), createFloatBuffer(value), Uniform.UniformT.VECTOR_3F);
     }
 
-    // when the program is about to be used
     public void link() {
         glUseProgram(programHandle);
 
@@ -64,12 +48,11 @@ public class ShaderProgram {
         }
     }
 
-    public int getProgramHandle() {
-        return programHandle;
+    public void unlink() {
+        glUseProgram(0);
     }
 
-    // when the program is no longer going to be used
-    public void cleanUp() {
+    final public void dispose() {
         glDeleteProgram(programHandle);
     }
 }

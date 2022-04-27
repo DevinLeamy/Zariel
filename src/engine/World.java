@@ -1,6 +1,7 @@
 package engine;
 
 import engine.components.*;
+import engine.controller.Controller;
 import engine.ecs.*;
 import engine.graphics.TextureAtlas;
 import engine.graphics.VoxelGeometry;
@@ -10,8 +11,10 @@ import engine.main.BoundingBox;
 import engine.main.Camera;
 import engine.main.ChunkManager;
 import engine.main.Debug;
+import engine.main.EntityGenerator;
 import engine.main.SkyBox;
 import engine.systems.*;
+import engine.ui.UI;
 import engine.view.Window;
 import math.*;
 
@@ -25,6 +28,7 @@ public class World {
     public Window window;
     public SkyBox skyBox;
     public EntityManager entityManager;
+    public UI ui;
     private Camera camera;
     private Camera debugCamera;
 
@@ -57,11 +61,11 @@ public class World {
         return World.world;
     }
 
-
     private World() {
         this.entityManager = EntityManager.instance;
         this.window = new Window();
         this.chunkManager = new ChunkManager();
+        this.ui = new UI();
         this.camera = new Camera(
                 (float) Math.PI - (float) Math.PI / 3,
                 window.getAspectRatio(),
@@ -85,7 +89,11 @@ public class World {
 
     private void init() {
         atlas = new TextureAtlas("res/images/minecraft_atlas.png", 16, 16);
+        initializeSystems();
+        initializeEntities();
+    }
 
+    private void initializeSystems() {
         this.movementSystem = new MovementSystem();
         this.terrainSystem = new TerrainSystem();
         this.playerInputSystem = new PlayerInputSystem();
@@ -104,111 +112,77 @@ public class World {
         this.bboxRenderingSystem = new BBoxRenderingSystem();
         this.carPhysicsSystem = new CarPhysicsSystem();
         this.debugInputSystem = new DebugInputSystem();
+    }
 
-//        ArrayList<String> playerFrames = new ArrayList<>(Arrays.asList(
-//                "res/voxels/player_animation/frame1.vox",
-//                "res/voxels/player_animation/frame2.vox",
-//                "res/voxels/player_animation/frame3.vox",
-//                "res/voxels/player_animation/frame4.vox",
-//                "res/voxels/player_animation/frame5.vox",
-//                "res/voxels/player_animation/frame6.vox",
-//                "res/voxels/player_animation/frame7.vox",
-//                "res/voxels/player_animation/frame8.vox",
-//                "res/voxels/player_animation/frame9.vox",
-//                "res/voxels/player_animation/frame10.vox",
-//                "res/voxels/player_animation/frame11.vox",
-//                "res/voxels/player_animation/frame12.vox",
-//                "res/voxels/player_animation/frame13.vox",
-//                "res/voxels/player_animation/frame14.vox",
-//                "res/voxels/player_animation/frame13.vox",
-//                "res/voxels/player_animation/frame12.vox",
-//                "res/voxels/player_animation/frame11.vox",
-//                "res/voxels/player_animation/frame10.vox",
-//                "res/voxels/player_animation/frame9.vox",
-//                "res/voxels/player_animation/frame8.vox",
-//                "res/voxels/player_animation/frame7.vox",
-//                "res/voxels/player_animation/frame6.vox",
-//                "res/voxels/player_animation/frame5.vox",
-//                "res/voxels/player_animation/frame4.vox",
-//                "res/voxels/player_animation/frame3.vox",
-//                "res/voxels/player_animation/frame2.vox",
-//                "res/voxels/player_animation/frame1.vox"
-//        ));
-
-        Entity player = new Entity();
-        float sizePerCube = 1 / 11.0f;
-        player.addComponent(new Transform(
-                new Vector3(19, 5, 78),
-                new Vector3(0, 0, 0),
-                new Vector3(sizePerCube, sizePerCube, sizePerCube)
-        ));
-        player.addComponent(new VoxelModel(VoxelGeometry.loadFromFile("res/voxels/car.vox").voxels));
-        player.addComponent(new PlayerTag());
-        player.addComponent(new CameraTarget(new Vector3(0f, 5, -5)));
-        player.addComponent(new Dynamics(
-                Vector3.zeros(),
-                Vector3.zeros()
-        ));
-        player.addComponent(new CarDynamics());
-        player.addComponent(new GravityTag());
-        player.addComponent(new RigidBody(
-                new BoundingBox(2, 2, 2),
-                "PLAYER"
-        ));
+    private void initializeEntities() {
+        float sizePerCube = 1 / 22.0f;
+        Entity player = EntityGenerator.createEntity(
+                new Transform(
+                        new Vector3(19, 5, 78),
+                        new Vector3(0, 0, 0),
+                        new Vector3(sizePerCube, sizePerCube, sizePerCube)
+                ),
+                new VoxelModel(VoxelGeometry.loadFromFile("res/voxels/car.vox").voxels),
+                new PlayerTag(),
+                new GravityTag(),
+                new CameraTarget(new Vector3(0f, 5, -5)),
+                new Dynamics(Vector3.zeros(), Vector3.zeros()),
+                new CarDynamics(),
+                new RigidBody(new BoundingBox(1, 1, 1), "PLAYER")
+        );
+        Entity metaViewer = EntityGenerator.createEntity(
+                new DebugCameraConfig()
+        );
 
         entityManager.addEntity(player);
-
-        Entity metaViewer = new Entity();
-        metaViewer.addComponent(new DebugCameraConfig());
-
         entityManager.addEntity(metaViewer);
     }
 
-    public void update(float dt) {
+    public void render() {
         int NO_DELTA = 0;
-        {
-            debugInputSystem.update(dt);
-            terrainSystem.update(dt);
 
-            cameraInputSystem.update(dt);
-
-            if (Debug.DEBUG) {
-                // control the camera
-                debugCameraInputSystem.update(dt);
-            } else {
-                // control the player
-                playerInputSystem.update(dt);
-            }
-
-            // update accelerations
-            // TODO: (make this update forces and then have the physics system update
-            //       based on the forces)
-            fallingSystem.update(dt);
-            carPhysicsSystem.update(dt);
-
-            // update velocity and position based on acceleration
-            movementSystem.update(dt);
-
-            terrainCollisionDetectionSystem.update(dt);
-            terrainCollisionResolutionSystem.update(dt);
-
-            lifeTimeSystem.update(dt);
-            despawnSystem.update(dt);
-
-            if (!Debug.DEBUG) {
-                cameraTrackingSystem.update(dt);
-            }
-
-            animationSystem.update(dt);
-        }
         prepareRender();
-        {
-            skyBoxRenderingSystem.update(NO_DELTA);
-            terrainRenderingSystem.update(NO_DELTA);
-            goRenderingSystem.update(NO_DELTA);
-            bboxRenderingSystem.update(NO_DELTA);
-        }
+        skyBoxRenderingSystem.update(NO_DELTA);
+        terrainRenderingSystem.update(NO_DELTA);
+        goRenderingSystem.update(NO_DELTA);
+        bboxRenderingSystem.update(NO_DELTA);
         window.render();
+    }
+
+    public void update(float dt) {
+        debugInputSystem.update(dt);
+        terrainSystem.update(dt);
+
+        cameraInputSystem.update(dt);
+
+        if (Debug.DEBUG) {
+            // control the camera
+            debugCameraInputSystem.update(dt);
+        } else {
+            // control the player
+            playerInputSystem.update(dt);
+        }
+
+        // update accelerations
+        // TODO: (make this update forces and then have the physics system update
+        //       based on the forces)
+        fallingSystem.update(dt);
+        carPhysicsSystem.update(dt);
+
+        // update velocity and position based on acceleration
+        movementSystem.update(dt);
+
+        terrainCollisionDetectionSystem.update(dt);
+        terrainCollisionResolutionSystem.update(dt);
+
+        lifeTimeSystem.update(dt);
+        despawnSystem.update(dt);
+
+        if (!Debug.DEBUG) {
+            cameraTrackingSystem.update(dt);
+        }
+
+        animationSystem.update(dt);
     }
 
     private void prepareRender() {
@@ -237,33 +211,6 @@ public class World {
 
     public void reset() {
         entityManager.removeAllEntities();
-
-        Entity player = new Entity();
-        float sizePerCube = 1 / 11.0f;
-        player.addComponent(new Transform(
-                new Vector3(19, 5, 78),
-                new Vector3(0, 0, 0),
-                new Vector3(sizePerCube, sizePerCube, sizePerCube)
-        ));
-        player.addComponent(new VoxelModel(VoxelGeometry.loadFromFile("res/voxels/car.vox").voxels));
-        player.addComponent(new PlayerTag());
-        player.addComponent(new CameraTarget(new Vector3(0f, 5, -5)));
-        player.addComponent(new Dynamics(
-                Vector3.zeros(),
-                Vector3.zeros()
-        ));
-        player.addComponent(new CarDynamics());
-        player.addComponent(new GravityTag());
-        player.addComponent(new RigidBody(
-                new BoundingBox(2, 2, 2),
-                "PLAYER"
-        ));
-
-        entityManager.addEntity(player);
-
-        Entity metaViewer = new Entity();
-        metaViewer.addComponent(new DebugCameraConfig());
-
-        entityManager.addEntity(metaViewer);
+        initializeEntities();
     }
 }

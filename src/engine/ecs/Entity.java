@@ -1,6 +1,6 @@
 package engine.ecs;
 
-import util.Utils;
+import engine.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Optional;

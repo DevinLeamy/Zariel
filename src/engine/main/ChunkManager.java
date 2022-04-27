@@ -206,13 +206,6 @@ public class ChunkManager {
         }
     }
 
-    public void render(Camera perspective) {
-        ArrayList<Chunk> visibleChunks = getVisibleChunks(perspective);
-        visibleChunks.forEach(chunk -> chunk.render(perspective));
-
-//        System.out.printf("Rendered chunks: %d%n", visibleChunks.size());
-    }
-
     public void update(Camera perspective) {
         unloadDistantChunks(perspective);
         createRelevantChunks(perspective);

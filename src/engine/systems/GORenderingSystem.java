@@ -9,16 +9,10 @@ import engine.ecs.Entity;
 import engine.ecs.InstanceSystem;
 import engine.graphics.*;
 import engine.main.Camera;
+import engine.renderers.GameObjectRenderer;
 
 public class GORenderingSystem extends InstanceSystem {
-    private static VertexShader vs = new VertexShader("res/shaders/voxel_renderable.vert", new Uniform[] {
-            new Uniform("viewM", Uniform.UniformT.MATRIX_4F),
-            new Uniform("projectionM", Uniform.UniformT.MATRIX_4F),
-            new Uniform("modelM", Uniform.UniformT.MATRIX_4F)
-    });
-    private static FragmentShader fs = new FragmentShader("res/shaders/voxel_renderable.frag", new Uniform[] {});
-    private static ShaderProgram shader = new ShaderProgram(vs, fs);
-    private static Renderer renderer = new Renderer(shader);
+    private static GameObjectRenderer renderer = new GameObjectRenderer();
 
     World world = World.getInstance();
 
@@ -35,12 +29,9 @@ public class GORenderingSystem extends InstanceSystem {
         Transform transform = transformStore.getComponent(entity).get();
 
         Camera camera = world.getPerspective();
-        VoxelMesh mesh = model.mesh();
+        Mesh mesh = model.mesh();
 
-        renderer.shader.setUniform("viewM", camera.viewMatrix());
-        renderer.shader.setUniform("modelM", transform.modelMatrix());
-        renderer.shader.setUniform("projectionM", camera.projectionMatrix());
-
-        renderer.renderMesh(mesh);
+        renderer.setRenderContext(camera, transform);
+        renderer.render(mesh);
     }
 }

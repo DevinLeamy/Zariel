@@ -13,7 +13,7 @@ import engine.components.DebugCameraConfig;
 import engine.components.Transform;
 import math.Vector3;
 import math.Vector3i;
-import util.Utils;
+import engine.util.Utils;
 
 import java.util.Optional;
 
@@ -28,7 +28,6 @@ public class DebugCameraInputSystem extends InstanceSystem {
     final private float mouseSensitivity = 0.002f;
 
     World world = World.getInstance();
-    Controller controller = Controller.getInstance();
     ComponentStore<DebugCameraConfig> debugCameraConfigStore = ComponentStore.of(DebugCameraConfig.class);
 
     private int[] mousePos;
@@ -53,7 +52,7 @@ public class DebugCameraInputSystem extends InstanceSystem {
         Vector3 right = Vector3.cross(forward, Transform.up).normalize();
 
         handleKeyPresses(dt, camera.transform, forward, right);
-        handleMouseUpdate(dt, controller.mousePosition(), config);
+        handleMouseUpdate(dt, Controller.mousePosition(), config);
 
         Vector3 newTarget = calculateDirection(cameraPosition, config.yaw, config.pitch);
         camera.lookAt(newTarget);
@@ -87,7 +86,7 @@ public class DebugCameraInputSystem extends InstanceSystem {
     }
 
     private void handleMouseButtons(Block selectedBlock) {
-        if (controller.takeMouseButtonState(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+        if (Controller.takeMouseButtonState(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
             selectedBlock.setActive(false);
         }
     }
@@ -142,13 +141,13 @@ public class DebugCameraInputSystem extends InstanceSystem {
     }
 
     private void handleKeyPresses(float dt, Transform transform, Vector3 forward, Vector3 right) {
-        if (controller.keyPressed(GLFW_KEY_W)) { transform.translate(Vector3.scale(forward, dt * cameraMovementSpeed)); }
-        if (controller.keyPressed(GLFW_KEY_S)) { transform.translate(Vector3.scale(forward, -dt * cameraMovementSpeed)); }
+        if (Controller.keyPressed(GLFW_KEY_W)) { transform.translate(Vector3.scale(forward, dt * cameraMovementSpeed)); }
+        if (Controller.keyPressed(GLFW_KEY_S)) { transform.translate(Vector3.scale(forward, -dt * cameraMovementSpeed)); }
         // left and right
-        if (controller.keyPressed(GLFW_KEY_A)) { transform.translate(Vector3.scale(right, -dt * cameraMovementSpeed)); }
-        if (controller.keyPressed(GLFW_KEY_D)) { transform.translate(Vector3.scale(right, dt * cameraMovementSpeed)); }
+        if (Controller.keyPressed(GLFW_KEY_A)) { transform.translate(Vector3.scale(right, -dt * cameraMovementSpeed)); }
+        if (Controller.keyPressed(GLFW_KEY_D)) { transform.translate(Vector3.scale(right, dt * cameraMovementSpeed)); }
         // up and down
-        if (controller.keyPressed(GLFW_KEY_SPACE)) { transform.translate(Vector3.scale(Transform.up, dt * cameraMovementSpeed)); }
-        if (controller.keyPressed(GLFW_KEY_LEFT_SHIFT)) { transform.translate(Vector3.scale(Transform.up, -dt * cameraMovementSpeed)); }
+        if (Controller.keyPressed(GLFW_KEY_SPACE)) { transform.translate(Vector3.scale(Transform.up, dt * cameraMovementSpeed)); }
+        if (Controller.keyPressed(GLFW_KEY_LEFT_SHIFT)) { transform.translate(Vector3.scale(Transform.up, -dt * cameraMovementSpeed)); }
     }
 }

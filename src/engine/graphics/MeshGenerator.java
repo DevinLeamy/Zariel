@@ -6,18 +6,19 @@ import math.Vector2;
 import math.Vector3;
 import math.Vector3i;
 import org.lwjgl.BufferUtils;
-import rendering.Vertex;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static engine.graphics.Lighting.calculateAO;
+import static engine.main.SkyBox.SKYBOX_VERTICES;
 import static org.lwjgl.opengl.GL41.*;
 
 public class MeshGenerator {
 
-    private static VoxelMesh generateVoxelMesh(VoxelGeometry voxels, Optional<Vector3i> location) {
+    private static Mesh generateMesh(VoxelGeometry voxels, Optional<Vector3i> location) {
         int vao = glGenVertexArrays();
         int vbo = glGenBuffers();
 
@@ -36,7 +37,7 @@ public class MeshGenerator {
         }
 
         if (vertices.size() == 0) {
-            return new VoxelMesh(0, vao, vbo);
+            return new Mesh(0, vao, vbo);
         }
 
         // buffer to hold vertex data
@@ -68,18 +69,42 @@ public class MeshGenerator {
         // unbind vertex array
         glBindVertexArray(0);
 
-        return new VoxelMesh(vertices.size(), vao, vbo);
+        return new Mesh(vertices.size(), vao, vbo);
     }
 
-    public static VoxelMesh generateVoxelMesh(VoxelGeometry voxels, Vector3i location) {
-        return generateVoxelMesh(voxels, Optional.of(location));
+    public static Mesh generateMesh(VoxelGeometry voxels, Vector3i location) {
+        return generateMesh(voxels, Optional.of(location));
     }
 
-    public static VoxelMesh generateLocalVoxelMesh(VoxelGeometry voxels) {
-        return generateVoxelMesh(voxels, Optional.empty());
+    public static Mesh generateLocalMesh(VoxelGeometry voxels) {
+        return generateMesh(voxels, Optional.empty());
     }
 
-    public static VoxelMesh generateCubeWireMesh() {
+    public static Mesh generateSkyBoxMesh() {
+        int vao = glGenVertexArrays();
+        int vbo = glGenBuffers();
+
+        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+        FloatBuffer vertexData = BufferUtils.createFloatBuffer(SKYBOX_VERTICES.length);
+        vertexData.put(SKYBOX_VERTICES);
+        vertexData.flip();
+
+        glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(0);
+        /**
+         * stride = 0 because values are tightly packed
+         */
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0L);
+
+        glBindVertexArray(0);
+
+        return new Mesh(SKYBOX_VERTICES.length, vao, vbo);
+    }
+
+    public static Mesh generateCubeWireMesh() {
         int vao = glGenVertexArrays();
         int vbo = glGenBuffers();
 
@@ -128,7 +153,7 @@ public class MeshGenerator {
         // unbind vertex array
         glBindVertexArray(0);
 
-        return new VoxelMesh(lines.size() * 2, vao, vbo);
+        return new Mesh(lines.size() * 2, vao, vbo);
     }
 
     private static ArrayList<Vertex> createLocalBlockVertices(BlockType blockType, Vector3 localOffset, VoxelGeometry voxels) {
@@ -425,13 +450,5 @@ public class MeshGenerator {
             // Vertex is completely occluded
             return 0;
         }
-    }
-
-    private static int calculateAO(int sideOne, int sideTwo, int corner) {
-        if (sideOne == 1 && sideTwo == 1) {
-            return 0;
-        }
-
-        return 3 - (sideOne + sideTwo + corner);
     }
 }

@@ -22,7 +22,7 @@ public class TextureAtlas {
      * @param cols: columns in the texture atlas
      */
     public TextureAtlas(String path, int rows, int cols) {
-        this.atlasHandle = TextureAtlas.loadTexture(path);
+        this.atlasHandle = TextureLoader.loadTextureAtlasTexture(path);
         this.tileWidth = 1.0f / rows;
         this.tileHeight = 1.0f / cols;
     }
@@ -47,28 +47,4 @@ public class TextureAtlas {
     public void link() {
         glBindTexture(GL_TEXTURE_2D, atlasHandle);
     }
-
-    public static int loadTexture(String path) {
-        int textureHandle = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, textureHandle);
-
-        IntBuffer width = BufferUtils.createIntBuffer(1);
-        IntBuffer height = BufferUtils.createIntBuffer(1);
-        IntBuffer channels = BufferUtils.createIntBuffer(1);
-
-        ByteBuffer data = stbi_load(path, width, height, channels, 3);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width.get(0), height.get(0), 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        if (data != null) {
-            stbi_image_free(data);
-        }
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        return textureHandle;
-    }
-
-
 }

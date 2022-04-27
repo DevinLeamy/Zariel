@@ -61,7 +61,7 @@ public class Camera {
          return Matrix4.mult(m1, m2);
     }
 
-    public Frustum getViewFrustum() {
+    public Frustum viewFrustum() {
         return new Frustum(fov, aspect, transform.position, Vector3.add(transform.position, transform.direction()), new Vector3(0, 1, 0), ncp, fcp);
     }
 

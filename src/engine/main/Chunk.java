@@ -1,31 +1,19 @@
 package engine.main;
 
 import engine.config.Config;
-import engine.graphics.FragmentShader;
+import engine.graphics.Mesh;
 import engine.graphics.MeshGenerator;
-import engine.graphics.Renderer;
-import engine.graphics.ShaderProgram;
-import engine.graphics.Uniform;
-import engine.graphics.VertexShader;
 import engine.graphics.VoxelGeometry;
-import engine.graphics.VoxelMesh;
+import engine.renderers.TerrainRenderer;
 import math.Vector3;
 import math.Vector3i;
-import util.Utils;
+import engine.util.Utils;
 
 // TODO: implement the iterator interface for the blocks so we don't have to
 //       next for loops all the time.
 
 public class Chunk {
-    final private static int CHUNK_SIZE = Config.CHUNK_SIZE;
-    private static VertexShader vs = new VertexShader("res/shaders/chunk.vert", new Uniform[] {
-        new Uniform("viewM", Uniform.UniformT.MATRIX_4F),
-        new Uniform("projectionM", Uniform.UniformT.MATRIX_4F),
-        new Uniform("location", Uniform.UniformT.VECTOR_3F)
-    });
-    private static FragmentShader fs = new FragmentShader("res/shaders/chunk.frag", new Uniform[] {});
-    private static ShaderProgram shader = new ShaderProgram(vs, fs);
-
+    final public static int CHUNK_SIZE = Config.CHUNK_SIZE;
     /**
      * @field blocks: Blocks in the chunk
      * @field updated: engine.main.Chunk mesh has been updated since the last render
@@ -34,8 +22,8 @@ public class Chunk {
      */
 
     VoxelGeometry voxels;
-    VoxelMesh mesh;
-    Renderer renderer;
+    Mesh mesh;
+    TerrainRenderer renderer;
     Vector3i location;
     float[][] noiseMap;
     public boolean loaded;
@@ -45,7 +33,7 @@ public class Chunk {
         this.location = location;
         this.loaded = false;
         this.updated = false;
-        this.renderer = new Renderer(shader);
+        this.renderer = new TerrainRenderer();
 
 
         NoiseMapGenerator noiseMapGenerator = NoiseMapGenerator.getInstance();
@@ -56,6 +44,14 @@ public class Chunk {
 
     public Vector3 chunkCoordsToWorldCoords(Vector3i chunkCoords) {
         return Vector3i.scale(chunkCoords, CHUNK_SIZE).toVector3();
+    }
+
+    public Vector3i location() {
+        return location.clone();
+    }
+
+    public Mesh mesh() {
+        return mesh;
     }
 
     /**
@@ -104,29 +100,9 @@ public class Chunk {
      * vao and vbo.
      */
     public void load() {
-        this.mesh = MeshGenerator.generateVoxelMesh(voxels, Vector3i.scale(location, CHUNK_SIZE));
+        this.mesh = MeshGenerator.generateMesh(voxels, Vector3i.scale(location, CHUNK_SIZE));
         updated = false;
         loaded = true;
-    }
-
-    /**
-     * You could store a uniform for the chunk coords and block size and then
-     * only store the local vertex coordinates in the buffer. Then you won't need to
-     * know the actual coordinates until you render so the mesh generation and rendering
-     * steps can be separated.
-     */
-    public void render(Camera prospective) {
-        if (mesh.vertices() == 0) {
-            return;
-        }
-
-        Vector3i location = Vector3i.scale(this.location, CHUNK_SIZE);
-
-        renderer.shader.setUniform("viewM", prospective.viewMatrix());
-        renderer.shader.setUniform("projectionM", prospective.projectionMatrix());
-        renderer.shader.setUniform("location", location);
-
-        renderer.renderMesh(mesh);
     }
 
     public Block getBlock(Vector3i pos) {

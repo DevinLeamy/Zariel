@@ -27,8 +27,8 @@ public class CarPhysicsSystem extends InstanceSystem {
         float steeringAngle = cd.steerAngle;
         boolean accelerating = cd.throttle > 0;
 
-//        float sideSlipAngle = Vector3.angleBetween(velocity, direction);
-//        float speed = velocity.len();
+        float sideSlipAngle = Vector3.angleBetween(velocity, direction);
+        float speed = velocity.len();
 
         // local to the car
 //        float vForward = (float) (Math.cos(sideSlipAngle) * speed);
@@ -45,17 +45,15 @@ public class CarPhysicsSystem extends InstanceSystem {
 
 //        System.out.println("Steering angle: " + util.Utils.radiansToDegrees(cd.steerAngle));
         float radiusOfRotation = wheelBase / (float) Math.sin(steeringAngle);
-        dynamics.angularVelocity = Physics.computeAngularVelocity(radiusOfRotation, Math.max(1.0f, Math.abs(velocity.len())));
+        dynamics.angularVelocity = Physics.computeAngularVelocity(radiusOfRotation, Math.max(4.0f, Math.abs(velocity.len())));
         // bias towards the center
         cd.steerAngle += Math.copySign(cd.steerAngle * 0.025f, cd.steerAngle) * -1;
 
 //        System.out.println(vRight + " " + speed);
 
 
-        float resistanceForward = (20) * velocity.len() * Math.abs(velocity.len()) + 600 * velocity.len();
-        float tractionForward = cd.engineForce * cd.throttle;
-
-//        float resistanceRight = 0.42f * vRight * Math.abs(vRight) + 300 * vRight;
+        float tractionForward = cd.engineForce * cd.throttle - cd.brakeForce * cd.brake;
+        float resistanceForward = (30) * velocity.len() * Math.abs(velocity.len()) + 700 * velocity.len();
 
 //        System.out.println(resistanceRight + " " + resistanceForward);
 
@@ -63,7 +61,6 @@ public class CarPhysicsSystem extends InstanceSystem {
         Vector3 fLongitudinal = Vector3.scale(direction, tractionForward);
 //        System.out.println(tractionForward + " " + )
         if (velocity.len() > 0) {
-
             fLongitudinal.add(Vector3.scale(velocity.clone().normalize(), -resistanceForward));
         }
 //        fLongitudinal.add(Vector3.scale(transform.right(), -resistanceRight));

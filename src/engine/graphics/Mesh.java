@@ -2,19 +2,19 @@ package engine.graphics;
 
 import static org.lwjgl.opengl.GL41.*;
 
-public class VoxelMesh {
+public class Mesh {
     private int vertices;
     private int vao;
     private int vbo;
     private int ebo;
 
-    public VoxelMesh(int vertices, int vao, int vbo, int ebo) {
+    public Mesh(int vertices, int vao, int vbo, int ebo) {
         this.vertices = vertices;
         this.vao = vao;
         this.vbo = vbo;
         this.ebo = ebo;
     }
-    public VoxelMesh(int vertices, int vao, int vbo) {
+    public Mesh(int vertices, int vao, int vbo) {
         this(vertices, vao, vbo, -1);
     }
 

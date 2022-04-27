@@ -1,7 +1,11 @@
-package util;
+package engine.util;
 
+import math.Matrix4;
 import math.Vector3;
+import math.Vector3i;
+import org.lwjgl.BufferUtils;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -47,5 +51,29 @@ public class Utils {
         }
 
         return range;
+    }
+
+    public static FloatBuffer createFloatBuffer(Vector3 v) {
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(3);
+        buffer.put(v.toArray());
+        buffer.flip();
+
+        return buffer;
+    }
+
+    public static FloatBuffer createFloatBuffer(Vector3i v) {
+        return Utils.createFloatBuffer(v.toVector3());
+    }
+
+    public static FloatBuffer createFloatBuffer(float v) {
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(1);
+        buffer.put(v);
+        buffer.flip();
+
+        return buffer;
+    }
+
+    public static FloatBuffer createFloatBuffer(Matrix4 v) {
+        return v.toFloatBuffer();
     }
 }

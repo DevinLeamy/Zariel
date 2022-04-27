@@ -17,6 +17,10 @@ public class Box extends Cube {
         }
     }
 
+    public Vector3 dimensions() {
+        return dimensions.clone();
+    }
+
     public Face leftFace() {
         return faces[2];
     }

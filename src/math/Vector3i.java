@@ -116,4 +116,8 @@ public class Vector3i {
     public static int dot(Vector3i u, Vector3i v) {
         return u.x * v.x + u.y * v.y + u.z * v.z;
     }
+
+    public Vector3i clone() {
+        return new Vector3i(x, y, z);
+    }
 }

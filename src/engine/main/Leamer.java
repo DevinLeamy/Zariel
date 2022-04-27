@@ -36,6 +36,7 @@ final public class Leamer {
 
             // updates
             world.update(dt);
+            world.render();
 
             // waiting
             try {

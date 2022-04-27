@@ -5,6 +5,7 @@ import engine.main.Camera;
 import engine.main.Chunk;
 import engine.main.ChunkManager;
 import engine.World;
+import engine.renderers.TerrainRenderer;
 
 import java.util.ArrayList;
 // TODO: TEMP
@@ -12,9 +13,11 @@ import java.util.ArrayList;
 public class TerrainRenderingSystem extends System {
     World world = World.getInstance();
     ChunkManager chunkManager = World.getInstance().chunkManager;
+    TerrainRenderer renderer;
 
     public TerrainRenderingSystem() {
         super(0);
+        renderer = new TerrainRenderer();
     }
 
     @Override
@@ -23,6 +26,10 @@ public class TerrainRenderingSystem extends System {
         //       and turn them into Entities/Components/Systems
         Camera camera = world.getPerspective();
         ArrayList<Chunk> visibleChunks = chunkManager.getVisibleChunks(camera);
-        visibleChunks.forEach(chunk -> chunk.render(camera));
+
+        for (Chunk chunk : visibleChunks) {
+            renderer.setRenderContext(camera, chunk.location().scale(Chunk.CHUNK_SIZE));
+            renderer.render(chunk.mesh());
+        }
     }
 }

@@ -1,7 +1,7 @@
 package engine.main;
 
+import engine.graphics.Mesh;
 import engine.graphics.MeshGenerator;
-import engine.graphics.VoxelMesh;
 import math.Vector3;
 
 public class Cube {
@@ -32,5 +32,5 @@ public class Cube {
             FAR_BOTTOM_RIGHT
     };
     final public static Face[] faces = new Face[] { FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM };
-    final public static VoxelMesh mesh = MeshGenerator.generateCubeWireMesh();
+    final public static Mesh mesh = MeshGenerator.generateCubeWireMesh();
 }

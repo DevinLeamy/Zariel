@@ -8,20 +8,12 @@ import java.nio.file.Path;
 import static org.lwjgl.opengl.GL41.*;
 
 public class Shader {
-    protected int type;
     protected int shaderHandle;
-    protected Uniform[] uniforms;
 
-    public Shader(String shaderPath, int type, Uniform[] uniforms) {
-        this.type = type;
-        this.uniforms = uniforms;
-
+    public Shader(String shaderPath, int type) {
         compileShader(shaderPath, type);
     }
 
-    public Uniform[] getUniforms() {
-        return uniforms;
-    }
 
     private String loadSource(String path) {
         String source = "";
@@ -55,11 +47,11 @@ public class Shader {
         }
     }
 
-    public int getShaderHandle() {
+    public int handle() {
         return shaderHandle;
     }
 
-    public void cleanUp() {
+    public void dispose() {
         glDeleteShader(shaderHandle);
     }
 }

@@ -1,4 +1,4 @@
-package rendering;
+package engine.graphics;
 
 import math.Vector2;
 import math.Vector3;
