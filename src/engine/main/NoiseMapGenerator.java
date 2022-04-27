@@ -1,5 +1,6 @@
 package engine.main;
 
+import engine.config.Config;
 import math.Vector2;
 
 import java.util.HashMap;

@@ -1,5 +1,9 @@
 package engine.main;
 
+import engine.graphics.FragmentShader;
+import engine.graphics.ShaderProgram;
+import engine.graphics.Uniform;
+import engine.graphics.VertexShader;
 import math.Matrix4;
 import org.lwjgl.BufferUtils;
 
@@ -8,7 +12,8 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL41.*;
-import static org.lwjgl.stb.STBImage.*;
+import static org.lwjgl.stb.STBImage.stbi_image_free;
+import static org.lwjgl.stb.STBImage.stbi_load;
 
 /**
  * Implemented using a cube map as described here: https://learnopengl.com/Advanced-OpenGL/Cubemaps

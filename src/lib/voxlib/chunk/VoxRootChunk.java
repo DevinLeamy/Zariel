@@ -1,11 +1,10 @@
 package lib.voxlib.chunk;
 
-import com.scs.voxlib.*;
-import lib.voxlib.mat.VoxMaterial;
-import lib.voxlib.mat.VoxOldMaterial;
 import lib.voxlib.GridPoint3;
 import lib.voxlib.VoxModelBlueprint;
 import lib.voxlib.VoxModelInstance;
+import lib.voxlib.mat.VoxMaterial;
+import lib.voxlib.mat.VoxOldMaterial;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,5 +1,14 @@
 package engine.main;
 
+import engine.config.Config;
+import engine.graphics.FragmentShader;
+import engine.graphics.MeshGenerator;
+import engine.graphics.Renderer;
+import engine.graphics.ShaderProgram;
+import engine.graphics.Uniform;
+import engine.graphics.VertexShader;
+import engine.graphics.VoxelGeometry;
+import engine.graphics.VoxelMesh;
 import math.Vector3;
 import math.Vector3i;
 import util.Utils;
@@ -21,7 +30,7 @@ public class Chunk {
      * @field blocks: Blocks in the chunk
      * @field updated: engine.main.Chunk mesh has been updated since the last render
      * @field chunkVerticesCount: Number of vertices in the chunk mesh
-     * @field location: engine.main.World coordinates (in chunks) of the chunk
+     * @field location: engine.World coordinates (in chunks) of the chunk
      */
 
     VoxelGeometry voxels;

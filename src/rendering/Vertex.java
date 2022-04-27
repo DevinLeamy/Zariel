@@ -1,6 +1,7 @@
 package rendering;
 
-import math.*;
+import math.Vector2;
+import math.Vector3;
 
 public class Vertex {
     public static int size = 12; // # of floats

@@ -17,12 +17,12 @@ public class TerrainGenerator {
                 new Pair(7, BlockType.STONE),
                 new Pair(13, BlockType.GRASS),
                 new Pair(40, BlockType.SNOW),
-//                new Pair(engine.main.Config.BEDROCK_LEVEL, engine.main.BlockType.STONE),
-//                new Pair(engine.main.Config.WATER_LEVEL, engine.main.BlockType.SNOW),
-//                new Pair(engine.main.Config.SAND_LEVEL, engine.main.BlockType.SNOW),
-//                new Pair(engine.main.Config.GRASS_LEVEL, engine.main.BlockType.GRASS),
-//                new Pair(engine.main.Config.STONE_LEVEL, engine.main.BlockType.STONE),
-//                new Pair(engine.main.Config.SNOW_LEVEL, engine.main.BlockType.SNOW),
+//                new Pair(engine.config.Config.BEDROCK_LEVEL, engine.main.BlockType.STONE),
+//                new Pair(engine.config.Config.WATER_LEVEL, engine.main.BlockType.SNOW),
+//                new Pair(engine.config.Config.SAND_LEVEL, engine.main.BlockType.SNOW),
+//                new Pair(engine.config.Config.GRASS_LEVEL, engine.main.BlockType.GRASS),
+//                new Pair(engine.config.Config.STONE_LEVEL, engine.main.BlockType.STONE),
+//                new Pair(engine.config.Config.SNOW_LEVEL, engine.main.BlockType.SNOW),
         };
         for (Pair pair : levels) {
 //            pair.first *= 2;

@@ -1,5 +1,7 @@
 package engine.main;
 
+import engine.graphics.MeshGenerator;
+import engine.graphics.VoxelMesh;
 import math.Vector3;
 
 public class Cube {

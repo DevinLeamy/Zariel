@@ -1,12 +1,14 @@
 package engine.main;
 
+import engine.components.Transform;
+import engine.config.Config;
 import math.Matrix4;
 import math.Vector3;
 
 public class Camera {
     public Transform transform;
     public Vector3 targetPosition;
-    float fov;
+    public float fov;
     float aspect;
     float ncp;
     float fcp;

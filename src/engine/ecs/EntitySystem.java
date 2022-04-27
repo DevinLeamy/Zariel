@@ -1,6 +1,6 @@
 package engine.ecs;
 
-import engine.main.World;
+import engine.World;
 
 import java.util.ArrayList;
 

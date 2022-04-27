@@ -1,6 +1,5 @@
 package lib.voxlib.chunk;
 
-import com.scs.voxlib.*;
 import lib.voxlib.InvalidVoxException;
 import lib.voxlib.StreamUtils;
 import lib.voxlib.mat.VoxOldMaterial;
@@ -47,7 +46,7 @@ public final class VoxMATTChunk extends VoxChunk {
             var material = new VoxOldMaterial(id, weight, matType, properties, isTotalPower);
             return new VoxMATTChunk(material);
         } catch (IllegalArgumentException e) {
-            throw new InvalidVoxException("engine.main.Material with ID " + id + " is invalid", e);
+            throw new InvalidVoxException("engine.graphics.Material with ID " + id + " is invalid", e);
         }
     }
 

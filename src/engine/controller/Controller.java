@@ -1,8 +1,9 @@
 package engine.controller;
 
-import static org.lwjgl.glfw.GLFW.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.util.*;
+import static org.lwjgl.glfw.GLFW.*;
 
 /**
  * Handles controller input

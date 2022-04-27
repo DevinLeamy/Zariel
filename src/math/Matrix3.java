@@ -2,7 +2,7 @@ package math;
 
 import org.lwjgl.BufferUtils;
 
-import java.nio.*;
+import java.nio.FloatBuffer;
 
 public class Matrix3 {
     private float[][] m;

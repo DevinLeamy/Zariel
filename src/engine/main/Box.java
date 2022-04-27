@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class Box extends Cube {
-    Face[] faces;
-    Vector3 dimensions;
+    public Face[] faces;
+    public Vector3 dimensions;
 
     public Box(Vector3 dimensions) {
         this.dimensions = dimensions;

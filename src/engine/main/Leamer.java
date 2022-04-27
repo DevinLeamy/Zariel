@@ -1,5 +1,8 @@
 package engine.main;
 
+import engine.World;
+import engine.components.PlayerTag;
+import engine.components.Transform;
 import engine.ecs.ComponentRegistry;
 import org.lwjgl.Version;
 

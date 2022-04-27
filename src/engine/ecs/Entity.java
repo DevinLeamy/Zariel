@@ -1,10 +1,9 @@
 package engine.ecs;
 
-import java.lang.Class;
+import util.Utils;
+
 import java.util.ArrayList;
 import java.util.Optional;
-
-import util.Utils;
 
 public class Entity {
     private static ArrayList<Integer> ids = Utils.range(0, ECSConfig.MAX_ENTITY_COUNT);

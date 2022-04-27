@@ -1,9 +1,13 @@
 package engine.main;
 
+import engine.config.Config;
 import math.Vector3;
 import math.Vector3i;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 public class ChunkManager {
     public static float CHUNK_LOAD_DISTANCE = Config.CHUNK_LOAD_DISTANCE;
@@ -18,7 +22,7 @@ public class ChunkManager {
     Chunk[][][] chunks;
     Set<Vector3i> loadQueue;
 
-    ChunkManager() {
+    public ChunkManager() {
         this.chunks = new Chunk[Config.WORLD_LENGTH][Config.WORLD_HEIGHT][Config.WORLD_WIDTH];
         this.loadQueue = new HashSet<>();
     }

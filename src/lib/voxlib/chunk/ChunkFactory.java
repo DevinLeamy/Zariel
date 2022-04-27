@@ -65,7 +65,7 @@ public final class ChunkFactory {
 			chunk = VoxShapeChunk.read(stream);
 			break;
 			
-		case nTRN: // engine.main.Transform Node engine.main.Chunk
+		case nTRN: // engine.main.components.Transform Node engine.main.Chunk
 			chunk = VoxTransformChunk.read(stream);
 			break;
 
