@@ -81,79 +81,49 @@ public class MeshGenerator {
     }
 
     public static Mesh generateSkyBoxMesh() {
-        int vao = glGenVertexArrays();
-        int vbo = glGenBuffers();
+        MeshBuilder builder = new MeshBuilder();
+        builder.loadAttributeData(SKYBOX_VERTICES, 3);
 
-        glBindVertexArray(vao);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        return builder.build();
+    }
 
-        FloatBuffer vertexData = BufferUtils.createFloatBuffer(SKYBOX_VERTICES.length);
-        vertexData.put(SKYBOX_VERTICES);
-        vertexData.flip();
+    private static float[] flatten(ArrayList<Vector3> data) {
+        float[] flattened = new float[data.size() * 3];
+        for (int i = 0; i < data.size(); ++i) {
+            float[] v = data.get(i).toArray();
+            flattened[i * 3] = v[0];
+            flattened[i * 3 + 1] = v[1];
+            flattened[i * 3 + 2] = v[2];
+        }
 
-        glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);
-
-        glEnableVertexAttribArray(0);
-        /**
-         * stride = 0 because values are tightly packed
-         */
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0L);
-
-        glBindVertexArray(0);
-
-        return new Mesh(SKYBOX_VERTICES.length, vao, vbo);
+        return flattened;
     }
 
     public static Mesh generateCubeWireMesh() {
-        int vao = glGenVertexArrays();
-        int vbo = glGenBuffers();
+        MeshBuilder builder = new MeshBuilder();
 
-        ArrayList<Vector3[]> lines = new ArrayList<>(List.of(
+        ArrayList<Vector3> lines = new ArrayList<>(List.of(
                 // far face
-                new Vector3[] {Cube.FAR_TOP_LEFT, Cube.FAR_TOP_RIGHT},
-                new Vector3[] {Cube.FAR_TOP_LEFT, Cube.FAR_BOTTOM_LEFT},
-                new Vector3[] {Cube.FAR_TOP_RIGHT, Cube.FAR_BOTTOM_RIGHT},
-                new Vector3[] {Cube.FAR_BOTTOM_LEFT, Cube.FAR_BOTTOM_RIGHT},
+                Cube.FAR_TOP_LEFT, Cube.FAR_TOP_RIGHT,
+                Cube.FAR_TOP_LEFT, Cube.FAR_BOTTOM_LEFT,
+                Cube.FAR_TOP_RIGHT, Cube.FAR_BOTTOM_RIGHT,
+                Cube.FAR_BOTTOM_LEFT, Cube.FAR_BOTTOM_RIGHT,
 
                 // close face
-                new Vector3[] {Cube.NEAR_TOP_LEFT, Cube.NEAR_TOP_RIGHT},
-                new Vector3[] {Cube.NEAR_TOP_LEFT, Cube.NEAR_BOTTOM_LEFT},
-                new Vector3[] {Cube.NEAR_TOP_RIGHT, Cube.NEAR_BOTTOM_RIGHT},
-                new Vector3[] {Cube.NEAR_BOTTOM_LEFT, Cube.NEAR_BOTTOM_RIGHT},
+                Cube.NEAR_TOP_LEFT, Cube.NEAR_TOP_RIGHT,
+                Cube.NEAR_TOP_LEFT, Cube.NEAR_BOTTOM_LEFT,
+                Cube.NEAR_TOP_RIGHT, Cube.NEAR_BOTTOM_RIGHT,
+                Cube.NEAR_BOTTOM_LEFT, Cube.NEAR_BOTTOM_RIGHT,
 
                 // attach faces
-                new Vector3[] {Cube.NEAR_TOP_LEFT, Cube.FAR_TOP_LEFT},
-                new Vector3[] {Cube.NEAR_TOP_RIGHT, Cube.FAR_TOP_RIGHT},
-                new Vector3[] {Cube.NEAR_BOTTOM_RIGHT, Cube.FAR_BOTTOM_RIGHT},
-                new Vector3[] {Cube.NEAR_BOTTOM_LEFT, Cube.FAR_BOTTOM_LEFT}
+                Cube.NEAR_TOP_LEFT, Cube.FAR_TOP_LEFT,
+                Cube.NEAR_TOP_RIGHT, Cube.FAR_TOP_RIGHT,
+                Cube.NEAR_BOTTOM_RIGHT, Cube.FAR_BOTTOM_RIGHT,
+                Cube.NEAR_BOTTOM_LEFT, Cube.FAR_BOTTOM_LEFT
         ));
 
-        // buffer to hold vertex data
-        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(lines.size() * 2 * 3);
-        for (Vector3[] line : lines) {
-            for (Vector3 vertex : line) {
-                vertexBuffer.put(vertex.toArray());
-            }
-        }
-        vertexBuffer.flip();
-
-
-        glBindVertexArray(vao);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-        // store vertex data in GL_ARRAY_BUFFER
-        glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
-
-        // enable attributes
-        glEnableVertexAttribArray(0); // position
-
-        int stride = 4 * 3; // 3 = 3 (position)
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0L);
-
-        // unbind vertex array
-        glBindVertexArray(0);
-
-        return new Mesh(lines.size() * 2, vao, vbo);
+        builder.loadAttributeData(flatten(lines), 3);
+        return builder.build();
     }
 
     private static ArrayList<Vertex> createLocalBlockVertices(BlockType blockType, Vector3 localOffset, VoxelGeometry voxels) {
