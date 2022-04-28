@@ -61,11 +61,22 @@ public class Vector2 {
         return new Vector2(0.0f, 0.0f);
     }
 
+    public Vector2 sub(Vector2 other) {
+        x -= other.x;
+        y -= other.y;
+
+        return this;
+    }
+
     public static Vector2 sub(Vector2 u, Vector2 v) {
         return new Vector2(
                 u.x - v.x,
                 u.y - v.y
         );
+    }
+
+    public Vector2 clone() {
+        return new Vector2(x, y);
     }
 
     public static float dot(Vector2 u, Vector2 v) {

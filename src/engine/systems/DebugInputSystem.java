@@ -24,9 +24,13 @@ public class DebugInputSystem extends System {
         if (Controller.takeKeyPressState(GLFW_KEY_0) == GLFW_PRESS) { Debug.DEBUG = true; }
         else if (Controller.takeKeyPressState(GLFW_KEY_9) == GLFW_PRESS) { Debug.DEBUG = false; }
 
+        if (Controller.takeKeyPressState(GLFW_KEY_Z) == GLFW_PRESS) { Debug.cursorLocked = true; }
+        else if (Controller.takeKeyPressState(GLFW_KEY_X) == GLFW_PRESS) { Debug.cursorLocked = false; }
+
         if (Controller.keyPressed(GLFW_KEY_P)) { Debug.wireframe = false; }
         if (Controller.keyPressed(GLFW_KEY_O)) { Debug.wireframe = true; }
 
         glPolygonMode(GL_FRONT_AND_BACK, Debug.wireframe ? GL_LINE : GL_FILL);
+        World.getInstance().window.setCursorLocked(Debug.cursorLocked);
     }
 }

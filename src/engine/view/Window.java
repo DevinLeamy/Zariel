@@ -127,6 +127,14 @@ public class Window {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
+    public void setCursorLocked(boolean locked) {
+        if (locked) {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        } else {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+    }
+
     public void setTitle(String windowTitle) {
         glfwSetWindowTitle(window, windowTitle);
     }

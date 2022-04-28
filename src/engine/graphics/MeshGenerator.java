@@ -126,6 +126,18 @@ public class MeshGenerator {
         return builder.build();
     }
 
+    public static Mesh generateQuadMesh() {
+        MeshBuilder builder = new MeshBuilder();
+
+        ArrayList<Vector3> triangles = new ArrayList<>(List.of(
+                Cube.NEAR_BOTTOM_LEFT, Cube.NEAR_TOP_RIGHT, Cube.NEAR_TOP_LEFT,
+                Cube.NEAR_BOTTOM_LEFT, Cube.NEAR_BOTTOM_RIGHT, Cube.NEAR_TOP_RIGHT
+        ));
+
+        builder.loadAttributeData(flatten(triangles), 3);
+        return builder.build();
+    }
+
     private static ArrayList<Vertex> createLocalBlockVertices(BlockType blockType, Vector3 localOffset, VoxelGeometry voxels) {
         Vector3 v1 = new Vector3 (1.0f,  0.0f, 0.0f); // bottom near right
         Vector3 v2 = new Vector3 (1.0f,  0.0f, 1.0f); // bottom far right

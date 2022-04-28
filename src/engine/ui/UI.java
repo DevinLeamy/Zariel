@@ -1,34 +1,29 @@
 package engine.ui;
 
-import java.util.ArrayList;
+import engine.main.BoundingBox2D;
+import math.Vector2;
 
 public class UI {
-    private ArrayList<UIElement> elements;
+    final public static float MAIN_WINDOW_WIDTH = 2;
+    final public static float MAIN_WINDOW_HEIGHT = 2;
+    final public static BoundingBox2D MAIN_WINDOW_CONTAINER = new BoundingBox2D(new Vector2(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), new Vector2(-1, -1));
+
+    final public UIContainer main;
 
     public UI() {
-        elements = new ArrayList<>();
+        main = new UIContainer(new Vector2(1, 1), new Vector2(0, 0));
     }
 
     public void addElement(UIElement element) {
-        elements.add(element);
+        main.addChild(element);
     }
 
     public void removeElement(int elementId) {
         // .dispose() removed UI element
-        elements.removeIf(element -> element.id == elementId);
-    }
-
-    public void render() {
-        for (UIElement element : elements) {
-            element.render();
-        }
+        main.removeChild(elementId);
     }
 
     public void clear() {
-        for (UIElement element : elements) {
-            element.dispose();
-        }
-
-        elements.clear();
+        main.dispose();
     }
 }

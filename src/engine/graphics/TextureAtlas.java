@@ -1,14 +1,7 @@
 package engine.graphics;
 
 import math.Vector2;
-import org.lwjgl.BufferUtils;
-
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-
 import static org.lwjgl.opengl.GL41.*;
-import static org.lwjgl.stb.STBImage.stbi_image_free;
-import static org.lwjgl.stb.STBImage.stbi_load;
 
 public class TextureAtlas {
     private int atlasHandle;

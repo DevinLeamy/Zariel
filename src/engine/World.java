@@ -51,6 +51,7 @@ public class World {
     private BBoxRenderingSystem bboxRenderingSystem;
     private CarPhysicsSystem carPhysicsSystem;
     private DebugInputSystem debugInputSystem;
+    private UIRenderingSystem uiRenderingSystem;
 
     public static World getInstance() {
         if (World.world == null) {
@@ -112,6 +113,7 @@ public class World {
         this.bboxRenderingSystem = new BBoxRenderingSystem();
         this.carPhysicsSystem = new CarPhysicsSystem();
         this.debugInputSystem = new DebugInputSystem();
+        this.uiRenderingSystem = new UIRenderingSystem();
     }
 
     private void initializeEntities() {
@@ -146,6 +148,7 @@ public class World {
         terrainRenderingSystem.update(NO_DELTA);
         goRenderingSystem.update(NO_DELTA);
         bboxRenderingSystem.update(NO_DELTA);
+        uiRenderingSystem.update(NO_DELTA);
         window.render();
     }
 

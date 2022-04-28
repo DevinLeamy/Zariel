@@ -1,10 +1,15 @@
 package engine.ui;
 
+import engine.main.BoundingBox2D;
+import math.Vector2;
+
+import static org.lwjgl.opengl.GL41.*;
+
 public class TextElement extends UIElement {
     String text;
 
-    public TextElement(String text, float width, float height, float x, float y) {
-        super(width, height, x, y);
+    public TextElement(Vector2 size, Vector2 position, String text) {
+        super(size, position);
         this.text = text;
     }
 
@@ -17,12 +22,6 @@ public class TextElement extends UIElement {
     }
 
     @Override
-    public void render() {
-
-    }
-
-    @Override
     public void dispose() {
-
     }
 }

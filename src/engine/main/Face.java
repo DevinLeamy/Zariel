@@ -1,5 +1,6 @@
 package engine.main;
 
+import math.Vector2;
 import math.Vector3;
 
 import java.util.Arrays;

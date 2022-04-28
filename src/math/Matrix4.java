@@ -30,6 +30,15 @@ public class Matrix4 {
             });
     }
 
+    public static Matrix4 mult(Matrix4... matrices) {
+        Matrix4 res = Matrix4.identity();
+        for (Matrix4 m : matrices) {
+            res.mult(m);
+        }
+
+        return res;
+    }
+
     public static Matrix4 mult(Matrix4 m1, Matrix4 m2) {
         float[][] res = new float[4][4];
 
@@ -50,6 +59,21 @@ public class Matrix4 {
     public Matrix4 mult(Matrix4 other) {
         set(Matrix4.mult(this, other).m);
         return this;
+    }
+
+    public static Vector3 mult(Matrix4 m, Vector3 v) {
+        float[] v4 = new float[] { v.x, v.y, v.z, 1.0f };
+        float[] res = new float[4];
+
+        for (int i = 0; i < 4; ++i) {
+            float sum = 0;
+            for (int j = 0; j < 4; ++j) {
+                sum += m.m[i][j] * v4[j];
+            }
+            res[i] = sum;
+        }
+
+        return new Vector3(res[0], res[1], res[2]);
     }
 
     public static Matrix4 genRotationMatrix(float x, float y, float z) {

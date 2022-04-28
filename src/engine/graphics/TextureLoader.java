@@ -24,6 +24,7 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.stb.STBImage.stbi_image_free;
 import static org.lwjgl.stb.STBImage.stbi_load;
+import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
 
 public class TextureLoader {
     public static int loadSkyBoxTexture(String[] faces) {
@@ -57,6 +58,10 @@ public class TextureLoader {
     }
 
     public static int loadTextureAtlasTexture(String path) {
+        return load2DTexture(path);
+    }
+
+    public static int load2DTexture(String path) {
         int textureHandle = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, textureHandle);
 
@@ -74,6 +79,8 @@ public class TextureLoader {
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        stbi_set_flip_vertically_on_load(true);
 
         return textureHandle;
     }
