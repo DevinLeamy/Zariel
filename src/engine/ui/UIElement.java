@@ -46,6 +46,14 @@ public class UIElement {
         return size.clone();
     }
 
+    public void setColor(Vector3 color) {
+        this.color = color;
+    }
+
+    public void setAlpha(float alpha) {
+        this.alpha = alpha;
+    }
+
     public Vector4 rgbaColor() {
         return new Vector4(color.x, color.y, color.z, alpha);
     }

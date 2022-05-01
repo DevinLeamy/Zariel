@@ -1,5 +1,8 @@
 package engine.controller;
 
+import engine.main.Listener;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,15 +10,19 @@ import static org.lwjgl.glfw.GLFW.*;
 
 /**
  * Handles controller input
- * TODO: Make this a singleton??
  */
 
 public class Controller {
     static private Map<Integer, Integer> keyPressed = new HashMap<>();
     static private Map<Integer, Integer> mouseButtonState = new HashMap<>();
+    static private ArrayList<Listener> listeners = new ArrayList<>();
     static private int mouseX;
     static private int mouseY;
     static private float scrollDelta;
+
+    public static void addListener(Listener listener) {
+        listeners.add(listener);
+    }
 
     public static boolean keyPressed(int key) {
         return keyPressed.getOrDefault(key, GLFW_RELEASE) == GLFW_PRESS || keyPressed.getOrDefault(key, GLFW_RELEASE) == GLFW_REPEAT;
@@ -76,6 +83,9 @@ public class Controller {
         switch (action) {
             case GLFW_PRESS   -> setMouseButtonState(button, GLFW_PRESS);
             case GLFW_RELEASE -> setMouseButtonState(button, GLFW_RELEASE);
+        }
+        for (Listener listener : listeners) {
+            listener.update();
         }
     }
 

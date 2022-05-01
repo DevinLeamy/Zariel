@@ -6,13 +6,8 @@ import engine.ecs.ComponentRegistry;
 import engine.ecs.ComponentStore;
 import engine.ecs.Entity;
 import engine.ecs.InstanceSystem;
-import engine.main.Block;
-import engine.main.BlockType;
-import engine.main.BoundingBox;
-import engine.graphics.VoxelGeometry;
 import engine.main.EntityGenerator;
 import math.Vector3;
-import math.Vector3i;
 import engine.util.Utils;
 
 import java.util.HashMap;

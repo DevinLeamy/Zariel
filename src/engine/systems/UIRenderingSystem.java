@@ -3,10 +3,11 @@ package engine.systems;
 import engine.World;
 import engine.ecs.System;
 import engine.renderers.UIRenderer;
-import engine.ui.UIContainer;
 import engine.ui.UI;
-import engine.ui.UIElement;
+import engine.ui.UIButton;
+import engine.ui.UIContainer;
 import math.Vector2;
+import math.Vector3;
 
 public class UIRenderingSystem extends System {
     UIRenderer renderer;
@@ -16,21 +17,31 @@ public class UIRenderingSystem extends System {
 
         World world = World.getInstance();
         UI ui = world.ui;
-        UIElement container = new UIElement(
-                new Vector2(0.25f, 0.5f),
+        UIContainer container = new UIContainer(
+                new Vector2(1, 1f),
                 new Vector2(0, 0)
         );
-
-//        for (int i = 0; i < 1; ++i) {
-//            UIElement child = new UIElement(
-//                    new Vector2(0.1f, 0.1f),
-//                    new Vector2(0.1f * i, 0)
-//            );
-//            child.setTexture(String.format("res/images/numbers/%d.png", i));
-//            container.addChild(child);
-//        }
-
         ui.addElement(container);
+
+        UIButton leftButton = new UIButton(
+                new Vector2(0.1f, 0.1f),
+                new Vector2(0, 0)
+        );
+        leftButton.setOnClick(() -> {
+            World.getInstance().reset();
+        });
+        leftButton.setColor(new Vector3(1, 0, 0));
+
+        UIButton rightButton = new UIButton(
+                new Vector2(0.1f, 0.1f),
+                new Vector2(0.9f, 0)
+        );
+        rightButton.setOnClick(() -> {
+            java.lang.System.out.println("Right button clicked");
+        });
+
+        container.addChild(leftButton);
+        container.addChild(rightButton);
     }
 
     @Override

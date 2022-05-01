@@ -18,8 +18,8 @@ public class Window {
     // The window handle
     public long window;
 
-    private final int WIDTH = 1750;
-    private final int HEIGHT = 1100;
+    public static final int WIDTH = 1600;
+    public static final int HEIGHT = 900;
 
     public Window() {
         init();

@@ -172,7 +172,7 @@ public class Vector3 {
 
     public static float angleBetween(Vector3 u, Vector3 v) {
         if (u.len() == 0 || v.len() == 0) {
-            System.err.println("Error: cannot calculate angle between zero vector");
+//            System.err.println("Error: cannot calculate angle between zero vector");
             return 0;
         }
 
