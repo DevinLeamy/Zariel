@@ -3,6 +3,7 @@ package engine.renderers;
 import engine.components.Transform;
 import engine.graphics.Mesh;
 import engine.main.Camera;
+import engine.shaders.BoundingBoxShader;
 import engine.shaders.GameObjectShader;
 
 import static org.lwjgl.opengl.GL41.*;
@@ -12,7 +13,7 @@ public class BoundingBoxRenderer extends Renderer {
     Transform boundingBoxTransform;
 
     public BoundingBoxRenderer() {
-        super(new GameObjectShader());
+        super(new BoundingBoxShader());
     }
 
     public void setRenderContext(Camera camera, Transform boundingBoxTransform) {

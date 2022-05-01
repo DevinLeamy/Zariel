@@ -1,13 +1,20 @@
 package engine.ui;
 
+import engine.graphics.TextureLoader;
 import engine.main.BoundingBox2D;
 import math.Matrix4;
 import math.Vector2;
 import math.Vector3;
+import math.Vector4;
 
 import java.util.ArrayList;
 
-abstract public class UIElement {
+import static engine.util.Utils.createRGB;
+
+/**
+ * Parent class for all UI elements
+ */
+public class UIElement {
     private static int NEXT_ID = 0;
 
     // Normalized Device Coordinates
@@ -16,6 +23,9 @@ abstract public class UIElement {
     final public int id;
     Vector2 size;
     Vector2 position;
+    Vector3 color;
+    float alpha;
+    int textureHandle;
     ArrayList<UIElement> children;
 
     /**
@@ -27,10 +37,33 @@ abstract public class UIElement {
         this.size = size;
         this.position = position;
         this.children = new ArrayList<>();
+        this.textureHandle = TextureLoader.load2DTexture("res/images/BLANK_ICON.png");
+        this.color = createRGB(140, 140, 140);
+        this.alpha = 1f;
     }
 
     public Vector2 size() {
         return size.clone();
+    }
+
+    public Vector4 rgbaColor() {
+        return new Vector4(color.x, color.y, color.z, alpha);
+    }
+
+    public Vector3 color() {
+        return color;
+    }
+
+    public void setTextureHandle(int textureHandle) {
+        this.textureHandle = textureHandle;
+    }
+
+    public void setTexture(String texturePath) {
+        this.textureHandle = TextureLoader.load2DTexture(texturePath);
+    }
+
+    public int textureHandle() {
+        return textureHandle;
     }
 
     public void centerOn(float x, float y) {
@@ -104,5 +137,5 @@ abstract public class UIElement {
         );
     }
 
-    abstract public void dispose();
+    public void dispose() {}
 }

@@ -3,6 +3,7 @@ package engine.graphics;
 import math.Matrix4;
 import math.Vector3;
 import math.Vector3i;
+import math.Vector4;
 
 import static org.lwjgl.opengl.GL41.*;
 import static engine.util.Utils.*;
@@ -37,6 +38,10 @@ public class ShaderProgram {
 
     public void setUniform(String name, Vector3 value) {
         Uniform.setUniform(getUniformLocation(name), createFloatBuffer(value), Uniform.UniformT.VECTOR_3F);
+    }
+
+    public void setUniform(String name, Vector4 value) {
+        Uniform.setUniform(getUniformLocation(name), createFloatBuffer(value), Uniform.UniformT.VECTOR_4F);
     }
 
     public void link() {

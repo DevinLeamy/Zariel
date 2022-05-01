@@ -3,6 +3,7 @@ package engine.util;
 import math.Matrix4;
 import math.Vector3;
 import math.Vector3i;
+import math.Vector4;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
@@ -61,6 +62,14 @@ public class Utils {
         return buffer;
     }
 
+    public static FloatBuffer createFloatBuffer(Vector4 v) {
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
+        buffer.put(v.toArray());
+        buffer.flip();
+
+        return buffer;
+    }
+
     public static FloatBuffer createFloatBuffer(Vector3i v) {
         return Utils.createFloatBuffer(v.toVector3());
     }
@@ -75,5 +84,9 @@ public class Utils {
 
     public static FloatBuffer createFloatBuffer(Matrix4 v) {
         return v.toFloatBuffer();
+    }
+
+    public static Vector3 createRGB(int red, int green, int blue) {
+        return new Vector3(red / 256f, green / 256f, blue / 256f);
     }
 }

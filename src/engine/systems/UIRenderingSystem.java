@@ -3,8 +3,9 @@ package engine.systems;
 import engine.World;
 import engine.ecs.System;
 import engine.renderers.UIRenderer;
-import engine.ui.UITextureElement;
+import engine.ui.UIContainer;
 import engine.ui.UI;
+import engine.ui.UIElement;
 import math.Vector2;
 
 public class UIRenderingSystem extends System {
@@ -15,22 +16,21 @@ public class UIRenderingSystem extends System {
 
         World world = World.getInstance();
         UI ui = world.ui;
-        UITextureElement textureElement = new UITextureElement(
-                new Vector2(0.5f, 0.5f),
-                new Vector2(0.5f, 0),
-                "res/images/menu.jpg"
+        UIElement container = new UIElement(
+                new Vector2(0.25f, 0.5f),
+                new Vector2(0, 0)
         );
 
-        for (int i = 0; i < 4; ++i) {
-            UITextureElement child = new UITextureElement(
-                    new Vector2(0.25f, 0.25f),
-                    new Vector2(0.25f * i, 0.25f * i),
-                    "res/images/menu.jpg"
-            );
-            textureElement.addChild(child);
-        }
+//        for (int i = 0; i < 1; ++i) {
+//            UIElement child = new UIElement(
+//                    new Vector2(0.1f, 0.1f),
+//                    new Vector2(0.1f * i, 0)
+//            );
+//            child.setTexture(String.format("res/images/numbers/%d.png", i));
+//            container.addChild(child);
+//        }
 
-        ui.addElement(textureElement);
+        ui.addElement(container);
     }
 
     @Override
