@@ -1,11 +1,9 @@
 package engine;
 
 import engine.components.*;
-import engine.controller.Controller;
 import engine.ecs.*;
 import engine.graphics.TextureAtlas;
 import engine.graphics.VoxelGeometry;
-//import engine.main.*;
 import engine.main.Block;
 import engine.main.BoundingBox;
 import engine.main.Camera;
@@ -13,14 +11,21 @@ import engine.main.ChunkManager;
 import engine.main.Debug;
 import engine.main.EntityGenerator;
 import engine.main.SkyBox;
+import engine.main.SystemDriver;
 import engine.systems.*;
+import engine.ui.GameMenu;
 import engine.ui.UI;
 import engine.view.Window;
 import math.*;
 
 import java.util.Optional;
 
+import static engine.GameState.MENU;
+import static engine.GameState.PAUSED;
+import static engine.GameState.PLAYING;
+
 public class World {
+    private GameState gameState;
     public static World world;
     public static TextureAtlas atlas;
 
@@ -32,25 +37,13 @@ public class World {
     private Camera camera;
     private Camera debugCamera;
 
+    private SystemDriver systemDriver;
+
     // Systems
-    private MovementSystem movementSystem;
-    private TerrainSystem terrainSystem;
-    private CameraInputSystem cameraInputSystem;
-    private PlayerInputSystem playerInputSystem;
     private GORenderingSystem goRenderingSystem;
-    private CameraTrackingSystem cameraTrackingSystem;
     private TerrainRenderingSystem terrainRenderingSystem;
-    private FallingSystem fallingSystem;
-    private TerrainCollisionDetectionSystem terrainCollisionDetectionSystem;
-    private TerrainCollisionResolutionSystem terrainCollisionResolutionSystem;
-    private DespawnSystem despawnSystem;
-    private LifeTimeSystem lifeTimeSystem;
     private SkyBoxRenderingSystem skyBoxRenderingSystem;
-    private DebugCameraInputSystem debugCameraInputSystem;
-    private AnimationSystem animationSystem;
     private BBoxRenderingSystem bboxRenderingSystem;
-    private CarPhysicsSystem carPhysicsSystem;
-    private DebugInputSystem debugInputSystem;
     private UIRenderingSystem uiRenderingSystem;
 
     public static World getInstance() {
@@ -63,10 +56,12 @@ public class World {
     }
 
     private World() {
+        this.gameState = PLAYING;
         this.entityManager = EntityManager.instance;
         this.window = new Window();
         this.chunkManager = new ChunkManager();
         this.ui = new UI();
+        this.systemDriver = new SystemDriver();
         this.camera = new Camera(
                 (float) Math.PI - (float) Math.PI / 3,
                 window.getAspectRatio(),
@@ -90,29 +85,36 @@ public class World {
 
     private void init() {
         atlas = new TextureAtlas("res/images/minecraft_atlas.png", 16, 16);
+        initializeUI();
         initializeSystems();
         initializeEntities();
     }
 
+    private void initializeUI() {
+        GameMenu.init();
+    }
+
     private void initializeSystems() {
-        this.movementSystem = new MovementSystem();
-        this.terrainSystem = new TerrainSystem();
-        this.playerInputSystem = new PlayerInputSystem();
+        systemDriver.registerSystem(new DebugInputSystem(), PLAYING, GameState.DEBUG, MENU, PAUSED);
+        systemDriver.registerSystem(new TerrainSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerSystem(new CameraInputSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerSystem(new DebugCameraInputSystem(), GameState.DEBUG);
+        systemDriver.registerSystem(new PlayerInputSystem(), GameState.PLAYING);
+        systemDriver.registerSystem(new FallingSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerSystem(new CarPhysicsSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerSystem(new MovementSystem(), PLAYING, GameState.DEBUG);
+
+        systemDriver.registerSystem(new TerrainCollisionDetectionSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerSystem(new TerrainCollisionResolutionSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerSystem(new LifeTimeSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerSystem(new DespawnSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerSystem(new CameraTrackingSystem(), PLAYING);
+        systemDriver.registerSystem(new AnimationSystem(), PLAYING, GameState.DEBUG);
+
         this.goRenderingSystem = new GORenderingSystem();
-        this.cameraInputSystem = new CameraInputSystem();
-        this.cameraTrackingSystem = new CameraTrackingSystem();
         this.terrainRenderingSystem = new TerrainRenderingSystem();
-        this.fallingSystem = new FallingSystem();
-        this.terrainCollisionResolutionSystem = new TerrainCollisionResolutionSystem();
-        this.terrainCollisionDetectionSystem = new TerrainCollisionDetectionSystem();
-        this.despawnSystem = new DespawnSystem();
-        this.lifeTimeSystem = new LifeTimeSystem();
         this.skyBoxRenderingSystem = new SkyBoxRenderingSystem();
-        this.debugCameraInputSystem = new DebugCameraInputSystem();
-        this.animationSystem = new AnimationSystem();
         this.bboxRenderingSystem = new BBoxRenderingSystem();
-        this.carPhysicsSystem = new CarPhysicsSystem();
-        this.debugInputSystem = new DebugInputSystem();
         this.uiRenderingSystem = new UIRenderingSystem();
     }
 
@@ -153,39 +155,7 @@ public class World {
     }
 
     public void update(float dt) {
-        debugInputSystem.update(dt);
-        terrainSystem.update(dt);
-
-        cameraInputSystem.update(dt);
-
-        if (Debug.DEBUG) {
-            // control the camera
-            debugCameraInputSystem.update(dt);
-        } else {
-            // control the player
-            playerInputSystem.update(dt);
-        }
-
-        // update accelerations
-        // TODO: (make this update forces and then have the physics system update
-        //       based on the forces)
-        fallingSystem.update(dt);
-        carPhysicsSystem.update(dt);
-
-        // update velocity and position based on acceleration
-        movementSystem.update(dt);
-
-        terrainCollisionDetectionSystem.update(dt);
-        terrainCollisionResolutionSystem.update(dt);
-
-        lifeTimeSystem.update(dt);
-        despawnSystem.update(dt);
-
-        if (!Debug.DEBUG) {
-            cameraTrackingSystem.update(dt);
-        }
-
-        animationSystem.update(dt);
+        systemDriver.updateGameState(gameState, dt);
     }
 
     private void prepareRender() {
