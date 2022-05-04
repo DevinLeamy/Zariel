@@ -8,6 +8,7 @@ import math.Vector3;
 import math.Vector4;
 
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 import static engine.util.Utils.createRGB;
 
@@ -16,6 +17,7 @@ import static engine.util.Utils.createRGB;
  */
 public class UIElement {
     private static int NEXT_ID = 0;
+    private static String BLANK_TEXTURE = "res/images/BLANK_ICON.png";
 
     // Normalized Device Coordinates
     final private static Vector2 CENTER_POSITION = new Vector2(0.5f, 0.5f);
@@ -27,19 +29,25 @@ public class UIElement {
     float alpha;
     int textureHandle;
     ArrayList<UIElement> children;
+    UIElement parent;
 
     /**
      * @param size as a percentage of the parent
      * @param position as a percentage of the parent
      */
-    public UIElement(Vector2 size, Vector2 position) {
+    public UIElement(Vector2 size, Vector2 position, UIElement parent) {
         this.id = NEXT_ID++;
         this.size = size;
         this.position = position;
         this.children = new ArrayList<>();
-        this.textureHandle = TextureLoader.load2DTexture("res/images/BLANK_ICON.png");
+        this.textureHandle = TextureLoader.load2DTexture(BLANK_TEXTURE);
         this.color = createRGB(140, 140, 140);
         this.alpha = 1f;
+        this.parent = parent;
+    }
+
+    public UIElement(Vector2 size, Vector2 position) {
+        this(size, position, null);
     }
 
     public Vector2 size() {
@@ -81,6 +89,11 @@ public class UIElement {
 
     public void addChild(UIElement element) {
         this.children.add(element);
+        element.setParent(this);
+    }
+
+    private void setParent(UIElement parent) {
+        this.parent = parent;
     }
 
     public void removeChild(int elementId) {
@@ -91,18 +104,9 @@ public class UIElement {
         return children;
     }
 
-    public Matrix4 screenCoordMatrix() {
-        return screenCoordMatrix(UI.MAIN_WINDOW_CONTAINER);
-    }
-
-    // NDC bounding container
-    public BoundingBox2D boundingContainer() {
-        return boundingContainer(UI.MAIN_WINDOW_CONTAINER);
-    }
-
     // NDC bounding container, relative to parent container
-    public BoundingBox2D boundingContainer(BoundingBox2D parentContainer) {
-        Matrix4 screenCoordM = screenCoordMatrix(parentContainer);
+    public BoundingBox2D boundingContainer() {
+        Matrix4 screenCoordM = screenCoordMatrix();
 
         Vector3 bottomLeftCoord = new Vector3(0, 0, 0);
         Vector3 topRightCoord = new Vector3(size.x, size.y, 0);
@@ -120,14 +124,14 @@ public class UIElement {
     }
 
     /**
-     * @param parent: container containing the element, in NDC
      * @return - A matrix to convert a point from (0-1) coordinate to NDC, relative to a window
      */
-    public Matrix4 screenCoordMatrix(BoundingBox2D parent) {
-        float windowLowX = parent.position.x;
-        float windowLowY = parent.position.y;
-        float windowWidth = parent.size.x;
-        float windowHeight = parent.size.y;
+    public Matrix4 screenCoordMatrix() {
+        BoundingBox2D parentBBox = parent == null ? UI.MAIN_WINDOW_CONTAINER : parent.boundingContainer();
+        float windowLowX = parentBBox.position.x;
+        float windowLowY = parentBBox.position.y;
+        float windowWidth = parentBBox.size.x;
+        float windowHeight = parentBBox.size.y;
 
         float relativeTransX = windowWidth * position.x;
         float relativeTransY = windowHeight * position.y;

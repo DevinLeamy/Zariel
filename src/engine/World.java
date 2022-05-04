@@ -8,7 +8,6 @@ import engine.main.Block;
 import engine.main.BoundingBox;
 import engine.main.Camera;
 import engine.main.ChunkManager;
-import engine.main.Debug;
 import engine.main.EntityGenerator;
 import engine.main.SkyBox;
 import engine.main.SystemDriver;
@@ -25,7 +24,7 @@ import static engine.GameState.PAUSED;
 import static engine.GameState.PLAYING;
 
 public class World {
-    private GameState gameState;
+    public GameState gameState;
     public static World world;
     public static TextureAtlas atlas;
 
@@ -38,13 +37,6 @@ public class World {
     private Camera debugCamera;
 
     private SystemDriver systemDriver;
-
-    // Systems
-    private GORenderingSystem goRenderingSystem;
-    private TerrainRenderingSystem terrainRenderingSystem;
-    private SkyBoxRenderingSystem skyBoxRenderingSystem;
-    private BBoxRenderingSystem bboxRenderingSystem;
-    private UIRenderingSystem uiRenderingSystem;
 
     public static World getInstance() {
         if (World.world == null) {
@@ -95,34 +87,35 @@ public class World {
     }
 
     private void initializeSystems() {
-        systemDriver.registerSystem(new DebugInputSystem(), PLAYING, GameState.DEBUG, MENU, PAUSED);
-        systemDriver.registerSystem(new TerrainSystem(), PLAYING, GameState.DEBUG);
-        systemDriver.registerSystem(new CameraInputSystem(), PLAYING, GameState.DEBUG);
-        systemDriver.registerSystem(new DebugCameraInputSystem(), GameState.DEBUG);
-        systemDriver.registerSystem(new PlayerInputSystem(), GameState.PLAYING);
-        systemDriver.registerSystem(new FallingSystem(), PLAYING, GameState.DEBUG);
-        systemDriver.registerSystem(new CarPhysicsSystem(), PLAYING, GameState.DEBUG);
-        systemDriver.registerSystem(new MovementSystem(), PLAYING, GameState.DEBUG);
+        // update systems
+        systemDriver.registerUpdateSystem(new DebugInputSystem(), PLAYING, GameState.DEBUG, MENU, PAUSED);
+        systemDriver.registerUpdateSystem(new TerrainSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerUpdateSystem(new CameraInputSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerUpdateSystem(new DebugCameraInputSystem(), GameState.DEBUG);
+        systemDriver.registerUpdateSystem(new PlayerInputSystem(), GameState.PLAYING);
+        systemDriver.registerUpdateSystem(new FallingSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerUpdateSystem(new CarPhysicsSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerUpdateSystem(new MovementSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerUpdateSystem(new TerrainCollisionDetectionSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerUpdateSystem(new TerrainCollisionResolutionSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerUpdateSystem(new LifeTimeSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerUpdateSystem(new DespawnSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerUpdateSystem(new CameraTrackingSystem(), PLAYING);
+        systemDriver.registerUpdateSystem(new AnimationSystem(), PLAYING, GameState.DEBUG);
 
-        systemDriver.registerSystem(new TerrainCollisionDetectionSystem(), PLAYING, GameState.DEBUG);
-        systemDriver.registerSystem(new TerrainCollisionResolutionSystem(), PLAYING, GameState.DEBUG);
-        systemDriver.registerSystem(new LifeTimeSystem(), PLAYING, GameState.DEBUG);
-        systemDriver.registerSystem(new DespawnSystem(), PLAYING, GameState.DEBUG);
-        systemDriver.registerSystem(new CameraTrackingSystem(), PLAYING);
-        systemDriver.registerSystem(new AnimationSystem(), PLAYING, GameState.DEBUG);
-
-        this.goRenderingSystem = new GORenderingSystem();
-        this.terrainRenderingSystem = new TerrainRenderingSystem();
-        this.skyBoxRenderingSystem = new SkyBoxRenderingSystem();
-        this.bboxRenderingSystem = new BBoxRenderingSystem();
-        this.uiRenderingSystem = new UIRenderingSystem();
+        // rendering systems
+        systemDriver.registerRenderingSystem(new SkyBoxRenderingSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerRenderingSystem(new TerrainRenderingSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerRenderingSystem(new GORenderingSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerRenderingSystem(new BBoxRenderingSystem(), PLAYING, GameState.DEBUG);
+        systemDriver.registerRenderingSystem(new UIRenderingSystem(), MENU, PLAYING, GameState.DEBUG);
     }
 
     private void initializeEntities() {
         float sizePerCube = 1 / 22.0f;
         Entity player = EntityGenerator.createEntity(
                 new Transform(
-                        new Vector3(19, 5, 78),
+                        new Vector3(19, 15, 55),
                         new Vector3(0, 0, 0),
                         new Vector3(sizePerCube, sizePerCube, sizePerCube)
                 ),
@@ -143,14 +136,8 @@ public class World {
     }
 
     public void render() {
-        int NO_DELTA = 0;
-
         prepareRender();
-        skyBoxRenderingSystem.update(NO_DELTA);
-        terrainRenderingSystem.update(NO_DELTA);
-        goRenderingSystem.update(NO_DELTA);
-        bboxRenderingSystem.update(NO_DELTA);
-        uiRenderingSystem.update(NO_DELTA);
+        systemDriver.renderGameState(gameState);
         window.render();
     }
 
@@ -163,10 +150,7 @@ public class World {
     }
 
     public Camera getPerspective() {
-        if (Debug.DEBUG) {
-            return debugCamera;
-        }
-        return camera;
+        return gameState == GameState.DEBUG ? debugCamera : camera;
     }
 
     public boolean blockIsActive(int x, int y, int z) {

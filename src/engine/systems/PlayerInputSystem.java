@@ -78,6 +78,12 @@ public class PlayerInputSystem extends InstanceSystem {
         carDynamics.throttle = 0.5f;
     }
 
+    private void jump(float dt, Transform transform, boolean falling) {
+        if (!falling) {
+            transform.translate(new Vector3(0, 3, 0));
+        }
+    }
+
     private void turn(float mag, CarDynamics carDynamics) {
         carDynamics.steerAngle = Utils.clamp(-(float) Math.PI / 4, (float) Math.PI / 4, carDynamics.steerAngle + mag * 0.4f);
     }
@@ -96,6 +102,7 @@ public class PlayerInputSystem extends InstanceSystem {
         controls.put(GLFW_KEY_S, () -> brake(dt, carDynamics));
         controls.put(GLFW_KEY_A, () -> turnLeft(dt, carDynamics));
         controls.put(GLFW_KEY_D, () -> turnRight(dt, carDynamics));
+        controls.put(GLFW_KEY_SPACE, () -> jump(dt, transform, falling));
 
         for (int key : controls.keySet()) {
             if (Controller.keyPressed(key)) {

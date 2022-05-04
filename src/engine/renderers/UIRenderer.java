@@ -16,22 +16,21 @@ public class UIRenderer {
     public void render(UIContainer container) {
         BoundingBox2D containerWindow = container.boundingContainer();
         for (UIElement element : container.getChildren()) {
-            render(element, containerWindow);
+            render(element);
         }
     }
 
-    public void render(UIElement element, BoundingBox2D parentWindow) {
+    public void render(UIElement element) {
         texturedQuadRenderer.setRenderContext(
                 element.textureHandle(),
                 element.rgbaColor(),
-                element.screenCoordMatrix(parentWindow),
+                element.screenCoordMatrix(),
                 Matrix4.genScalingMatrix(element.size().x, element.size().y, 1)
         );
         texturedQuadRenderer.render(MeshGenerator.generateQuadMesh());
 
-        BoundingBox2D containerWindow = element.boundingContainer(parentWindow);
         for (UIElement child: element.getChildren()) {
-            render(child, containerWindow);
+            render(child);
         }
     }
 }

@@ -1,7 +1,7 @@
 package engine.config;
 
 public class Config {
-    final public static int CHUNK_SIZE = 128;
+    final public static int CHUNK_SIZE = 256;
     // CHUNK_DISTANCES
     final public static int WORLD_LENGTH = 1; // z axis
     final public static int WORLD_WIDTH = 1; // x axis
