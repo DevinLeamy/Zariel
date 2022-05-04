@@ -1,8 +1,12 @@
 package engine.main;
 
+import engine.components.CameraTarget;
+import engine.components.CarDynamics;
+import engine.components.DebugCameraConfig;
 import engine.components.Dynamics;
 import engine.components.GravityTag;
 import engine.components.LifeTime;
+import engine.components.PlayerTag;
 import engine.components.RigidBody;
 import engine.components.Transform;
 import engine.components.VoxelModel;
@@ -45,6 +49,25 @@ public class EntityGenerator {
                 new VoxelModel(VoxelGeometry.loadFromFile("res/voxels/bomb.vox").voxels),
                 new Dynamics(transform.direction().normalize().scale(10), Vector3.zeros()),
                 new RigidBody(new BoundingBox(1, 1, 1), "BOMB")
+        );
+    }
+
+    public static Entity generatePlayer(Transform transform) {
+        return createEntity(
+                transform,
+                new VoxelModel(VoxelGeometry.loadFromFile("res/voxels/car.vox").voxels),
+                new PlayerTag(),
+                new GravityTag(),
+                new CameraTarget(new Vector3(0f, 5, -5)),
+                new Dynamics(Vector3.zeros(), Vector3.zeros()),
+                new CarDynamics(),
+                new RigidBody(new BoundingBox(1, 1, 1), "PLAYER")
+        );
+    }
+
+    public static Entity generateDebugCamera() {
+        return createEntity(
+                new DebugCameraConfig()
         );
     }
 }

@@ -3,16 +3,15 @@ package engine;
 import engine.components.*;
 import engine.ecs.*;
 import engine.graphics.TextureAtlas;
-import engine.graphics.VoxelGeometry;
 import engine.main.Block;
-import engine.main.BoundingBox;
 import engine.main.Camera;
 import engine.main.ChunkManager;
 import engine.main.EntityGenerator;
 import engine.main.SkyBox;
 import engine.main.SystemDriver;
 import engine.systems.*;
-import engine.ui.GameMenu;
+import engine.ui.GameMenuUI;
+import engine.ui.RacingUI;
 import engine.ui.UI;
 import engine.view.Window;
 import math.*;
@@ -48,7 +47,7 @@ public class World {
     }
 
     private World() {
-        this.gameState = PLAYING;
+        this.gameState = MENU;
         this.entityManager = EntityManager.instance;
         this.window = new Window();
         this.chunkManager = new ChunkManager();
@@ -75,15 +74,34 @@ public class World {
         });
     }
 
+    private void initializeGameState() {
+        switch (gameState) {
+            case PLAYING -> onPlayingGame();
+            case MENU -> onGameMenu();
+            case PAUSED -> onPauseGame();
+        }
+    }
+
     private void init() {
         atlas = new TextureAtlas("res/images/minecraft_atlas.png", 16, 16);
-        initializeUI();
+        initializeGameState();
         initializeSystems();
         initializeEntities();
     }
 
-    private void initializeUI() {
-        GameMenu.init();
+    public void onPlayingGame() {
+        gameState = PLAYING;
+        initializeEntities();
+        RacingUI.init();
+    }
+
+    public void onPauseGame() {
+        gameState = PAUSED;
+    }
+
+    public void onGameMenu() {
+        gameState = MENU;
+        GameMenuUI.init();
     }
 
     private void initializeSystems() {
@@ -113,23 +131,13 @@ public class World {
 
     private void initializeEntities() {
         float sizePerCube = 1 / 22.0f;
-        Entity player = EntityGenerator.createEntity(
-                new Transform(
-                        new Vector3(19, 15, 55),
-                        new Vector3(0, 0, 0),
-                        new Vector3(sizePerCube, sizePerCube, sizePerCube)
-                ),
-                new VoxelModel(VoxelGeometry.loadFromFile("res/voxels/car.vox").voxels),
-                new PlayerTag(),
-                new GravityTag(),
-                new CameraTarget(new Vector3(0f, 5, -5)),
-                new Dynamics(Vector3.zeros(), Vector3.zeros()),
-                new CarDynamics(),
-                new RigidBody(new BoundingBox(1, 1, 1), "PLAYER")
+        Transform playerTransform = new Transform(
+                new Vector3(19, 15, 55),
+                new Vector3(0, 0, 0),
+                new Vector3(sizePerCube, sizePerCube, sizePerCube)
         );
-        Entity metaViewer = EntityGenerator.createEntity(
-                new DebugCameraConfig()
-        );
+        Entity player = EntityGenerator.generatePlayer(playerTransform);
+        Entity metaViewer = EntityGenerator.generateDebugCamera();
 
         entityManager.addEntity(player);
         entityManager.addEntity(metaViewer);

@@ -8,7 +8,6 @@ import math.Vector3;
 import math.Vector4;
 
 import java.util.ArrayList;
-import java.util.stream.IntStream;
 
 import static engine.util.Utils.createRGB;
 
@@ -149,5 +148,9 @@ public class UIElement {
         );
     }
 
-    public void dispose() {}
+    public void dispose() {
+        for (UIElement child : children) {
+            child.dispose();
+        }
+    }
 }

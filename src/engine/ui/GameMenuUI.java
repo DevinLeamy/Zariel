@@ -4,7 +4,7 @@ import engine.World;
 import math.Vector2;
 import math.Vector3;
 
-public class GameMenu {
+public class GameMenuUI {
     public static void init() {
         World world = World.getInstance();
         UI ui = world.ui;
@@ -29,7 +29,8 @@ public class GameMenu {
                 new Vector2(0.9f, 0)
         );
         rightButton.setOnClick(() -> {
-            java.lang.System.out.println("Right button clicked");
+            java.lang.System.out.println("Playing Game");
+            World.getInstance().onPlayingGame();
         });
 
         container.addChild(leftButton);
