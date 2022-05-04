@@ -1,7 +1,6 @@
 package engine.renderers;
 
 import engine.graphics.MeshGenerator;
-import engine.main.BoundingBox2D;
 import engine.ui.UIContainer;
 import engine.ui.UIElement;
 import math.Matrix4;
@@ -14,7 +13,6 @@ public class UIRenderer {
     }
 
     public void render(UIContainer container) {
-        BoundingBox2D containerWindow = container.boundingContainer();
         for (UIElement element : container.getChildren()) {
             render(element);
         }

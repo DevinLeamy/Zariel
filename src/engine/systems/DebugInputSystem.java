@@ -1,6 +1,5 @@
 package engine.systems;
 
-import engine.GameState;
 import engine.controller.Controller;
 import engine.ecs.System;
 import engine.main.Debug;
@@ -20,14 +19,12 @@ public class DebugInputSystem extends System {
     @Override
     public void update(float dt) {
         if (Controller.takeKeyPressState(GLFW_KEY_Q) == GLFW_PRESS) {
-            World.getInstance().reset();
+            World.reset();
         }
         if (Controller.takeKeyPressState(GLFW_KEY_0) == GLFW_PRESS) {
             Debug.DEBUG = true;
-            World.getInstance().gameState = GameState.DEBUG;
         } else if (Controller.takeKeyPressState(GLFW_KEY_9) == GLFW_PRESS) {
             Debug.DEBUG = false;
-            World.getInstance().gameState = GameState.PLAYING;
         }
 
         if (Controller.takeKeyPressState(GLFW_KEY_Z) == GLFW_PRESS) { Debug.cursorLocked = true; }
@@ -37,6 +34,6 @@ public class DebugInputSystem extends System {
         if (Controller.keyPressed(GLFW_KEY_O)) { Debug.wireframe = true; }
 
         glPolygonMode(GL_FRONT_AND_BACK, Debug.wireframe ? GL_LINE : GL_FILL);
-        World.getInstance().window.setCursorLocked(Debug.cursorLocked);
+        World.window.setCursorLocked(Debug.cursorLocked);
     }
 }

@@ -8,7 +8,7 @@ import engine.ecs.InstanceSystem;
 import engine.World;
 
 public class DespawnSystem extends InstanceSystem {
-    EntityManager entityManager = World.getInstance().entityManager;
+    EntityManager entityManager = World.entityManager;
 
     public DespawnSystem() {
         super(ComponentRegistry.getSignature(DespawnTag.class), 0);

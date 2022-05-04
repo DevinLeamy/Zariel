@@ -5,7 +5,7 @@ import engine.ecs.*;
 import engine.World;
 
 public class LifeTimeSystem extends InstanceSystem {
-    EntityManager entityManager = World.getInstance().entityManager;
+    EntityManager entityManager = World.entityManager;
 
     ComponentStore<LifeTime> lifeTimeStore = ComponentStore.of(LifeTime.class);
     public LifeTimeSystem() {

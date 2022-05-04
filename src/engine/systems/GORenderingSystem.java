@@ -14,8 +14,6 @@ import engine.renderers.GameObjectRenderer;
 public class GORenderingSystem extends InstanceSystem {
     private static GameObjectRenderer renderer = new GameObjectRenderer();
 
-    World world = World.getInstance();
-
     ComponentStore<VoxelModel> voxelModelStore = ComponentStore.of(VoxelModel.class);
     ComponentStore<Transform> transformStore = ComponentStore.of(Transform.class);
 
@@ -28,7 +26,7 @@ public class GORenderingSystem extends InstanceSystem {
         VoxelModel model = voxelModelStore.getComponent(entity).get();
         Transform transform = transformStore.getComponent(entity).get();
 
-        Camera camera = world.getPerspective();
+        Camera camera = World.getPerspective();
         Mesh mesh = model.mesh();
 
         renderer.setRenderContext(camera, transform);

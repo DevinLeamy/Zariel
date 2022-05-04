@@ -319,10 +319,8 @@ public class MeshGenerator {
         int worldY = (int) (translation.y + worldLocation.y);
         int worldZ = (int) (translation.z + worldLocation.z);
 
-        World world = World.getInstance();
-
         // left-face
-        if (!world.blockIsActive(worldX - 1, worldY, worldZ)) {
+        if (!World.blockIsActive(worldX - 1, worldY, worldZ)) {
             triangles.add(new int[][] {
                     {3, 5, 3}, {7, 5, 0}, {8, 5, 1}
             });
@@ -332,7 +330,7 @@ public class MeshGenerator {
         }
 
         // bottom-face
-        if (!world.blockIsActive(worldX, worldY - 1, worldZ)) {
+        if (!World.blockIsActive(worldX, worldY - 1, worldZ)) {
             triangles.add(new int[][]{
                     {2, 1, 3}, {3, 1, 0}, {4, 1, 1}
             });
@@ -342,7 +340,7 @@ public class MeshGenerator {
         }
 
         // front-face
-        if (!world.blockIsActive(worldX, worldY, worldZ - 1)) {
+        if (!World.blockIsActive(worldX, worldY, worldZ - 1)) {
             triangles.add(new int[][]{
                     {1, 6, 3}, {4, 6, 0}, {8, 6, 1}
             });
@@ -352,7 +350,7 @@ public class MeshGenerator {
         }
 
         // right-face
-        if (!world.blockIsActive(worldX + 1, worldY, worldZ)) {
+        if (!World.blockIsActive(worldX + 1, worldY, worldZ)) {
             triangles.add(new int[][]{
                     {5, 3, 3}, {6, 3, 0}, {2, 3, 1}
             });
@@ -362,7 +360,7 @@ public class MeshGenerator {
         }
 
         // top-face
-        if (!world.blockIsActive(worldX, worldY + 1, worldZ)) {
+        if (!World.blockIsActive(worldX, worldY + 1, worldZ)) {
             triangles.add(new int[][]{
                     {8, 2, 3}, {7, 2, 0}, {6, 2, 1}
             });
@@ -372,7 +370,7 @@ public class MeshGenerator {
         }
 
         // back-face
-        if (!world.blockIsActive(worldX, worldY, worldZ + 1)) {
+        if (!World.blockIsActive(worldX, worldY, worldZ + 1)) {
             triangles.add(new int[][]{
                     {6, 4, 3}, {7, 4, 0}, {3, 4, 1}
             });
@@ -407,13 +405,12 @@ public class MeshGenerator {
     }
 
     private static int calculateAmbientOcclusion(int x, int y, int z) {
-        World world = World.getInstance();
         // Looking down (-z going up, +x going right)
         // TODO: calculate these based on the vertex normal
-        boolean topLeft     = world.blockIsActive(x - 1, y, z);
-        boolean topRight    = world.blockIsActive(x, y, z);
-        boolean bottomLeft  = world.blockIsActive(x - 1, y, z - 1);
-        boolean bottomRight = world.blockIsActive(x, y, z - 1);
+        boolean topLeft     = World.blockIsActive(x - 1, y, z);
+        boolean topRight    = World.blockIsActive(x, y, z);
+        boolean bottomLeft  = World.blockIsActive(x - 1, y, z - 1);
+        boolean bottomRight = World.blockIsActive(x, y, z - 1);
 
         int topLeftI = topLeft ? 1 : 0;
         int topRightI = topRight ? 1 : 0;

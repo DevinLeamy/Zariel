@@ -16,7 +16,7 @@ public class CameraTrackingSystem extends InstanceSystem {
 
     @Override
     protected void update(float dt, Entity entity) {
-        Camera camera = World.getInstance().getPerspective();
+        Camera camera = World.getPerspective();
 
         // the entity "is" the target
         Transform targetTransform = entity.getComponent(Transform.class).get();

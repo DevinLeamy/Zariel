@@ -6,7 +6,6 @@ import engine.World;
 import engine.renderers.SkyBoxRenderer;
 
 public class SkyBoxRenderingSystem extends System {
-    World world = World.getInstance();
     SkyBoxRenderer renderer;
 
     public SkyBoxRenderingSystem() {
@@ -16,8 +15,8 @@ public class SkyBoxRenderingSystem extends System {
 
     @Override
     public void update(float dt) {
-        SkyBox skyBox = world.skyBox;
-        renderer.setRenderContext(world.getPerspective(), skyBox.texture());
+        SkyBox skyBox = World.skyBox;
+        renderer.setRenderContext(World.getPerspective(), skyBox.texture());
         renderer.render(skyBox.mesh());
     }
 }

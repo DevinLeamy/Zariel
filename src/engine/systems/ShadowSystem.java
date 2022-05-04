@@ -59,7 +59,7 @@ public class ShadowSystem extends System {
     }
 
     public Matrix4 generateLightSpaceTransform() {
-        Matrix4 lightProjectionM = Camera.orthographicProjectionM((int) (10 * World.getInstance().window.getAspectRatio()), 10, 100);
+        Matrix4 lightProjectionM = Camera.orthographicProjectionM((int) (10 * World.window.getAspectRatio()), 10, 100);
         Matrix4 lightViewM = Camera.lookAt(new Vector3(-20, 100, 20), Vector3.zeros(), Transform.up);
 
         Matrix4 lightSpaceM = Matrix4.mult(lightProjectionM, lightViewM);

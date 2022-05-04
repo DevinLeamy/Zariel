@@ -11,8 +11,7 @@ import java.util.ArrayList;
 // TODO: TEMP
 
 public class TerrainRenderingSystem extends System {
-    World world = World.getInstance();
-    ChunkManager chunkManager = World.getInstance().chunkManager;
+    ChunkManager chunkManager = World.chunkManager;
     TerrainRenderer renderer;
 
     public TerrainRenderingSystem() {
@@ -24,7 +23,7 @@ public class TerrainRenderingSystem extends System {
     public void update(float dt) {
         // TODO: get rid of the chunk manager and chunk classes
         //       and turn them into Entities/Components/Systems
-        Camera camera = world.getPerspective();
+        Camera camera = World.getPerspective();
         ArrayList<Chunk> visibleChunks = chunkManager.getVisibleChunks(camera);
 
         for (Chunk chunk : visibleChunks) {

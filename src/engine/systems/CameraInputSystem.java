@@ -7,7 +7,6 @@ import engine.World;
 import engine.util.Utils;
 
 public class CameraInputSystem extends System {
-    World world = World.getInstance();
     final private float scrollSensitivity = 0.03f;
 
     public CameraInputSystem() {
@@ -16,7 +15,7 @@ public class CameraInputSystem extends System {
 
     @Override
     public void update(float dt) {
-        Camera camera = world.getPerspective();
+        Camera camera = World.getPerspective();
         handleScrollUpdate(Controller.pollScrollDelta(), camera);
     }
 

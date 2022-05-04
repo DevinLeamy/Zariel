@@ -27,7 +27,6 @@ public class DebugCameraInputSystem extends InstanceSystem {
     final private float cameraMovementSpeed = 15; // 1u / second
     final private float mouseSensitivity = 0.002f;
 
-    World world = World.getInstance();
     ComponentStore<DebugCameraConfig> debugCameraConfigStore = ComponentStore.of(DebugCameraConfig.class);
 
     private int[] mousePos;
@@ -45,7 +44,7 @@ public class DebugCameraInputSystem extends InstanceSystem {
     protected void update(float dt, Entity entity) {
         DebugCameraConfig config = debugCameraConfigStore.getComponent(entity).get();
 
-        Camera camera = world.getPerspective();
+        Camera camera = World.getPerspective();
         Vector3 cameraPosition = camera.transform.position;
 
         Vector3 forward = Vector3.sub(camera.targetPosition, cameraPosition).normalize();
@@ -112,9 +111,9 @@ public class DebugCameraInputSystem extends InstanceSystem {
         while (dist < MAX_SELECT_DISTANCE) {
             Vector3i pos = Vector3.add(source, Vector3.scale(forward, dist)).toVector3i();
 
-            if (world.blockIsActive(pos)) {
+            if (World.blockIsActive(pos)) {
                 System.out.println("Selected block: " + pos);
-                return world.getBlock(pos);
+                return World.getBlock(pos);
             }
 
             // increment by half of a block width

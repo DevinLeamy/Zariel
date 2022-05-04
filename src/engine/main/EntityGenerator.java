@@ -52,17 +52,21 @@ public class EntityGenerator {
         );
     }
 
+    private static Entity player;
     public static Entity generatePlayer(Transform transform) {
-        return createEntity(
-                transform,
-                new VoxelModel(VoxelGeometry.loadFromFile("res/voxels/car.vox").voxels),
-                new PlayerTag(),
-                new GravityTag(),
-                new CameraTarget(new Vector3(0f, 5, -5)),
-                new Dynamics(Vector3.zeros(), Vector3.zeros()),
-                new CarDynamics(),
-                new RigidBody(new BoundingBox(1, 1, 1), "PLAYER")
-        );
+        if (player == null) {
+            player = createEntity(
+                    transform,
+                    new VoxelModel(VoxelGeometry.loadFromFile("res/voxels/car.vox").voxels),
+                    new PlayerTag(),
+                    new GravityTag(),
+                    new CameraTarget(new Vector3(0f, 5, -5)),
+                    new Dynamics(Vector3.zeros(), Vector3.zeros()),
+                    new CarDynamics(),
+                    new RigidBody(new BoundingBox(1, 1, 1), "PLAYER")
+            );
+        }
+        return player;
     }
 
     public static Entity generateDebugCamera() {

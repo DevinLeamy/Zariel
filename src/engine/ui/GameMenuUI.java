@@ -6,13 +6,13 @@ import math.Vector3;
 
 public class GameMenuUI {
     public static void init() {
-        World world = World.getInstance();
-        UI ui = world.ui;
+        UI ui = World.ui;
 
-        UIContainer container = new UIContainer(
+        UIElement container = new UIElement(
                 new Vector2(1, 1f),
                 new Vector2(0, 0)
         );
+        container.setTexture("res/images/ui/flag.jpg");
         ui.addElement(container);
 
         UIButton leftButton = new UIButton(
@@ -20,7 +20,7 @@ public class GameMenuUI {
                 new Vector2(0, 0)
         );
         leftButton.setOnClick(() -> {
-            World.getInstance().reset();
+            World.reset();
         });
         leftButton.setColor(new Vector3(1, 0, 0));
 
@@ -30,8 +30,9 @@ public class GameMenuUI {
         );
         rightButton.setOnClick(() -> {
             java.lang.System.out.println("Playing Game");
-            World.getInstance().onPlayingGame();
+            World.onPlayingGame();
         });
+        rightButton.setTexture("res/images/ui/play.png");
 
         container.addChild(leftButton);
         container.addChild(rightButton);

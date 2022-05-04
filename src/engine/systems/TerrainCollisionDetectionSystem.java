@@ -35,14 +35,12 @@ public class TerrainCollisionDetectionSystem extends InstanceSystem {
     }
 
     public Optional<TerrainCollision> terrainCollision(Transform transform, BoundingBox boundingBox) {
-        World world = World.getInstance();
-
         Matrix3 rotationM = Matrix3.genRotationMatrix(transform.rotation);
         for (Face face : boundingBox.faces) {
             Vector3 vertexWorldPosition = Matrix3.mult(rotationM, face.center()).add(transform.position);
             Vector3i blockCoordinate = vertexWorldPosition.toVector3i(true);
 
-            if (world.blockIsActive(blockCoordinate)) {
+            if (World.blockIsActive(blockCoordinate)) {
                 return Optional.of(new TerrainCollision(blockCoordinate, face));
             }
         }

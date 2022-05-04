@@ -5,8 +5,7 @@ import engine.World;
 import java.util.ArrayList;
 
 abstract public class EntitySystem extends System {
-    final static protected World world = World.getInstance();
-    final static protected EntityManager entityManager = world.entityManager;
+    final static protected EntityManager entityManager = World.entityManager;
 
     final private long signature;
 

@@ -14,8 +14,7 @@ public class UIRenderingSystem extends System {
 
     @Override
     public void update(float dt) {
-        World world = World.getInstance();
-        UI ui = world.ui;
+        UI ui = World.ui;
         renderer.render(ui.getMain());
     }
 }

@@ -17,7 +17,7 @@ final public class Leamer {
     private static boolean running = true;
 
     public static void main(String[] args) {
-        World world = World.getInstance();
+        World.init();
 
         // versions
         System.out.println("LWJGL_VERSION: " + Version.getVersion());
@@ -35,8 +35,8 @@ final public class Leamer {
             prevTime += dtInMillis;
 
             // updates
-            world.update(dt);
-            world.render();
+            World.update(dt);
+            World.render();
 
             // waiting
             try {
@@ -53,14 +53,16 @@ final public class Leamer {
 
             long framesDuration = frames.stream().mapToLong(Long::longValue).sum();
             if (framesDuration >= 1000) {
-                world.window.setTitle(String.format(
-                        "FPS: %d POS: %s",
+                try {
+                    World.window.setTitle(String.format(
+                                    "FPS: %d POS: %s",
 //                        "CHUNK: %s",
-                        frames.size()
-                        ,
-                        world.entityManager.queryEntities(ComponentRegistry.getSignature(Transform.class, PlayerTag.class)).get(0).getComponent(Transform.class).get().position)
-//                        engine.main.ChunkManager.getChunkCoords(world.camera.position).toString()
-                );
+                                    frames.size()
+                                    ,
+                                    World.entityManager.queryEntities(ComponentRegistry.getSignature(Transform.class, PlayerTag.class)).get(0).getComponent(Transform.class).get().position)
+                    );
+                } catch (Exception e) {}
+
             }
 
             while (framesDuration >= 1000) {
@@ -69,6 +71,6 @@ final public class Leamer {
             }
         }
 
-        world.window.cleanUp();
+        World.window.cleanUp();
     }
 }

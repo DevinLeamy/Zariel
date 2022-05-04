@@ -17,8 +17,6 @@ import math.Vector3i;
 public class FallingSystem extends InstanceSystem {
     final private static float GRAVITY = 9.81f;
 
-    World world = World.getInstance();
-
     public FallingSystem() {
         super(ComponentRegistry.getSignature(GravityTag.class, Dynamics.class, Transform.class), 0);
     }
@@ -56,6 +54,6 @@ public class FallingSystem extends InstanceSystem {
         Vector3i feet = pos.toVector3i(true);
         Vector3i ground = Vector3i.sub(feet, new Vector3i(0, 1, 0));
 
-        return world.blockIsActive(ground);
+        return World.blockIsActive(ground);
     }
 }

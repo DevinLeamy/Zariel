@@ -1,12 +1,13 @@
 package engine.main;
 
+import engine.components.VoxelModel;
 import math.Vector3i;
 
 public class Course implements CourseI {
-    Block[][][] voxels;
+    VoxelModel model;
     Vector3i start;
-    public Course(Block[][][] voxels, Vector3i start) {
-        this.voxels = voxels;
+    public Course(VoxelModel model, Vector3i start) {
+        this.model = model;
         this.start = start;
     }
 

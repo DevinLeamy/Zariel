@@ -1,5 +1,6 @@
 package engine.systems;
 
+import engine.World;
 import engine.components.*;
 import engine.controller.Controller;
 import engine.ecs.ComponentRegistry;
@@ -111,7 +112,7 @@ public class PlayerInputSystem extends InstanceSystem {
         }
 
         if (Controller.takeMouseButtonState(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-            world.entityManager.addEntity(EntityGenerator.generateBomb(transform));
+            World.entityManager.addEntity(EntityGenerator.generateBomb(transform));
         }
     }
 }

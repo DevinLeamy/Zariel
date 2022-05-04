@@ -1,5 +1,6 @@
 package engine.systems;
 
+import engine.World;
 import engine.components.RigidBody;
 import engine.components.Transform;
 import engine.ecs.ComponentRegistry;
@@ -28,7 +29,7 @@ public class BBoxRenderingSystem extends InstanceSystem {
                 boundingBox.dimensions()
         );
 
-        Camera camera = world.getPerspective();
+        Camera camera = World.getPerspective();
 
         renderer.setRenderContext(camera, boundingBoxTransform);
         renderer.render(Cube.mesh);

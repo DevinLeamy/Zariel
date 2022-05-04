@@ -93,7 +93,6 @@ public class VoxelGeometry {
 
     public void setBlock(int i, int j, int k, Block newBlock) {
         if (!validIndex(i, j, k)) {
-//            System.out.println("Cannot set");
             return;
         }
         if (getBlock(i, j, k).get().isActive()) {
@@ -141,8 +140,6 @@ public class VoxelGeometry {
                     maxY = Integer.max(maxY, y);
                     maxZ = Integer.max(maxZ, z);
                 }
-
-                System.out.println(maxX + " " + maxY + " " + maxZ);
 
                 VoxelGeometry geometry = new VoxelGeometry(new Vector3i(maxX + 1, maxY + 1, maxZ + 1));
 

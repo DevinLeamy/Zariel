@@ -32,17 +32,10 @@ public class MeshBuilder {
             return attribute;
         }
     }
-    private int vao;
-    private int vbo;
     private ArrayList<AttributeArray> attributeArrays;
 
     public MeshBuilder() {
-        vao = glGenVertexArrays();
-        vbo = glGenBuffers();
         attributeArrays = new ArrayList<>();
-
-        glBindVertexArray(vao);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
     }
 
     public void loadAttributeData(float[] data, int attributeSize) {
@@ -78,6 +71,12 @@ public class MeshBuilder {
 
 
     public Mesh build() {
+        int vao = glGenVertexArrays();
+        int vbo = glGenBuffers();
+
+        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
         int floatsPerVertex = calculateFloatsPerVertex();
         int stride = 4 * floatsPerVertex;
         int vertices = countVertices();

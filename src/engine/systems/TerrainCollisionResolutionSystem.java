@@ -71,7 +71,7 @@ public class TerrainCollisionResolutionSystem extends InstanceSystem {
         } else if (rigidBody.objectType.equals("BOMB")) {
             entity.addComponent(new DespawnTag());
 
-            Optional<Block> maybeBlock = World.getInstance().getBlock(collision.location);
+            Optional<Block> maybeBlock = World.getBlock(collision.location);
 
             if (maybeBlock.isEmpty()) {
                 return;
@@ -120,9 +120,8 @@ public class TerrainCollisionResolutionSystem extends InstanceSystem {
     }
 
     private void destroyBlock(Vector3i blockLocation, Block newBlock) {
-        World world = World.getInstance();
         // TODO: this should result in a chunk update
-        Optional<Block> maybeBlock = world.getBlock(blockLocation);
+        Optional<Block> maybeBlock = World.getBlock(blockLocation);
 
         if (maybeBlock.isEmpty()) {
             return;
