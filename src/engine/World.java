@@ -5,7 +5,6 @@ import engine.graphics.TextureAtlas;
 import engine.main.Block;
 import engine.main.Camera;
 import engine.main.ChunkManager;
-import engine.main.Debug;
 import engine.main.DebugGameState;
 import engine.main.GameState;
 import engine.main.GameStateI;
@@ -44,16 +43,7 @@ public class World {
         chunkManager = new ChunkManager();
         ui = new UI();
         systemDriver = new SystemDriver();
-        camera = new Camera(
-                (float) Math.PI - (float) Math.PI / 3,
-                window.getAspectRatio(),
-                Vector3.zeros()
-        );
-        debugCamera = new Camera(
-                (float) Math.PI - (float) Math.PI / 2,
-                window.getAspectRatio(),
-                new Vector3(6, 5, 42)
-        );
+
         skyBox = new SkyBox(new String[] {
                 "res/images/skybox/right.png",
                 "res/images/skybox/left.png",
@@ -123,7 +113,7 @@ public class World {
     }
 
     public static Camera getPerspective() {
-        return Debug.DEBUG ? debugCamera : camera;
+        return gameState.getPerspective();
     }
 
     public static boolean blockIsActive(int x, int y, int z) {

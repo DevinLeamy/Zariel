@@ -26,4 +26,9 @@ public class MenuGameState implements GameStateI {
     public void reset() {
         World.entityManager.removeAllEntities();
     }
+
+    @Override
+    public Camera getPerspective() {
+        return null;
+    }
 }

@@ -8,6 +8,11 @@ import math.Vector3;
 
 public class PlayingGameState implements GameStateI {
     GameState state = GameState.PLAYING;
+    Camera perspective = new Camera(
+            (float) Math.PI - (float) Math.PI / 3,
+            World.window.getAspectRatio(),
+            Vector3.zeros()
+    );
 
     @Override
     public void initialize() {
@@ -30,6 +35,11 @@ public class PlayingGameState implements GameStateI {
     public void reset() {
         World.entityManager.removeAllEntities();
         initializeEntities();
+    }
+
+    @Override
+    public Camera getPerspective() {
+        return perspective;
     }
 
     private void initializeEntities() {
