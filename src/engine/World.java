@@ -6,6 +6,8 @@ import engine.main.Block;
 import engine.main.Camera;
 import engine.main.ChunkManager;
 import engine.main.Debug;
+import engine.main.DebugGameState;
+import engine.main.GameState;
 import engine.main.GameStateI;
 import engine.main.MenuGameState;
 import engine.main.PlayingGameState;
@@ -18,9 +20,9 @@ import math.*;
 
 import java.util.Optional;
 
-import static engine.GameState.MENU;
-import static engine.GameState.PAUSED;
-import static engine.GameState.PLAYING;
+import static engine.main.GameState.MENU;
+import static engine.main.GameState.PAUSED;
+import static engine.main.GameState.PLAYING;
 
 public class World {
     public static GameStateI gameState;
@@ -55,8 +57,8 @@ public class World {
         skyBox = new SkyBox(new String[] {
                 "res/images/skybox/right.png",
                 "res/images/skybox/left.png",
-                "res/images/skybox/top.png",
                 "res/images/skybox/bottom.png",
+                "res/images/skybox/top.png",
                 "res/images/skybox/front.png",
                 "res/images/skybox/back.png",
         });
@@ -73,6 +75,11 @@ public class World {
 
     public static void onGameMenu() {
         gameState = new MenuGameState();
+        gameState.initialize();
+    }
+
+    public static void onDebugMode() {
+        gameState = new DebugGameState();
         gameState.initialize();
     }
 

@@ -23,8 +23,10 @@ public class DebugInputSystem extends System {
         }
         if (Controller.takeKeyPressState(GLFW_KEY_0) == GLFW_PRESS) {
             Debug.DEBUG = true;
+            World.onDebugMode();
         } else if (Controller.takeKeyPressState(GLFW_KEY_9) == GLFW_PRESS) {
             Debug.DEBUG = false;
+            World.onPlayingGame();
         }
 
         if (Controller.takeKeyPressState(GLFW_KEY_Z) == GLFW_PRESS) { Debug.cursorLocked = true; }

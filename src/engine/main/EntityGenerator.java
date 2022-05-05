@@ -57,7 +57,7 @@ public class EntityGenerator {
         if (player == null) {
             player = createEntity(
                     transform,
-                    new VoxelModel(VoxelGeometry.loadFromFile("res/voxels/car.vox").voxels),
+                    new VoxelModel(VoxelGeometry.loadFromFile("res/voxels/pink-car.vox").voxels),
                     new PlayerTag(),
                     new GravityTag(),
                     new CameraTarget(new Vector3(0f, 5, -5)),
@@ -69,9 +69,13 @@ public class EntityGenerator {
         return player;
     }
 
+    private static Entity debugCamera;
     public static Entity generateDebugCamera() {
-        return createEntity(
-                new DebugCameraConfig()
-        );
+        if (debugCamera == null) {
+            debugCamera = createEntity(
+                    new DebugCameraConfig()
+            );
+        }
+        return debugCamera;
     }
 }

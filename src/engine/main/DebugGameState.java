@@ -1,15 +1,16 @@
 package engine.main;
 
 import engine.World;
-import engine.ui.GameMenuUI;
+import engine.ui.RacingUI;
 
-public class MenuGameState implements GameStateI {
-    GameState state = GameState.MENU;
+public class DebugGameState implements GameStateI {
+    GameState state = GameState.DEBUG;
 
     @Override
     public void initialize() {
-        Debug.cursorLocked = false;
-        GameMenuUI.init();
+        Debug.cursorLocked = true;
+        initializeEntities();
+        RacingUI.init();
     }
 
     @Override
@@ -24,6 +25,9 @@ public class MenuGameState implements GameStateI {
 
     @Override
     public void reset() {
-        World.entityManager.removeAllEntities();
+        // keep existing entities
+    }
+
+    private void initializeEntities() {
     }
 }

@@ -64,7 +64,7 @@ public class Chunk {
     public void initializeGeometry() {
         voxels = new VoxelGeometry(new Vector3i(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
 
-        Block[][][] trackBlocks = VoxelGeometry.loadFromFile("res/voxels/tracks/track3.vox").voxels;
+        Block[][][] trackBlocks = VoxelGeometry.loadFromFile("res/voxels/track.vox").voxels;
 
         for (int i = 0; i < CHUNK_SIZE; ++i) {
             for (int j = 0; j < CHUNK_SIZE; ++j) {

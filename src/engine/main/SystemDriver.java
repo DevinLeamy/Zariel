@@ -1,13 +1,12 @@
 package engine.main;
 
-import engine.GameState;
 import engine.ecs.System;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static engine.GameState.*;
+import static engine.main.GameState.*;
 
 public class SystemDriver {
     Map<GameState, ArrayList<System>> updateSystems;

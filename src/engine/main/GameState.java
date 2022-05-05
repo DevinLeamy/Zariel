@@ -1,4 +1,4 @@
-package engine;
+package engine.main;
 
 public enum GameState {
     MENU,

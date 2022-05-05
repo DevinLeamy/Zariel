@@ -56,7 +56,6 @@ public class DebugCameraInputSystem extends InstanceSystem {
         Vector3 newTarget = calculateDirection(cameraPosition, config.yaw, config.pitch);
         camera.lookAt(newTarget);
 
-
         // -z axis
         forward = Vector3.sub(newTarget, cameraPosition).normalize();
         Optional<Block> maybeBlock = getSelectedBlock(cameraPosition, forward);

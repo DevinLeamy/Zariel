@@ -1,6 +1,5 @@
 package engine.main;
 
-import engine.GameState;
 import engine.World;
 import engine.components.Transform;
 import engine.ecs.Entity;
@@ -36,7 +35,7 @@ public class PlayingGameState implements GameStateI {
     private void initializeEntities() {
         float sizePerCube = 1 / 22.0f;
         Transform playerTransform = new Transform(
-                new Vector3(19, 15, 55),
+                new Vector3(19, 20, 55),
                 new Vector3(0, 0, 0),
                 new Vector3(sizePerCube, sizePerCube, sizePerCube)
         );
