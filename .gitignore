@@ -3,3 +3,6 @@ out
 *.log
 .DS_Store
 *.obj
+Process.md
+Advise.md
+RoadMap.md
