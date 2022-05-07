@@ -61,24 +61,24 @@ public class DebugCameraInputSystem extends InstanceSystem {
         Optional<Block> maybeBlock = getSelectedBlock(cameraPosition, forward);
 
         maybeBlock.ifPresent(selectedBlock -> {
-            if (previouslySelectedBlock != selectedBlock) {
-                this.undoPreviousSelection.run();
-                this.undoPreviousSelection = new Runnable() {
-                    // undo selectedBlock selection, because it will become the previous selection
-                    private Block previouslySelectedBlock = selectedBlock;
-                    private BlockType oldBlockType = selectedBlock.getBlockType();
+//            if (previouslySelectedBlock != selectedBlock) {
+//                this.undoPreviousSelection.run();
+//                this.undoPreviousSelection = new Runnable() {
+//                    // undo selectedBlock selection, because it will become the previous selection
+//                    private Block previouslySelectedBlock = selectedBlock;
+//                    private BlockType oldBlockType = selectedBlock.getBlockType();
+//
+//                    @Override
+//                    public void run() {
+//                        previouslySelectedBlock.setBlockType(oldBlockType);
+//                    }
+//                };
+//            }
 
-                    @Override
-                    public void run() {
-                        previouslySelectedBlock.setBlockType(oldBlockType);
-                    }
-                };
-            }
+//            selectedBlock.setBlockType(BlockType.SNOW);
+//            handleMouseButtons(selectedBlock);
 
-            selectedBlock.setBlockType(BlockType.SNOW);
-            handleMouseButtons(selectedBlock);
-
-            previouslySelectedBlock = selectedBlock;
+//            previouslySelectedBlock = selectedBlock;
         });
 
     }

@@ -9,7 +9,7 @@ import math.Vector3;
 public class PlayingGameState implements GameStateI {
     GameState state = GameState.PLAYING;
     Camera perspective = new Camera(
-            (float) Math.PI - (float) Math.PI / 3,
+            (float) Math.PI - (float) Math.PI / 2,
             World.window.getAspectRatio(),
             Vector3.zeros()
     );

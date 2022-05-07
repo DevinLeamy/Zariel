@@ -9,6 +9,7 @@ import engine.ecs.InstanceSystem;
 import engine.main.BoundingBox;
 import engine.main.Camera;
 import engine.main.Cube;
+import engine.main.Debug;
 import engine.renderers.BoundingBoxRenderer;
 
 public class BBoxRenderingSystem extends InstanceSystem {
@@ -31,7 +32,9 @@ public class BBoxRenderingSystem extends InstanceSystem {
 
         Camera camera = World.getPerspective();
 
-        renderer.setRenderContext(camera, boundingBoxTransform);
-        renderer.render(Cube.mesh);
+        if (Debug.boundingBox) {
+            renderer.setRenderContext(camera, boundingBoxTransform);
+            renderer.render(Cube.mesh);
+        }
     }
 }

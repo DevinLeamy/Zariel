@@ -35,6 +35,8 @@ public class DebugInputSystem extends System {
 
         if (Controller.keyPressed(GLFW_KEY_P)) { Debug.wireframe = false; }
         if (Controller.keyPressed(GLFW_KEY_O)) { Debug.wireframe = true; }
+        if (Controller.takeKeyPressState(GLFW_KEY_N) == GLFW_PRESS) { Debug.boundingBox = false; }
+        if (Controller.takeKeyPressState(GLFW_KEY_M) == GLFW_PRESS) { Debug.boundingBox = true; }
 
         glPolygonMode(GL_FRONT_AND_BACK, Debug.wireframe ? GL_LINE : GL_FILL);
         World.window.setCursorLocked(Debug.cursorLocked);

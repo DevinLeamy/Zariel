@@ -7,4 +7,5 @@ public class Debug {
     public static int voxels = 0;
     public static int vertices = 0;
     public static boolean cursorLocked = true;
+    public static boolean boundingBox = false;
 }

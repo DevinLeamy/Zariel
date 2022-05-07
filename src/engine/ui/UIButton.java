@@ -1,6 +1,5 @@
 package engine.ui;
 
-import engine.World;
 import engine.controller.Controller;
 import engine.main.BoundingBox2D;
 import engine.main.Listener;
