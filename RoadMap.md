@@ -11,4 +11,4 @@
 
 ### Other Tasks
 - [x] Fix SkyBox
-- [ ] Add `getPerspective()` to GameState interface
+- [x] Add `getPerspective()` to GameState interface
