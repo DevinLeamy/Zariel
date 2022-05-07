@@ -26,4 +26,7 @@ public class Config {
     public static boolean orthographic = false;
 
     public static int MAX_ENTITY_COUNT = 10000;
+
+    // PHYSICS
+    final public static float GRAVITY = 9.81f;
 }

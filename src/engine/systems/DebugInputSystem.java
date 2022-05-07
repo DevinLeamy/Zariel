@@ -19,7 +19,8 @@ public class DebugInputSystem extends System {
     @Override
     public void update(float dt) {
         if (Controller.takeKeyPressState(GLFW_KEY_Q) == GLFW_PRESS) {
-            World.reset();
+//            World.reset();
+            World.onPlayingGame();
         }
         if (Controller.takeKeyPressState(GLFW_KEY_0) == GLFW_PRESS) {
             Debug.DEBUG = true;

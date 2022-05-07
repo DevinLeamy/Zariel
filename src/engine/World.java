@@ -32,8 +32,6 @@ public class World {
     public static SkyBox skyBox;
     public static EntityManager entityManager;
     public static UI ui;
-    private static Camera camera;
-    private static Camera debugCamera;
 
     public static SystemDriver systemDriver;
 

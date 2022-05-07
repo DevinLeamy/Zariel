@@ -9,9 +9,6 @@ import math.Vector3;
 import math.Vector3i;
 import engine.util.Utils;
 
-// TODO: implement the iterator interface for the blocks so we don't have to
-//       next for loops all the time.
-
 public class Chunk {
     final public static int CHUNK_SIZE = Config.CHUNK_SIZE;
     /**

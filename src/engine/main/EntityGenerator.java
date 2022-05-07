@@ -1,5 +1,6 @@
 package engine.main;
 
+import engine.World;
 import engine.components.CameraTarget;
 import engine.components.CarDynamics;
 import engine.components.DebugCameraConfig;
@@ -11,7 +12,9 @@ import engine.components.RigidBody;
 import engine.components.Transform;
 import engine.components.VoxelModel;
 import engine.ecs.Component;
+import engine.ecs.ComponentRegistry;
 import engine.ecs.Entity;
+import engine.ecs.EntityManager;
 import engine.graphics.VoxelGeometry;
 import math.Vector3;
 import math.Vector3i;
@@ -65,6 +68,12 @@ public class EntityGenerator {
                     new CarDynamics(),
                     new RigidBody(new BoundingBox(1, 1, 1), "PLAYER")
             );
+        } else {
+            // reset player
+            player.addComponent(transform);
+            player.addComponent(new Dynamics(Vector3.zeros(), Vector3.zeros()));
+            player.addComponent(new CarDynamics());
+            player.addComponent(new GravityTag());
         }
         return player;
     }

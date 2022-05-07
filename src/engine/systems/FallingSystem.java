@@ -3,6 +3,7 @@ package engine.systems;
 import engine.components.Dynamics;
 import engine.components.GravityTag;
 import engine.components.Transform;
+import engine.config.Config;
 import engine.ecs.ComponentRegistry;
 import engine.ecs.Entity;
 import engine.ecs.InstanceSystem;
@@ -15,8 +16,6 @@ import math.Vector3i;
  * whether they are in the air.
  */
 public class FallingSystem extends InstanceSystem {
-    final private static float GRAVITY = 9.81f;
-
     public FallingSystem() {
         super(ComponentRegistry.getSignature(GravityTag.class, Dynamics.class, Transform.class), 0);
     }
@@ -41,7 +40,7 @@ public class FallingSystem extends InstanceSystem {
          * and velocity.
          */
         if (!previouslyFalling && falling) {
-            dynamics.acceleration.y -= GRAVITY;
+            dynamics.acceleration.y -= Config.GRAVITY;
         } else if (previouslyFalling && !falling) {
             acceleration.y = Float.max(0, acceleration.y);
             velocity.y = Float.max(0, velocity.y);

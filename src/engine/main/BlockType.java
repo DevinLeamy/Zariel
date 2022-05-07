@@ -5,14 +5,7 @@ import math.Vector3i;
 
 public class BlockType {
     public static BlockType EMPTY = new BlockType(7, 7);
-    public static BlockType BEDROCK = new BlockType(new Vector3i(40, 40, 230), 1, 1);
-    public static BlockType LEAF = new BlockType(new Vector3i(140, 245, 140), 3, 4);
-    public static BlockType WOOD = new BlockType(new Vector3i(117, 74, 21), 1, 4);
-    public static BlockType STONE = new BlockType(new Vector3i(140, 140, 140), 0, 1);
     public static BlockType SNOW = new BlockType(new Vector3i(245, 245, 245), 4, 2);
-    public static BlockType GRASS = new BlockType(new Vector3i(52, 140, 49), 2, 8);
-    public static BlockType RED = new BlockType(8, 1);
-
 
     public int textureRow;
     public int textureCol;

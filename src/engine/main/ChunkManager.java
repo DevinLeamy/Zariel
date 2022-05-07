@@ -1,6 +1,7 @@
 package engine.main;
 
 import engine.config.Config;
+import math.Vector2;
 import math.Vector3;
 import math.Vector3i;
 
@@ -114,6 +115,29 @@ public class ChunkManager {
             createChunk(chunkLocation, new Chunk(chunkLocation));
             addNeighborsToLoadQueue(chunkLocation);
         }
+    }
+
+    public float groundLevel(Vector2 location) {
+        int x = (int) location.x;
+        int z = (int) location.y;
+
+        Optional<Chunk> maybeChunk = getChunk(x, 0, z);
+        if (maybeChunk.isEmpty()) {
+            // abyss
+            return -1000;
+        }
+
+        Chunk chunk = maybeChunk.get();
+
+        float groundLevel = 0;
+        for (int i = 0; i < Config.WORLD_HEIGHT * Config.CHUNK_SIZE; ++i) {
+            if (chunk.getBlock(new Vector3i(x, i, z)).isActive()) {
+                // Note: We add 1.0f because each block has a height of 1.0f
+                groundLevel = i + 1.0f;
+            }
+        }
+
+        return groundLevel;
     }
 
     public void addNeighborsToLoadQueue(Vector3i location) {
