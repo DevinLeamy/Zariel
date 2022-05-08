@@ -23,9 +23,9 @@
 - `A/D` steer left/right
 - `Scroll` zoom in/out
 - `Cursor` move camera up/down 
+- `Q` reset game
 
 ### Debug controls
-- `Q` reset game
 - `0` enter debug camera view
 - `9` leave debug camera view
 - `Z` lock cursor (can't freely move it - good for driving)
@@ -34,6 +34,7 @@
 - `N` disable bounding box display
 - `O` enable wireframe mode
 - `P` disable wireframe mode
+- `ESC` exit 
 
 ### Demo game showcase
 https://user-images.githubusercontent.com/45083086/167272144-30f59b9a-0e1f-4c17-93fa-d3eae5afb267.mp4
