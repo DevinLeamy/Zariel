@@ -41,3 +41,7 @@ https://user-images.githubusercontent.com/45083086/167272144-30f59b9a-0e1f-4c17-
 ### Debug showcase
 https://user-images.githubusercontent.com/45083086/167271668-01c11c28-c744-4bb6-bc02-ffb0a16df52f.mp4
 
+### Demo terrain generation
+https://user-images.githubusercontent.com/45083086/167297176-1a15442c-5692-4fef-b11c-dce556e3d609.mp4
+
+
