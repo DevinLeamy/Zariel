@@ -11,7 +11,7 @@
 - Diffuse lighting
 - Ambient occlusion
 - Frustum culling
-- Orthographic and prospective projection
+- Orthographic and perspective projection
 - Input controls
 - Collision system
 - Physics system
@@ -28,7 +28,7 @@
 ### Debug controls
 - `0` enter debug camera view
 - `9` leave debug camera view
-- `Z` lock cursor (can't freely move it - good for driving)
+- `Z` lock cursor
 - `X` unlock cursor 
 - `M` enable bounding box display
 - `N` disable bounding box display
@@ -44,5 +44,3 @@ https://user-images.githubusercontent.com/45083086/167271668-01c11c28-c744-4bb6-
 
 ### Demo terrain generation
 https://user-images.githubusercontent.com/45083086/167297176-1a15442c-5692-4fef-b11c-dce556e3d609.mp4
-
-
